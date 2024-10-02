@@ -8,17 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Author extends Model
+class Book extends Model
 {
     use HasFactory;
     use HasSlug;
 
     protected $fillable = [
-        'first_name',
-        'last_name',
-        'nationality',
-        'biography',
-        'image_url',
+        'title',
+        'synopsis',
+        'pages_amount',
+        'chapters_amount',
         'slug',
     ];
 
@@ -28,7 +27,7 @@ class Author extends Model
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom(['first_name', 'last_name'])
+            ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
     }
 
@@ -43,10 +42,10 @@ class Author extends Model
     }
 
     /**
-     * Get the books that owns the author.
+     * The authors that belong to the book.
      */
-    public function books(): BelongsToMany
+    public function authors(): BelongsToMany
     {
-        return $this->belongsToMany(Book::class);
+        return $this->belongsToMany(Author::class);
     }
 }
