@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Http\Controllers\API\V1;
+
+use App\Models\API\V1\Book;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class BookController
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(): JsonResponse
+    {
+        return response()->json(Book::all(), JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request): JsonResponse
+    {
+        $newBook = Book::query()
+        ->create($request->all());
+
+        return response()->json($newBook, JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Book $book): JsonResponse
+    {
+        return response()->json($book, JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Book $book): JsonResponse
+    {
+        $book->update($request->all());
+
+        return response()->json($book, JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Book $book): JsonResponse
+    {
+        $book->delete();
+
+        return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
+    }
+}
