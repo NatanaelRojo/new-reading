@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Requests\API\V1\Author\StoreAuthorRequest;
+use App\Http\Requests\API\V1\Author\UpdateAuthorRequest;
 use App\Models\API\V1\Author;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -39,7 +40,7 @@ class AuthorController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Author $author): JsonResponse
+    public function update(UpdateAuthorRequest $request, Author $author): JsonResponse
     {
         $author->update($request->all());
 
