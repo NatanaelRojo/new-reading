@@ -18,7 +18,7 @@ class AuthorController
     {
         $authors = Author::all();
 
-        return response()->json(AuthorResource::collection($authors), JsonResponse::HTTP_OK());
+        return response()->json(AuthorResource::collection($authors), JsonResponse::HTTP_OK);
     }
 
     /**

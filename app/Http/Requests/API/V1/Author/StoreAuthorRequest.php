@@ -20,7 +20,6 @@ class StoreAuthorRequest extends FormRequest
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'nationality' => ['required', 'string', 'max:255'],
-            'date_of_birth' => ['required', 'date'],
             'biography' => ['required', 'string'],
             'image_url' => ['required', 'url'],
         ];

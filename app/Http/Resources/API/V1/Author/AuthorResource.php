@@ -20,7 +20,6 @@ class AuthorResource extends JsonResource
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'nationality' => $this->nationality,
-            'date_of_birth' => $this->date_of_birth,
             'biography' => $this->biography,
             'image_url' => $this->image_url,
             'books' => BookResource::collection($this->whenLoaded('books')),

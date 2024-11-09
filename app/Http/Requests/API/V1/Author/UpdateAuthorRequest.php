@@ -20,7 +20,6 @@ class UpdateAuthorRequest extends FormRequest
             'first_name' => ['string', 'max:255'],
             'last_name' => ['string', 'max:255'],
             'nationality' => ['string', 'max:255'],
-            'date_of_birth' => ['date'],
             'biography' => ['string'],
             'image_url' => ['url'],
         ];
