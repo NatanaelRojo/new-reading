@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Http\Requests\API\V1\Author\StoreAuthorRequest;
 use App\Models\API\V1\Author;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class AuthorController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreAuthorRequest $request): JsonResponse
     {
         $newAuthor = Author::query()
         ->create($request->all());
