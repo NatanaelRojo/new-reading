@@ -42,7 +42,7 @@ class AuthorController
      */
     public function update(UpdateAuthorRequest $request, Author $author): JsonResponse
     {
-        $author->update($request->all());
+        $author->update($request->validated());
 
         return response()->json($author, JsonResponse::HTTP_OK);
     }
