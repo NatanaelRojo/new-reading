@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Requests\API\V1\Author\StoreAuthorRequest;
 use App\Http\Requests\API\V1\Author\UpdateAuthorRequest;
+use App\Http\Resources\API\V1\Author\AuthorResource;
 use App\Models\API\V1\Author;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,9 @@ class AuthorController
      */
     public function index(): JsonResponse
     {
-        return response()->json(Author::all());
+        $authors = Author::all();
+
+        return response()->json(AuthorResource::collection($authors), JsonResponse::HTTP_OK());
     }
 
     /**
@@ -26,7 +29,7 @@ class AuthorController
         $newAuthor = Author::query()
         ->create($request->validated());
 
-        return response()->json($newAuthor, JsonResponse::HTTP_OK);
+        return response()->json(new AuthorResource($newAuthor), JsonResponse::HTTP_OK);
     }
 
     /**
@@ -34,7 +37,7 @@ class AuthorController
      */
     public function show(Author $author): JsonResponse
     {
-        return response()->json($author, JsonResponse::HTTP_OK);
+        return response()->json(new AuthorResource($author), JsonResponse::HTTP_OK);
     }
 
     /**
@@ -44,7 +47,7 @@ class AuthorController
     {
         $author->update($request->validated());
 
-        return response()->json($author, JsonResponse::HTTP_OK);
+        return response()->json(new AuthorResource($author), JsonResponse::HTTP_OK);
     }
 
     /**

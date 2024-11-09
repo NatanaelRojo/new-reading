@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Requests\API\V1\Book\StoreBookRequest;
 use App\Http\Requests\API\V1\Book\UpdateBookRequest;
+use App\Http\Resources\API\V1\Book\BookResource;
 use App\Models\API\V1\Book;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,9 @@ class BookController
      */
     public function index(): JsonResponse
     {
-        return response()->json(Book::all(), JsonResponse::HTTP_OK);
+        $books = Book::all();
+
+        return response()->json(BookResource::collection($books), JsonResponse::HTTP_OK);
     }
 
     /**
@@ -26,7 +29,7 @@ class BookController
         $newBook = Book::query()
         ->create($request->validated());
 
-        return response()->json($newBook, JsonResponse::HTTP_OK);
+        return response()->json(new BookResource($newBook), JsonResponse::HTTP_OK);
     }
 
     /**
@@ -34,7 +37,7 @@ class BookController
      */
     public function show(Book $book): JsonResponse
     {
-        return response()->json($book, JsonResponse::HTTP_OK);
+        return response()->json(new BookResource($book), JsonResponse::HTTP_OK);
     }
 
     /**
@@ -44,7 +47,7 @@ class BookController
     {
         $book->update($request->validated());
 
-        return response()->json($book, JsonResponse::HTTP_OK);
+        return response()->json(new BookResource($book), JsonResponse::HTTP_OK);
     }
 
     /**
