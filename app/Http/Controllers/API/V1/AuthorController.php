@@ -24,7 +24,7 @@ class AuthorController
     public function store(StoreAuthorRequest $request): JsonResponse
     {
         $newAuthor = Author::query()
-        ->create($request->all());
+        ->create($request->validated());
 
         return response()->json($newAuthor, JsonResponse::HTTP_OK);
     }
