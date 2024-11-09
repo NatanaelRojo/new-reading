@@ -1,6 +1,6 @@
 <?php
 
-namespace App\API\V1\Models;
+namespace App\Models\API\V1;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
