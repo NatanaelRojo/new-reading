@@ -18,6 +18,7 @@ class BookResource extends JsonResource
         return [
             'title' => $this->title,
             'synopsis' => $this->synopsis,
+            'isbn' => $this->isbn,
             'pages_amount' => $this->pages_amount,
             'chapters_amount' => $this->chapters_amount,
             'authors' => AuthorResource::collection($this->whenLoaded('authors')),

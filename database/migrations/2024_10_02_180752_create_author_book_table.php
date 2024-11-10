@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Author;
-use App\Models\Book;
+use App\Models\API\V1\Author;
+use App\Models\API\V1\Book;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

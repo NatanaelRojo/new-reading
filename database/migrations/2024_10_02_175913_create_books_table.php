@@ -13,9 +13,11 @@ return new class () extends Migration {
         if (!Schema::hasTable('books')) {
             Schema::create('books', function (Blueprint $table) {
                 $table->id();
-                $table->string('title');
+                $table->string('title', 255);
                 $table->text('synopsis');
+                $table->string('isbn');
                 $table->smallInteger('pages_amount');
+                $table->string('image_url');
                 $table->smallInteger('chapters_amount');
                 $table->string('slug');
                 $table->timestamps();

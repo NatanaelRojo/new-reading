@@ -19,6 +19,7 @@ class UpdateBookRequest extends FormRequest
         return [
             'title' => ['string', 'max:255'],
             'synopsis' => ['string'],
+            'isbn' => ['string', 'max:255'],
             'pages_amount' => ['integer', 'min:1'],
             'chapters_amount' => ['integer', 'min:1'],
         ];

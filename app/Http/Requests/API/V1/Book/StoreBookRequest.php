@@ -19,6 +19,7 @@ class StoreBookRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'synopsis' => ['required', 'string'],
+            'isbn' => ['required', 'string', 'max:255'],
             'pages_amount' => ['required', 'integer', 'min:1'],
             'chapters_amount' => ['required', 'integer', 'min:1'],
         ];
