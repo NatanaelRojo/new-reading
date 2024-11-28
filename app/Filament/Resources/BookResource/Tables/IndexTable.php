@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\AuthorResource\Tables;
+namespace App\Filament\Resources\BookResource\Tables;
 
 use Filament\Tables;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -18,11 +18,11 @@ class IndexTable
     public static function getColumns(): array
     {
         return [
-            TextColumn::make('first_name'),
-            TextColumn::make('last_name'),
-            TextColumn::make('nationality'),
-            TextColumn::make('biography'),
-            TextColumn::make('image_url'),
+            TextColumn::make('title'),
+            TextColumn::make('synopsis'),
+            TextColumn::make('isbn'),
+            TextColumn::make('pages_amount'),
+            TextColumn::make('chapters_amount'),
         ];
     }
 

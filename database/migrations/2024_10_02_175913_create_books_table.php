@@ -17,7 +17,8 @@ return new class () extends Migration {
                 $table->text('synopsis');
                 $table->string('isbn');
                 $table->smallInteger('pages_amount');
-                $table->string('image_url');
+                $table->string('image_url')
+                    ->nullable();
                 $table->smallInteger('chapters_amount');
                 $table->string('slug');
                 $table->timestamps();

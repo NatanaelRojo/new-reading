@@ -15,6 +15,8 @@ return new class () extends Migration {
                 $table->id();
                 $table->string('first_name', 30);
                 $table->string('last_name', 30);
+                $table->string('full_name')
+                    ->storedAs("first_name || ' ' || last_name");
                 $table->string('nationality', 30);
                 $table->text('biography');
                 $table->string('image_url')
