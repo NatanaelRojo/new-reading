@@ -17,7 +17,8 @@ return new class () extends Migration {
                 $table->string('last_name', 30);
                 $table->string('nationality', 30);
                 $table->text('biography');
-                $table->string('image_url');
+                $table->string('image_url')
+                    ->nullable();
                 $table->string('slug');
                 $table->timestamps();
             });
