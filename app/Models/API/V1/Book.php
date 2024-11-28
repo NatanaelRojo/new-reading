@@ -20,6 +20,7 @@ class Book extends Model
         'pages_amount',
         'chapters_amount',
         'slug',
+        'image_url',
     ];
 
     /**

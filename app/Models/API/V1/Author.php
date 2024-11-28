@@ -16,11 +16,17 @@ class Author extends Model
     protected $fillable = [
         'first_name',
         'last_name',
+        'full_name',
         'nationality',
         'biography',
         'image_url',
         'slug',
     ];
+
+    // public function getFullNameAttribute(): string
+    // {
+    //     return $this->first_name . ' ' . $this->last_name;
+    // }
 
     /**
      * Get the options for generating the slug.

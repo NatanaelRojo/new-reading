@@ -29,7 +29,9 @@ class CreateForm
                 ->relationship(
                     name: 'books',
                     titleAttribute: 'title'
-                ),
+                )
+                ->preload()
+                ->searchable(),
         ];
     }
 }
