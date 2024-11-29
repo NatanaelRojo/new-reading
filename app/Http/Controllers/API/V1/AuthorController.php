@@ -16,7 +16,8 @@ class AuthorController
      */
     public function index(): JsonResponse
     {
-        $authors = Author::all();
+        $authors = Author::with('books')
+        ->get();
 
         return response()->json(AuthorResource::collection($authors), JsonResponse::HTTP_OK);
     }
