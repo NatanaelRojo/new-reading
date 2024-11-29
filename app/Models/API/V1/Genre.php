@@ -2,25 +2,15 @@
 
 namespace App\Models\API\V1;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Book extends Model
+class Genre extends Model
 {
-    use HasFactory;
-    use HasSlug;
-
     protected $fillable = [
-        'title',
-        'synopsis',
-        'isbn',
-        'pages_amount',
-        'chapters_amount',
+        'name',
         'slug',
-        'image_url',
     ];
 
     /**
@@ -43,19 +33,8 @@ class Book extends Model
         return 'slug';
     }
 
-    /**
-     * The authors that belong to the book.
-     */
-    public function authors(): BelongsToMany
+    public function books(): BelongsToMany
     {
-        return $this->belongsToMany(Author::class);
-    }
-
-    /**
-     * The genres that belong to the book.
-     */
-    public function genres(): BelongsToMany
-    {
-        return $this->belongsToMany(Genre::class);
+        return $this->belongsToMany(Book::class);
     }
 }
