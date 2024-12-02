@@ -2,12 +2,17 @@
 
 namespace App\Models\API\V1;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
 class Genre extends Model
 {
+    use HasFactory;
+    use HasSlug;
+
     protected $fillable = [
         'name',
         'slug',
@@ -19,7 +24,7 @@ class Genre extends Model
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom('title')
+            ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
     }
 
