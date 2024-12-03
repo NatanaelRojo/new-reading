@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Http\Controllers\API\V1;
+
+use App\Http\Requests\API\V1\Review\StoreReviewRequest;
+use App\Http\Requests\API\V1\Review\UpdateReviewRequest;
+use App\Http\Resources\API\V1\Review\ReviewResource;
+use App\Models\API\V1\Review;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class ReviewController
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(): JsonResponse
+    {
+        $reviews = Review::with(['book', 'user'])
+            ->get();
+
+        return response()
+            ->json(ReviewResource::collection($reviews), JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreReviewRequest $request): JsonResponse
+    {
+        $newReview = Review::query()
+            ->create($request->validated());
+
+        return response()
+            ->json(new ReviewResource($newReview), JsonResponse::HTTP_CREATED);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Review $review): JsonResponse
+    {
+        return response()
+            ->json(new ReviewResource($review), JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateReviewRequest $request, Review $review): JsonResponse
+    {
+        $review->update($request->validated());
+
+        return response()
+            ->json(new ReviewResource($review), JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Review $review): JsonResponse
+    {
+        $review->delete();
+
+        return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
+    }
+}

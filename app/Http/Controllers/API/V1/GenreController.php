@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Requests\API\V1\Genre\StoreGenreRequest;
 use App\Http\Requests\API\V1\Genre\UpdateGenreRequest;
-use App\Http\Resources\API\V1\GenreResource;
+use App\Http\Resources\API\V1\Genre\GenreResource;
 use App\Models\API\V1\Genre;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,7 +30,7 @@ class GenreController
         $newGenre = Genre::query()
             ->create($request->validated());
 
-        return response()->json(new GenreResource($newGenre), JsonResponse::HTTP_OK);
+        return response()->json(new GenreResource($newGenre), JsonResponse::HTTP_CREATED);
     }
 
     /**
