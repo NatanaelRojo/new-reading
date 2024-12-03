@@ -12,7 +12,7 @@ use Spatie\Sluggable\SlugOptions;
 class Review extends Model
 {
     use HasFactory;
-    use HasSlug;
+    // use HasSlug;
 
     protected $fillable = [
         'user_id',
