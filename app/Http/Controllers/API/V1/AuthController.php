@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Http\Requests\API\V1\User\LoginUserRequest;
 use App\Http\Requests\API\V1\User\RegisterUserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -26,7 +27,7 @@ class AuthController
         ], JsonResponse::HTTP_CREATED);
     }
 
-    public function login(Request $request): JsonResponse
+    public function login(LoginUserRequest $request): JsonResponse
     {
         $user = User::query()
             ->where('email', $request->email)
