@@ -1,0 +1,39 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class () extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        if (Schema::hasTable('users')
+        && !Schema::hasColumn('users', 'first_name')
+        && !Schema::hasColumn('users', 'last_name')
+        && !Schema::hasColumn('users', 'full_name')
+        && !Schema::hasColumn('users', 'birth_date')
+        && !Schema::hasColumn('users', 'description')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('first_name');
+                $table->string('last_name');
+                $table->string('full_name')
+                ->storedAs("first_name || ' ' || last_name");
+                $table->date('birth_date');
+                $table->text('description');
+            });
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
+    }
+};
