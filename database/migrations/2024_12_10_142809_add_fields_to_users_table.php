@@ -17,12 +17,17 @@ return new class () extends Migration {
         && !Schema::hasColumn('users', 'birth_date')
         && !Schema::hasColumn('users', 'description')) {
             Schema::table('users', function (Blueprint $table) {
-                $table->string('first_name');
-                $table->string('last_name');
+                $table->string('first_name')
+                    ->default('');
+                $table->string('last_name')
+                    ->default('');
                 $table->string('full_name')
-                ->storedAs("first_name || ' ' || last_name");
-                $table->date('birth_date');
-                $table->text('description');
+                    ->storedAs("first_name || ' ' || last_name");
+                $table->date('birth_date')
+                    ->nullable();
+                $table->text('description')
+                    ->default('')
+                    ->nullable();
             });
         }
     }
