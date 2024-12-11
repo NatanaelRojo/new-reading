@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\V1;
+namespace App\Http\Controllers\API\V1\Controllers;
 
 use App\Http\Requests\API\V1\Genre\StoreGenreRequest;
 use App\Http\Requests\API\V1\Genre\UpdateGenreRequest;
