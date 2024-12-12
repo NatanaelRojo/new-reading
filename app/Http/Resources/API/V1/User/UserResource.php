@@ -15,6 +15,7 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'profile_image_url' => $this->profile_image_url,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'birth_date' => $this->birth_date,

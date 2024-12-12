@@ -11,12 +11,15 @@ return new class () extends Migration {
     public function up(): void
     {
         if (Schema::hasTable('users')
+        && !Schema::hasColumn('users', 'profile_image_url')
         && !Schema::hasColumn('users', 'first_name')
         && !Schema::hasColumn('users', 'last_name')
         && !Schema::hasColumn('users', 'full_name')
         && !Schema::hasColumn('users', 'birth_date')
         && !Schema::hasColumn('users', 'description')) {
             Schema::table('users', function (Blueprint $table) {
+                $table->string('profile_image_url')
+                ->nullable();
                 $table->string('first_name')
                     ->default('');
                 $table->string('last_name')
