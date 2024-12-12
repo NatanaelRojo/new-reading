@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1\Controllers;
 
+use App\Http\Requests\API\V1\User\UpdateUserRequest;
 use App\Http\Resources\API\V1\User\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -42,7 +43,7 @@ class UserController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user): JsonResponse
+    public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
         $user->update($request->validated());
 

@@ -2,13 +2,12 @@
 
 namespace App\Http\Requests\API\V1\User;
 
-use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
-class RegisterUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -19,13 +18,12 @@ class RegisterUserRequest extends FormRequest
     {
         return [
             'profile_image_url' => ['url'],
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'birth_date' => ['required', 'date'],
+            'first_name' => ['string', 'max:255'],
+            'last_name' => ['string', 'max:255'],
+            'birth_date' => ['date'],
             'biography' => ['string'],
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'name' => ['string', 'max:255'],
+            'email' => ['string', 'email', 'max:255'],
         ];
     }
 
