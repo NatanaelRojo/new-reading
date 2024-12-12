@@ -32,6 +32,6 @@ Route::middleware('auth:sanctum')
             Route::get('/users/{user}', 'show');
             Route::put('/users/{user}', 'update');
             Route::delete('/users/{user}', 'destroy');
-            Route::post('/users/{user}/follow', 'toggleFollow');
+            Route::post('/users/{user}/follow', 'follow');
         });
     });

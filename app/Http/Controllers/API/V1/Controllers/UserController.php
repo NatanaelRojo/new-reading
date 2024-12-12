@@ -59,6 +59,13 @@ class UserController
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
+    /**
+     * Toggle follow
+     *
+     * @param Request $request
+     * @param User $user
+     * @return JsonResponse
+     */
     public function toggleFollow(Request $request, User $user): JsonResponse
     {
         $currentUser = $request->user();
