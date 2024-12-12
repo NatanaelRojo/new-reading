@@ -27,7 +27,7 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'birth_date',
-        'biography',
+        'description',
         'name',
         'email',
         'password',
@@ -90,6 +90,4 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followed_id');
     }
-
-    public function scopeIsAlreadyFollowing(Builder $query, User $user): bool
 }
