@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\API\V1\AuthController;
-use App\Http\Controllers\API\V1\AuthorController;
-use App\Http\Controllers\API\V1\BookController;
-use App\Http\Controllers\API\V1\GenreController;
-use App\Http\Controllers\API\V1\ReviewController;
+use App\Http\Controllers\API\V1\Controllers\AuthController;
+use App\Http\Controllers\API\V1\Controllers\AuthorController;
+use App\Http\Controllers\API\V1\Controllers\BookController;
+use App\Http\Controllers\API\V1\Controllers\GenreController;
+use App\Http\Controllers\API\V1\Controllers\ReviewController;
+use App\Http\Controllers\API\V1\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,3 +25,13 @@ Route::apiResource('authors', AuthorController::class);
 Route::apiResource('books', BookController::class);
 Route::apiResource('genres', GenreController::class);
 Route::apiResource('reviews', ReviewController::class);
+Route::middleware('auth:sanctum')
+    ->group(function () {
+        Route::controller(UserController::class)->group(function () {
+            Route::get('/users', 'index');
+            Route::get('/users/{user}', 'show');
+            Route::put('/users/{user}', 'update');
+            Route::delete('/users/{user}', 'destroy');
+            Route::post('/users/{user}/follow', 'toggleFollow');
+        });
+    });
