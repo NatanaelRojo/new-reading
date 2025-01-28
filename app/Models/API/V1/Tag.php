@@ -8,34 +8,29 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Book extends Model
+class Tag extends Model
 {
     use HasFactory;
     use HasSlug;
 
     protected $fillable = [
-        'title',
-        'synopsis',
-        'isbn',
-        'pages_amount',
-        'chapters_amount',
+        'name',
         'slug',
-        'image_url',
     ];
 
     /**
      * Get the options for generating the slug.
+     * @return SlugOptions
      */
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom('title')
+            ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
     }
 
     /**
      * Get the route key for the model.
-     *
      * @return string
      */
     public function getRouteKeyName(): string
@@ -44,26 +39,11 @@ class Book extends Model
     }
 
     /**
-     * The authors that belong to the book.
+     * Summary of books
+     * @return BelongsToMany<Book, Tag>
      */
-    public function authors(): BelongsToMany
+    public function books(): BelongsToMany
     {
-        return $this->belongsToMany(Author::class);
-    }
-
-    /**
-     * The genres that belong to the book.
-     */
-    public function genres(): BelongsToMany
-    {
-        return $this->belongsToMany(Genre::class);
-    }
-
-    /**
-     * The tags that belong to the book.
-     */
-    public function tags(): BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class);
+        return $this->belongsToMany(Book::class);
     }
 }
