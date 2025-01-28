@@ -6,6 +6,7 @@ use App\Http\Controllers\API\V1\Controllers\BookController;
 use App\Http\Controllers\API\V1\Controllers\GenreController;
 use App\Http\Controllers\API\V1\Controllers\ReviewController;
 use App\Http\Controllers\API\V1\Controllers\UserController;
+use App\Http\Controllers\API\V1\TagController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,7 @@ Route::middleware('auth:sanctum')
 Route::apiResource('authors', AuthorController::class);
 Route::apiResource('books', BookController::class);
 Route::apiResource('genres', GenreController::class);
+Route::apiResource('tags', TagController::class);
 Route::apiResource('reviews', ReviewController::class);
 Route::middleware('auth:sanctum')
     ->group(function () {
