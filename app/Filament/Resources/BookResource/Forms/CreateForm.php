@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\BookResource\Forms;
 
 use App\Filament\Resources\AuthorResource\Forms\CreateForm as FormsCreateForm;
+use App\Filament\Resources\TagResource\Forms\CreateForm as TagResourceFormsCreateForm;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -59,13 +60,21 @@ class CreateForm
             FileUpload::make('image_url')
             ->imageEditor(),
             Select::make('authors')
-            ->multiple()
-            ->relationship(
-                name: 'authors',
-                titleAttribute: 'full_name'
-            )->preload()
-            ->searchable()
-            ->createOptionForm(FormsCreateForm::getFields()),
+                ->multiple()
+                ->relationship(
+                    name: 'authors',
+                    titleAttribute: 'full_name'
+                )->preload()
+                ->searchable()
+                ->createOptionForm(FormsCreateForm::getFields()),
+            Select::make('tags')
+                ->multiple()
+                ->relationship(
+                    name: 'tags',
+                    titleAttribute: 'name'
+                )->preload()
+                ->searchable()
+                ->createOptionForm(TagResourceFormsCreateForm::getFields()),
         ];
     }
 }
