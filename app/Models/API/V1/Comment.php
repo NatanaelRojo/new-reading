@@ -21,6 +21,10 @@ class Comment extends Model
         'user_id',
     ];
 
+    /**
+     * Get the options for generating the slug.
+     * @return SlugOptions
+     */
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
