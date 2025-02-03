@@ -17,6 +17,7 @@ class Comment extends Model
     protected $fillable = [
         'body',
         'book_id',
+        'slug',
         'user_id',
     ];
 
@@ -27,6 +28,10 @@ class Comment extends Model
             ->saveSlugsTo('slug');
     }
 
+    /**
+     * Get the route key for the model.
+     * @return string
+     */
     public function getRouteKeyName(): string
     {
         return 'slug';
