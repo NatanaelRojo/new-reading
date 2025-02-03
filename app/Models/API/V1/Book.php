@@ -5,6 +5,7 @@ namespace App\Models\API\V1;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
@@ -49,6 +50,15 @@ class Book extends Model
     public function authors(): BelongsToMany
     {
         return $this->belongsToMany(Author::class);
+    }
+
+    /**
+     * The comments that belong to the book.
+     * @return HasMany
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
     }
 
     /**
