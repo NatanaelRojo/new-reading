@@ -30,7 +30,7 @@ class BookFactory extends Factory
         ];
     }
 
-    public function configure()
+    public function configure(): static
     {
         return $this->afterCreating(function (Book $book) {
             $book->authors()

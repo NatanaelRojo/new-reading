@@ -2,20 +2,21 @@
 
 namespace Database\Seeders;
 
-use App\Models\API\V1\Author;
-use Database\Factories\AuthorFactory;
+use App\Models\API\V1\Book;
+use App\Models\API\V1\Comment;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class AuthorSeeder extends Seeder
+class CommentSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Author::factory()
-            ->count(30)
+        Comment::factory()
+            ->count(50)
             ->create();
     }
 }
