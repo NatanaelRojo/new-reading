@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Http\Requests\API\V1\Post\StorePostRequest;
+use App\Http\Requests\API\V1\Post\UpdatePostRequest;
 use App\Http\Resources\API\V1\Post\PostResource;
 use App\Models\API\V1\Post;
 use Illuminate\Http\JsonResponse;
@@ -26,7 +28,7 @@ class PostController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StorePostRequest $request): JsonResponse
     {
         $newPost = Post::query()
             ->create($request->validated());
@@ -53,7 +55,7 @@ class PostController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post): JsonResponse
+    public function update(UpdatePostRequest $request, Post $post): JsonResponse
     {
         $post->update($request->validated());
 
