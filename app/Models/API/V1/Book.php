@@ -70,6 +70,14 @@ class Book extends Model
     }
 
     /**
+     * The posts that belong to the book.
+     */
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    /**
      * The tags that belong to the book.
      */
     public function tags(): BelongsToMany
