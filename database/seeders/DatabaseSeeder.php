@@ -16,9 +16,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AuthorSeeder::class,
             TagSeeder::class,
+            GenreSeeder::class,
             BookSeeder::class,
             UserSeeder::class,
             CommentSeeder::class,
+            ReviewSeeder::class
         ]);
     }
 }
