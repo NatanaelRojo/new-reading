@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             BookSeeder::class,
             UserSeeder::class,
             CommentSeeder::class,
-            ReviewSeeder::class
+            ReviewSeeder::class,
+            PostSeeder::class,
         ]);
     }
 }

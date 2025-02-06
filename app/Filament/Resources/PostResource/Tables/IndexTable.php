@@ -14,7 +14,7 @@ class IndexTable
     public static function getColumns(): array
     {
         return [
-            TextColumn::make('user.username'),
+            TextColumn::make('user.name'),
             TextColumn::make('book.title'),
             TextColumn::make('body')
                 ->limit(50),

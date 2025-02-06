@@ -17,7 +17,7 @@ class CreateForm
                 ->required()
                 ->relationship(
                     name: 'user',
-                    titleAttribute: 'username'
+                    titleAttribute: 'name'
                 )->preload()
                 ->searchable()
                 ->createOptionForm(FormsCreateForm::make()),
