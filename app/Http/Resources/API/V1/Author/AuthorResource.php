@@ -23,6 +23,7 @@ class AuthorResource extends JsonResource
             'biography' => $this->biography,
             'image_url' => $this->image_url,
             'books' => BookResource::collection($this->whenLoaded('books')),
+            'slug' => $this->slug,
         ];
     }
 }

@@ -30,7 +30,11 @@ class AuthorController
         $newAuthor = Author::query()
         ->create($request->validated());
 
-        return response()->json(new AuthorResource($newAuthor), JsonResponse::HTTP_OK);
+        return response()
+            ->json(
+                new AuthorResource($newAuthor),
+                JsonResponse::HTTP_CREATED
+            );
     }
 
     /**
@@ -48,7 +52,11 @@ class AuthorController
     {
         $author->update($request->validated());
 
-        return response()->json(new AuthorResource($author), JsonResponse::HTTP_OK);
+        return response()
+            ->json(
+                new AuthorResource($author),
+                JsonResponse::HTTP_OK
+            );
     }
 
     /**
