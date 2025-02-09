@@ -38,13 +38,7 @@ class AuthorApiTest extends TestCase
         $response = $this->putJson('/api/v1/authors/' . $newAuthor['slug'], $otherAuthor->toArray());
 
         $response->assertStatus(JsonResponse::HTTP_OK)
-            ->assertJson([
-                'first_name' => $otherAuthor['first_name'],
-                'last_name' => $otherAuthor['last_name'],
-                'nationality' => $otherAuthor['nationality'],
-                'biography' => $otherAuthor['biography'],
-                'image_url' => $otherAuthor['image_url'],
-            ]);
+            ->assertJson($otherAuthor->toArray());
     }
 
     public function test_delete_an_author(): void
