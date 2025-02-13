@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bc6841e5bc39b54338d13071df2d75c7",
+    "content-hash": "47a6793027af8c0fb67e169c87ea7c64",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -1961,6 +1961,92 @@
                 }
             ],
             "time": "2023-12-03T19:50:20+00:00"
+        },
+        {
+            "name": "indexzer0/eloquent-filtering",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/IndexZer0/eloquent-filtering.git",
+                "reference": "d1ed7f4be738b6ae735ce111dfb9a2d8365a9240"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/IndexZer0/eloquent-filtering/zipball/d1ed7f4be738b6ae735ce111dfb9a2d8365a9240",
+                "reference": "d1ed7f4be738b6ae735ce111dfb9a2d8365a9240",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^10.0||^11.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "require-dev": {
+                "larastan/larastan": "^2.9",
+                "laravel/pint": "^1.14",
+                "nunomaduro/collision": "^8.1.1||^7.10.0",
+                "orchestra/testbench": "^9.0.0||^8.22.0",
+                "pestphp/pest": "^3.0.0",
+                "pestphp/pest-plugin-arch": "^3.0.0",
+                "pestphp/pest-plugin-laravel": "^3.0.0",
+                "phpstan/extension-installer": "^1.3",
+                "phpstan/phpstan-deprecation-rules": "^1.1",
+                "phpstan/phpstan-phpunit": "^1.3",
+                "spatie/laravel-ray": "^1.35"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "IndexZer0\\EloquentFiltering\\EloquentFilteringServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "IndexZer0\\EloquentFiltering\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "IndexZer0",
+                    "email": "24657691+IndexZer0@users.noreply.github.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Powerful eloquent filtering",
+            "homepage": "https://github.com/indexzer0/eloquent-filtering",
+            "keywords": [
+                "Custom Filters",
+                "IndexZer0",
+                "Relationships",
+                "column",
+                "eloquent",
+                "eloquent-filtering",
+                "filter",
+                "filtering",
+                "filters",
+                "laravel",
+                "nested",
+                "nesting",
+                "sort",
+                "sorting"
+            ],
+            "support": {
+                "issues": "https://github.com/IndexZer0/eloquent-filtering/issues",
+                "source": "https://github.com/IndexZer0/eloquent-filtering/tree/2.1.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/IndexZer0",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-11-28T19:31:35+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",

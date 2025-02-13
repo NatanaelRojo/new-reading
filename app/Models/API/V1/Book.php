@@ -6,13 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use IndexZer0\EloquentFiltering\Contracts\IsFilterable;
+use IndexZer0\EloquentFiltering\Filter\Contracts\AllowedFilterList;
+use IndexZer0\EloquentFiltering\Filter\Filterable\Filter;
+use IndexZer0\EloquentFiltering\Filter\FilterType;
+use IndexZer0\EloquentFiltering\Filter\Traits\Filterable;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Book extends Model
+class Book extends Model implements IsFilterable
 {
     use HasFactory;
     use HasSlug;
+    use Filterable;
 
     protected $fillable = [
         'title',
@@ -32,6 +38,13 @@ class Book extends Model
         return SlugOptions::create()
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
+    }
+
+    public function allowedFilters(): AllowedFilterList
+    {
+        return Filter::only(
+            Filter::field('title', [FilterType::LIKE])
+        );
     }
 
     /**
