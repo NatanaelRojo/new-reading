@@ -2,6 +2,7 @@
 
 namespace App\Models\API\V1;
 
+use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,6 +13,7 @@ class Author extends Model
 {
     use HasFactory;
     use HasSlug;
+    use Filterable;
 
     protected $fillable = [
         'first_name',
