@@ -8,6 +8,8 @@ use App\Http\Resources\API\V1\Book\BookResource;
 use App\Models\API\V1\Book;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use IndexZer0\EloquentFiltering\Contracts\EloquentFilteringException;
+use Throwable;
 
 class BookController
 {
@@ -19,6 +21,19 @@ class BookController
         $books = Book::all();
 
         return response()->json(BookResource::collection($books), JsonResponse::HTTP_OK);
+    }
+
+    public function filter(Request $request): JsonResponse
+    {
+        $filteredBooks = Book::query()
+            ->with([
+                'authors',
+                'genres',
+                'tags',
+            ])->filter($request->all())
+            ->get();
+
+        return response()->json(BookResource::collection($filteredBooks), JsonResponse::HTTP_OK);
     }
 
     /**
