@@ -2,6 +2,7 @@
 
 namespace App\Models\API\V1;
 
+use App\ModelFilters\API\V1\TagFilter;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,6 +39,15 @@ class Tag extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * Get the filter class name for the model.
+     * @return string
+     */
+    public function modelFilter(): string
+    {
+        return $this->provideFilter(TagFilter::class);
     }
 
     /**

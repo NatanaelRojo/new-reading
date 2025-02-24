@@ -2,6 +2,7 @@
 
 namespace App\Models\API\V1;
 
+use App\ModelFilters\API\V1\BookFilter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -45,6 +46,15 @@ class Book extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * Get the filter class name for the model.
+     * @return string
+     */
+    public function modelFilter(): string
+    {
+        return $this->provideFilter(BookFilter::class);
     }
 
     /**
