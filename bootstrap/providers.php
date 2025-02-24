@@ -3,4 +3,5 @@
 return [
     App\Providers\AppServiceProvider::class,
     App\Providers\Filament\AdPanelProvider::class,
+    EloquentFilter\ServiceProvider::class,
 ];
