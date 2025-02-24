@@ -26,6 +26,7 @@ class BookFactory extends Factory
             'isbn' => fake()->isbn13(),
             'pages_amount' => fake()->numberBetween(1, 1000),
             'chapters_amount' => fake()->numberBetween(1, 50),
+            'published_at' => fake()->date(),
             'image_url' => fake()->imageUrl(),
         ];
     }

@@ -6,15 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use IndexZer0\EloquentFiltering\Contracts\IsFilterable;
-use IndexZer0\EloquentFiltering\Filter\Contracts\AllowedFilterList;
-use IndexZer0\EloquentFiltering\Filter\Filterable\Filter;
-use IndexZer0\EloquentFiltering\Filter\FilterType;
-use IndexZer0\EloquentFiltering\Filter\Traits\Filterable;
+use EloquentFilter\Filterable;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Book extends Model implements IsFilterable
+class Book extends Model
 {
     use HasFactory;
     use HasSlug;
@@ -26,6 +22,7 @@ class Book extends Model implements IsFilterable
         'isbn',
         'pages_amount',
         'chapters_amount',
+        'published_at',
         'slug',
         'image_url',
     ];
@@ -38,13 +35,6 @@ class Book extends Model implements IsFilterable
         return SlugOptions::create()
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
-    }
-
-    public function allowedFilters(): AllowedFilterList
-    {
-        return Filter::only(
-            Filter::field('title', [FilterType::LIKE])
-        );
     }
 
     /**

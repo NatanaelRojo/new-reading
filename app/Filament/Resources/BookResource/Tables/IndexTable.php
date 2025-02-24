@@ -23,6 +23,7 @@ class IndexTable
             TextColumn::make('isbn'),
             TextColumn::make('pages_amount'),
             TextColumn::make('chapters_amount'),
+            TextColumn::make('published_at'),
         ];
     }
 

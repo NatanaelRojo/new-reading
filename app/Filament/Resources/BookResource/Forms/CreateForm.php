@@ -5,6 +5,7 @@ namespace App\Filament\Resources\BookResource\Forms;
 use App\Filament\Resources\AuthorResource\Forms\CreateForm as FormsCreateForm;
 use App\Filament\Resources\TagResource\Forms\CreateForm as TagResourceFormsCreateForm;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -35,6 +36,10 @@ class CreateForm
             ->required()
             ->numeric()
             ->minValue(1),
+            DatePicker::make('published_at')
+                ->required()
+                ->minDate(now()->subYears(150))
+                ->maxDate(now()),
             FileUpload::make('image_url')
             ->imageEditor(),
         ];
@@ -57,6 +62,10 @@ class CreateForm
             ->required()
             ->numeric()
             ->minValue(1),
+            DatePicker::make('published_at')
+                ->required()
+                ->minDate(now()->subYears(150))
+                ->maxDate(now()),
             FileUpload::make('image_url')
             ->imageEditor(),
             Select::make('authors')
