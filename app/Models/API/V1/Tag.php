@@ -2,6 +2,7 @@
 
 namespace App\Models\API\V1;
 
+use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,6 +12,7 @@ use Spatie\Sluggable\SlugOptions;
 class Tag extends Model
 {
     use HasFactory;
+    use Filterable;
     use HasSlug;
 
     protected $fillable = [
