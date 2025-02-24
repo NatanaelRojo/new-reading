@@ -17,10 +17,10 @@ class BookFilter extends ModelFilter
             'author_name' => 'authorName',
         ],
         'genres' => [
-            'genre_name' => 'genreName',
+            'genre_name' => 'name',
         ],
         'tags' => [
-            'tag_name' => 'tagName',
+            'tag_name' => 'name',
         ],
     ];
 
@@ -29,5 +29,5 @@ class BookFilter extends ModelFilter
         return $this->where('title', 'like', "%$title%");
     }
 
-    
+
 }
