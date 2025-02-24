@@ -7,11 +7,11 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "^3.2",
-        "indexzer0/eloquent-filtering": "^2.1",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
-        "spatie/laravel-sluggable": "^3.6"
+        "spatie/laravel-sluggable": "^3.6",
+        "tucker-eric/eloquentfilter": "^3.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
