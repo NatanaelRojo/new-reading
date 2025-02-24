@@ -24,13 +24,21 @@ Route::middleware('auth:sanctum')
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 
-Route::apiResource('authors', AuthorController::class);
-Route::apiResource('books', BookController::class);
-Route::apiResource('comments', CommentController::class);
-Route::apiResource('genres', GenreController::class);
-Route::apiResource('posts', PostController::class);
-Route::apiResource('tags', TagController::class);
-Route::apiResource('reviews', ReviewController::class);
+Route::apiResources([
+    'authors' => AuthorController::class,
+    'books' => BookController::class,
+    'comments' => CommentController::class,
+    'genres' => GenreController::class,
+    'posts' => PostController::class,
+    'users' => UserController::class,
+    'tags' => TagController::class,
+    'reviews' => ReviewController::class
+]);
+
+Route::controller(BookController::class)->group(function () {
+    Route::post('/books/filter', 'filter');
+});
+
 Route::middleware('auth:sanctum')
     ->group(function () {
         Route::controller(UserController::class)->group(function () {
