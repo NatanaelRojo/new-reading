@@ -8,7 +8,6 @@ use App\Http\Resources\API\V1\Book\BookResource;
 use App\Models\API\V1\Book;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use IndexZer0\EloquentFiltering\Contracts\EloquentFilteringException;
 use Throwable;
 
 class BookController

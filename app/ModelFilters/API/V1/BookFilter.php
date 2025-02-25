@@ -28,6 +28,4 @@ class BookFilter extends ModelFilter
     {
         return $this->where('title', 'like', "%$title%");
     }
-
-
 }
