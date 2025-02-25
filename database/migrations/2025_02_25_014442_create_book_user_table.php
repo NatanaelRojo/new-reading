@@ -1,0 +1,39 @@
+<?php
+
+use App\Models\API\V1\Book;
+use App\Models\API\V1\Tag;
+use App\Models\User;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class () extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        if (!Schema::hasTable('book_user')) {
+            Schema::create('book_user', function (Blueprint $table) {
+                $table->id();
+                $table->foreignIdFor(Book::class);
+                $table->foreignIdFor(User::class);
+                $table->foreignIdFor(Tag::class)
+                    ->constrained()
+                    ->onDelete('cascade')
+                    ->onUpdate('cascade');
+                $table->timestamps();
+
+                $table->unique(['book_id', 'user_id']);
+            });
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('book_user');
+    }
+};
