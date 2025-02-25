@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Models\API\V1\Book;
 use App\Models\API\V1\Comment;
 use App\Models\API\V1\Post;
 use Illuminate\Database\Eloquent\Builder;
@@ -69,6 +70,13 @@ class User extends Authenticatable
         return Attribute::make(
             get: fn () => $this->first_name . ' ' . $this->last_name,
         );
+    }
+
+    public function books(): BelongsToMany
+    {
+        return $this->belongsToMany(Book::class)
+            ->withPivot('tag_id')
+            ->withTimestamps();
     }
 
     public function comments(): HasMany

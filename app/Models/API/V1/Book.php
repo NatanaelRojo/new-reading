@@ -3,6 +3,7 @@
 namespace App\Models\API\V1;
 
 use App\ModelFilters\API\V1\BookFilter;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -90,11 +91,18 @@ class Book extends Model
         return $this->hasMany(Post::class);
     }
 
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)
+            ->withPivot('tag_id')
+            ->withTimestamps();
+    }
+
     /**
      * The tags that belong to the book.
      */
-    public function tags(): BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class);
-    }
+    // public function tags(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Tag::class);
+    // }
 }
