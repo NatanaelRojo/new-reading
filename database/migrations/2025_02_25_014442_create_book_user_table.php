@@ -19,6 +19,7 @@ return new class () extends Migration {
                 $table->foreignIdFor(Book::class);
                 $table->foreignIdFor(User::class);
                 $table->foreignIdFor(Tag::class)
+                    ->nullable()
                     ->constrained()
                     ->onDelete('cascade')
                     ->onUpdate('cascade');
