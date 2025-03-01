@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Forms\CreateForm;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers\BooksRelationManager;
 use App\Filament\Resources\UserResource\Tables\IndexTable;
 use App\Models\User;
 use Filament\Forms;
@@ -39,7 +40,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            BooksRelationManager::class,
         ];
     }
 
