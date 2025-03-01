@@ -101,8 +101,8 @@ class Book extends Model
     /**
      * The tags that belong to the book.
      */
-    // public function tags(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(Tag::class);
-    // }
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class);
+    }
 }
