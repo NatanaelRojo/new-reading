@@ -4,6 +4,8 @@ namespace App\Filament\Resources\BookResource\Forms;
 
 use App\Filament\Resources\AuthorResource\Forms\CreateForm as FormsCreateForm;
 use App\Filament\Resources\TagResource\Forms\CreateForm as TagResourceFormsCreateForm;
+use App\Filament\Resources\UserResource\Forms\CreateForm as UserResourceFormsCreateForm;
+use App\Models\API\V1\Tag;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -84,6 +86,13 @@ class CreateForm
                 )->preload()
                 ->searchable()
                 ->createOptionForm(TagResourceFormsCreateForm::getFields()),
+                Select::make('users')
+                ->relationship(
+                    name: 'users',
+                    titleAttribute: 'name'
+                )->preload()
+                ->searchable()
+                ->createOptionForm(UserResourceFormsCreateForm::make()),
         ];
     }
 }
