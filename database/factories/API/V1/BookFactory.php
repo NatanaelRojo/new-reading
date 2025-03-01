@@ -6,6 +6,7 @@ use App\Models\API\V1\Author;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Genre;
 use App\Models\API\V1\Tag;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -44,6 +45,15 @@ class BookFactory extends Factory
                     Genre::inRandomOrder()->take(rand(1, 10))
                     ->pluck('id')
                 );
+            $book->users()
+                ->attach(
+                    User::inRandomOrder()->take(rand(1, 10))
+                    ->pluck('id')
+                );
+            foreach ($book->users as $user) {
+                $user->pivot->tag_id = Tag::inRandomOrder()->take(1)->first()->id;
+                $user->pivot->save();
+            }
             $book->tags()
                 ->attach(
                     Tag::inRandomOrder()->take(rand(1, 10))
