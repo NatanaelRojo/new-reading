@@ -49,13 +49,4 @@ class Tag extends Model
     {
         return $this->provideFilter(TagFilter::class);
     }
-
-    /**
-     * Summary of books
-     * @return BelongsToMany<Book, Tag>
-     */
-    public function books(): BelongsToMany
-    {
-        return $this->belongsToMany(Book::class);
-    }
 }

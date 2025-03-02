@@ -54,11 +54,6 @@ class BookFactory extends Factory
                 $user->pivot->tag_id = Tag::inRandomOrder()->take(1)->first()->id;
                 $user->pivot->save();
             }
-            $book->tags()
-                ->attach(
-                    Tag::inRandomOrder()->take(rand(1, 10))
-                    ->pluck('id')
-                );
         });
     }
 }

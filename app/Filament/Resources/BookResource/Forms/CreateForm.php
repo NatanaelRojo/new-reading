@@ -78,14 +78,6 @@ class CreateForm
                 )->preload()
                 ->searchable()
                 ->createOptionForm(FormsCreateForm::getFields()),
-            Select::make('tags')
-                ->multiple()
-                ->relationship(
-                    name: 'tags',
-                    titleAttribute: 'name'
-                )->preload()
-                ->searchable()
-                ->createOptionForm(TagResourceFormsCreateForm::getFields()),
                 Select::make('users')
                 ->relationship(
                     name: 'users',
