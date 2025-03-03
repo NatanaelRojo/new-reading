@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\API\V1\Book;
 
+use App\Models\API\V1\Tag;
+use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -22,6 +24,8 @@ class UpdateBookRequest extends FormRequest
             'isbn' => ['string', 'max:255'],
             'pages_amount' => ['integer', 'min:1'],
             'chapters_amount' => ['integer', 'min:1'],
+            'tag_id' => ['integer', 'exists:' . Tag::class . ',id'],
+            'user_id' => ['integer', 'exists:' . User::class . ',id'],
         ];
     }
 
