@@ -8,6 +8,7 @@ use App\Http\Resources\API\V1\Book\BookResource;
 use App\Models\API\V1\Book;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Throwable;
 
 class BookController
@@ -59,7 +60,12 @@ class BookController
      */
     public function update(UpdateBookRequest $request, Book $book): JsonResponse
     {
-        $book->update($request->validated());
+        if ($request->has('tag_id') && $request->has('user_id')) {
+            $book->assignTagToUser($request->user_id, $request->tag_id);
+        }
+
+        $validatedDataForBook = Arr::except($request->validated(), ['tag_id', 'user_id']);
+        $book->update($validatedDataForBook);
 
         return response()->json(new BookResource($book), JsonResponse::HTTP_OK);
     }
