@@ -72,6 +72,22 @@ class User extends Authenticatable
         );
     }
 
+    /**
+     * Assign a tag to a book for the current user.
+     *
+     * @param int $bookId
+     * @param int $tagId
+     * @return void
+     */
+    public function assignTagToBook(int $bookId, int $tagId): void
+    {
+        if (!$this->books()->where('book_id', $bookId)->exists()) {
+            $this->books()->attach($bookId, ['tag_id' => $tagId]);
+        }
+
+        $this->books()->updateExistingPivot($bookId, ['tag_id' => $tagId]);
+    }
+
     public function books(): BelongsToMany
     {
         return $this->belongsToMany(Book::class)

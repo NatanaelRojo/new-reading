@@ -58,6 +58,23 @@ class Book extends Model
         return $this->provideFilter(BookFilter::class);
     }
 
+    /*************  ✨ Codeium Command 🌟  *************/
+    /**
+     * Assign a tag to a user for the current book.
+     *
+     * @param int $userId The ID of the user to assign the tag to.
+     * @param int $tagId The ID of the tag to assign to the user.
+     * @return void
+     */
+    public function assignTagToUser(int $userId, int $tagId): void
+    {
+        if (!$this->users()->where('user_id', $userId)->exists()) {
+            $this->users()->attach($userId, ['tag_id' => $tagId]);
+        }
+
+        $this->users()->updateExistingPivot($userId, ['tag_id' => $tagId]);
+    }
+
     /**
      * The authors that belong to the book.
      */
