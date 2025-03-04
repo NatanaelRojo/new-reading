@@ -22,7 +22,10 @@ class StorePostRequest extends FormRequest
             'body' => ['required', 'string', 'min:5', 'max:1000'],
             'progress' => ['required', 'integer', 'min:1',],
             'book_id' => ['required', 'exists:' . Book::class . ',id'],
-            'user_id' => ['required', 'exists:' . User::class . ',id'],
+            'user_id' => [
+                $this->route('user') ? 'nullable' : 'required',
+                'exists:' . User::class . ',id'
+            ],
         ];
     }
 
