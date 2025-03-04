@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BookResource\Tables;
 
+use App\Models\API\V1\Book;
 use App\Models\API\V1\Tag;
 use App\Models\User;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -22,8 +23,12 @@ class UserRelationManagerTable
             SelectColumn::make('tag_id')
                 ->label('tag')
                 ->options(fn (): Collection => Tag::query()->pluck('name', 'id')),
-            // TextColumn::make('tag')
-            //     ->getStateUsing(fn (User $record): string => Tag::find($record->tag_id)->name),
+                TextColumn::make('pages_read'),
+                TextColumn::make('reading_percentage')
+                    ->suffix('%')
+                    ->getStateUsing(function (?User $record): string {
+                        return $record->getBookCompletionPercentage($record->book_id);
+                    })
         ];
     }
 
