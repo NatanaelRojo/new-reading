@@ -34,8 +34,8 @@ class CreateForm
             TextInput::make('progress')
                 ->required()
                 ->numeric()
-                ->min(0)
-                ->max(100),
+                ->minLength(0)
+                ->maxLength(100),
         ];
     }
 }
