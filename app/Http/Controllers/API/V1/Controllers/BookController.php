@@ -60,11 +60,12 @@ class BookController
      */
     public function update(UpdateBookRequest $request, Book $book): JsonResponse
     {
-        if ($request->has('tag_id') && $request->has('user_id')) {
-            $book->assignTagToUser($request->user_id, $request->tag_id);
-        }
-
-        $validatedDataForBook = Arr::except($request->validated(), ['tag_id', 'user_id']);
+        $this->handleBookUserUpdates($request, $book);
+        $validatedDataForBook = Arr::except($request->validated(), [
+            'tag_id',
+            'user_id',
+            'pages_read',
+        ]);
         $book->update($validatedDataForBook);
 
         return response()->json(new BookResource($book), JsonResponse::HTTP_OK);
@@ -78,5 +79,22 @@ class BookController
         $book->delete();
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Handle book user updates like tag assignment and progress updates.
+     *
+     * @param \App\Http\Requests\API\V1\Book\UpdateBookRequest $request
+     * @param \App\Models\API\V1\Book $book
+     * @return void
+     */
+    private function handleBookUserUpdates(UpdateBookRequest $request, Book $book): void
+    {
+        if (!$request->has('user_id')) {
+            return;
+        }
+
+        $book->assignTagToUser($request->user_id, $request->tag_id);
+        $book->updateUserProgress($request->user_id, $request->pages_read);
     }
 }
