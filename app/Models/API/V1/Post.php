@@ -48,6 +48,10 @@ class Post extends Model
         return $this->belongsTo(Book::class);
     }
 
+    /**
+     * Get the user that owns the post.
+     * @return BelongsTo<User, Post>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

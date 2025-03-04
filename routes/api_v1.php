@@ -38,7 +38,10 @@ Route::apiResources([
 Route::controller(BookController::class)->group(function () {
     Route::post('/books/filter', 'filter');
 });
-
+Route::prefix('users/{user}')->group(function () {
+    Route::get('/posts', [PostController::class, 'indexByUser']);
+    Route::post('/posts', [PostController::class, 'storeByUser']);
+});
 Route::middleware('auth:sanctum')
     ->group(function () {
         Route::controller(UserController::class)->group(function () {
