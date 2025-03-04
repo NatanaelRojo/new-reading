@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Filament\Resources\BookResource\RelationManagers;
+
+use App\Filament\Resources\BookResource\Tables\PostRelationManagerTable;
+use App\Filament\Resources\PostResource\Forms\CreateForm;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+class PostsRelationManager extends RelationManager
+{
+    protected static string $relationship = 'posts';
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema(CreateForm::make());
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->recordTitleAttribute('body')
+            ->columns(PostRelationManagerTable::getColumns())
+            ->filters(PostRelationManagerTable::getFilters())
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
+            ])
+            ->actions(PostRelationManagerTable::getActions())
+            ->bulkActions(PostRelationManagerTable::getBulkActions());
+    }
+}
