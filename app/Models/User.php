@@ -88,10 +88,31 @@ class User extends Authenticatable
         $this->books()->updateExistingPivot($bookId, ['tag_id' => $tagId]);
     }
 
+    public function getBookCompletionPercentage(int $bookId = null): ?int
+    {
+        if (is_null($bookId)) {
+            return null;
+        }
+
+        $userBook = $this->books()->firstWhere('book_id', $bookId);
+
+        if (!$userBook) {
+            return null; // The user hasn't started this book
+        }
+
+        $totalPages = $userBook->pages_amount;
+
+        if ($totalPages && $userBook->pivot->pages_read) {
+            return ($userBook->pivot->pages_read / $totalPages) * 100;
+        }
+
+        return 0; // No progress
+    }
+
     public function books(): BelongsToMany
     {
         return $this->belongsToMany(Book::class)
-            ->withPivot('tag_id')
+            ->withPivot('tag_id', 'pages_read')
             ->withTimestamps();
     }
 
