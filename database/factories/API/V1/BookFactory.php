@@ -52,6 +52,7 @@ class BookFactory extends Factory
                 );
             foreach ($book->users as $user) {
                 $user->pivot->tag_id = Tag::inRandomOrder()->take(1)->first()->id;
+                $user->pivot->pages_read = fake()->numberBetween(1, $book->pages_amount);
                 $user->pivot->save();
             }
         });

@@ -58,7 +58,6 @@ class Book extends Model
         return $this->provideFilter(BookFilter::class);
     }
 
-    /*************  ✨ Codeium Command 🌟  *************/
     /**
      * Assign a tag to a user for the current book.
      *
@@ -79,35 +78,45 @@ class Book extends Model
         $this->users()->updateExistingPivot($userId, ['tag_id' => $tagId]);
     }
 
-    public function updateUserProgress(int $userId = null, int $pagesRead = null): void
+    /**
+     * Update the progress of a user for a specific book.
+     *
+     * @param int $userId The ID of the user to update the progress for.
+     * @param int $pagesRead The number of pages read by the user.
+     * @return void
+     */
+public function updateUserProgress(int $userId = null, int $pagesRead = null): void
     {
-        if (is_null($userId) || is_null($pagesRead)) {
-            return;
+        if (!is_null($userId) || !is_null($pagesRead)) {
+            $this->users()->updateExistingPivot($userId, ['pages_read' => $pagesRead]);
         }
-
-        $this->users()->updateExistingPivot($userId, ['pages_read' => $pagesRead]);
     }
 
-    public function getUserCompletionPercentage(int $userId): ?int
+    /**
+     * Get the completion percentage of a book for a specific user.
+     *
+     * @param int $userId
+     * @return float|int|null
+     */
+    public function getUserCompletionPercentage(int $userId = null): ?int
     {
-        $userBook = $this->users()->where('user_id', $userId)->first();
-
-        if (!$userBook) {
-            return null; // The user hasn't started this book
+        if (is_null($userId)) {
+            return null;
         }
 
+        $userBook = $this->users()->firstWhere('user_id', $userId);
         $totalPages = $this->pages_amount;
 
-        if ($totalPages && $userBook->pivot->pages_read) {
-            return ($userBook->pivot->pages_read / $totalPages) * 100;
+        if (!$userBook || !$totalPages) {
+            return null;
         }
 
-        return 0; // No progress
+        return $userBook->pivot->pages_read ? ($userBook->pivot->pages_read / $totalPages) * 100 : 0;
     }
-
 
     /**
      * The authors that belong to the book.
+     * @return BelongsToMany<Author, Book>
      */
     public function authors(): BelongsToMany
     {
@@ -116,7 +125,7 @@ class Book extends Model
 
     /**
      * The comments that belong to the book.
-     * @return HasMany
+     * @return HasMany<Comment, Book>
      */
     public function comments(): HasMany
     {
@@ -125,6 +134,7 @@ class Book extends Model
 
     /**
      * The genres that belong to the book.
+     * @return BelongsToMany<Genre, Book>
      */
     public function genres(): BelongsToMany
     {
@@ -133,12 +143,17 @@ class Book extends Model
 
     /**
      * The posts that belong to the book.
+     * @return HasMany<Post, Book>
      */
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
     }
 
+    /**
+     * The users that belong to the book.
+     * @return BelongsToMany<User, Book>
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)

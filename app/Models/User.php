@@ -79,8 +79,12 @@ class User extends Authenticatable
      * @param int $tagId
      * @return void
      */
-    public function assignTagToBook(int $bookId, int $tagId): void
+    public function assignTagToBook(int $bookId = null, int $tagId = null): void
     {
+        if (is_null($bookId) || is_null($tagId)) {
+            return;
+        }
+
         if (!$this->books()->where('book_id', $bookId)->exists()) {
             $this->books()->attach($bookId, ['tag_id' => $tagId]);
         }
@@ -88,6 +92,26 @@ class User extends Authenticatable
         $this->books()->updateExistingPivot($bookId, ['tag_id' => $tagId]);
     }
 
+    /**
+     * Update the progress of a book for a specific user.
+     *
+     * @param int $bookId The ID of the user to update the progress for.
+     * @param int $pagesRead The number of pages read by the user.
+     * @return void
+     */
+    public function updateBookProgress(int $bookId = null, int $pagesRead = null): void
+    {
+        if (!is_null($bookId) || !is_null($pagesRead)) {
+            $this->users()->updateExistingPivot($bookId, ['pages_read' => $pagesRead]);
+        }
+    }
+
+    /**
+     * Get the completion percentage of a book for a specific user.
+     *
+     * @param int $bookId
+     * @return float|int|null
+     */
     public function getBookCompletionPercentage(int $bookId = null): ?int
     {
         if (is_null($bookId)) {
@@ -95,20 +119,19 @@ class User extends Authenticatable
         }
 
         $userBook = $this->books()->firstWhere('book_id', $bookId);
-
-        if (!$userBook) {
-            return null; // The user hasn't started this book
-        }
-
         $totalPages = $userBook->pages_amount;
 
-        if ($totalPages && $userBook->pivot->pages_read) {
-            return ($userBook->pivot->pages_read / $totalPages) * 100;
+        if (!$userBook || !$totalPages) {
+            return null;
         }
 
-        return 0; // No progress
+        return $userBook->pivot->pages_read ? ($userBook->pivot->pages_read / $totalPages) * 100 : 0;
     }
 
+    /**
+     * Get the books which owns this user.
+     * @return BelongsToMany<Book, User>
+     */
     public function books(): BelongsToMany
     {
         return $this->belongsToMany(Book::class)
@@ -116,6 +139,10 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    /**
+     * Get the comments that belong to the user.
+     * @return HasMany<Comment, User>
+     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
@@ -146,16 +173,28 @@ class User extends Authenticatable
         return $this->followers()->where('follower_id', $user->id)->exists();
     }
 
+    /**
+     * Get the followers of the user.
+     * @return BelongsToMany<User, User>
+     */
     public function followers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'follows', 'followed_id', 'follower_id');
     }
 
+    /**
+     * Get the users that the user is following.
+     * @return BelongsToMany<User, User>
+     */
     public function following(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followed_id');
     }
 
+    /**
+     * Get the posts that belong to the user.
+     * @return HasMany<Post, User>
+     */
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
