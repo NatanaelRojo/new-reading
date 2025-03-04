@@ -6,6 +6,7 @@ use App\Http\Requests\API\V1\Post\StorePostRequest;
 use App\Http\Requests\API\V1\Post\UpdatePostRequest;
 use App\Http\Resources\API\V1\Post\PostResource;
 use App\Models\API\V1\Post;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -26,12 +27,48 @@ class PostController
     }
 
     /**
+     * Display a listing of the resource.
+     * @param \App\Models\User $user
+     * @return JsonResponse|mixed
+     */
+    public function indexByUser(User $user): JsonResponse
+    {
+        $userPosts = $user->posts;
+
+        return response()
+            ->json(
+                PostResource::collection($userPosts),
+                JsonResponse::HTTP_OK
+            );
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(StorePostRequest $request): JsonResponse
     {
         $newPost = Post::query()
             ->create($request->validated());
+
+        return response()
+            ->json(
+                new PostResource($newPost),
+                JsonResponse::HTTP_CREATED
+            );
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     * @param \App\Http\Requests\API\V1\Post\StorePostRequest $request
+     * @param \App\Models\User $user
+     * @return JsonResponse|mixed
+     */
+    public function storeByUser(StorePostRequest $request, User $user): JsonResponse
+    {
+        $validatedData = $request->validated();
+        $validatedData['user_id'] = $user->id;
+
+        $newPost = $user->posts()->create($validatedData);
 
         return response()
             ->json(
