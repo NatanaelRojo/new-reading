@@ -62,7 +62,6 @@ class ReviewController
         }
 
         $newReview = $book->reviews()
-        ->with(['book', 'user'])
         ->create($validatedData);
 
         return response()
