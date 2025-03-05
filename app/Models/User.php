@@ -7,6 +7,8 @@ namespace App\Models;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Comment;
 use App\Models\API\V1\Post;
+use App\Models\API\V1\Review;
+use App\Models\API\V1\Tag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -129,6 +131,26 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if the user has completed a book.
+     *
+     * @param int $bookId
+     * @param array $validatedData
+     * @return bool
+     */
+    public function hasCompletedBook(array $validatedData): bool
+    {
+        $userBookToReview = $this->books()->firstWhere('book_id', $validatedData['book_id']);
+        $bookToReviewTag = Tag::query()
+            ->firstWhere('id', $userBookToReview->pivot->tag_id);
+
+        if ($bookToReviewTag->name !== 'Completed') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Get the books which owns this user.
      * @return BelongsToMany<Book, User>
      */
@@ -198,5 +220,10 @@ class User extends Authenticatable
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 }
