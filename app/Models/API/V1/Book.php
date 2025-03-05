@@ -85,7 +85,7 @@ class Book extends Model
      * @param int $pagesRead The number of pages read by the user.
      * @return void
      */
-public function updateUserProgress(int $userId = null, int $pagesRead = null): void
+    public function updateUserProgress(int $userId = null, int $pagesRead = null): void
     {
         if (!is_null($userId) || !is_null($pagesRead)) {
             $this->users()->updateExistingPivot($userId, ['pages_read' => $pagesRead]);
@@ -112,6 +112,19 @@ public function updateUserProgress(int $userId = null, int $pagesRead = null): v
         }
 
         return $userBook->pivot->pages_read ? ($userBook->pivot->pages_read / $totalPages) * 100 : 0;
+    }
+
+    public function isCompletedByUser(int $userId = null): bool
+    {
+        $user = $this->users()->firstWhere('user_id', $userId);
+        $bookTag = Tag::query()
+            ->firstWhere('id', $user->pivot->tag_id);
+
+        if ($bookTag->name !== 'Completed') {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -149,6 +162,16 @@ public function updateUserProgress(int $userId = null, int $pagesRead = null): v
     {
         return $this->hasMany(Post::class);
     }
+
+    /**
+     * The reviews that belong to the book.
+     * @return HasMany<Review, Book>
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
 
     /**
      * The users that belong to the book.
