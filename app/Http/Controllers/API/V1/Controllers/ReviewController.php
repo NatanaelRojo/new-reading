@@ -5,7 +5,10 @@ namespace App\Http\Controllers\API\V1\Controllers;
 use App\Http\Requests\API\V1\Review\StoreReviewRequest;
 use App\Http\Requests\API\V1\Review\UpdateReviewRequest;
 use App\Http\Resources\API\V1\Review\ReviewResource;
+use App\Models\API\V1\Book;
 use App\Models\API\V1\Review;
+use App\Models\API\V1\Tag;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -24,12 +27,43 @@ class ReviewController
     }
 
     /**
+     * Display a listing of the resource.
+     * @param \App\Models\User $user
+     * @return JsonResponse|mixed
+     */
+    public function indexByUser(User $user): JsonResponse
+    {
+        $userReviews = $user->reviews;
+
+        return response()
+            ->json(ReviewResource::collection($userReviews), JsonResponse::HTTP_OK);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreReviewRequest $request): JsonResponse
     {
         $newReview = Review::query()
             ->create($request->validated());
+
+        return response()
+            ->json(new ReviewResource($newReview), JsonResponse::HTTP_CREATED);
+    }
+
+    public function storeByBook(StoreReviewRequest $request, Book  $book): JsonResponse
+    {
+        $validatedData = $request->validated();
+        $validatedData['book_id'] = $book->id;
+
+        if (!$book->isCompletedByUser($validatedData['user_id'])) {
+            return response()
+                ->json('Book not completed', JsonResponse::HTTP_CONFLICT);
+        }
+
+        $newReview = $book->reviews()
+        ->with(['book', 'user'])
+        ->create($validatedData);
 
         return response()
             ->json(new ReviewResource($newReview), JsonResponse::HTTP_CREATED);
