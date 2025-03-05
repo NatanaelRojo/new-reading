@@ -19,8 +19,15 @@ class StoreReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'book_id' => ['required', 'integer', 'exists:' . Book::class . ',id'],
-            'user_id' => ['required', 'integer', 'exists:' . User::class . ',id'],
+            'book_id' => [
+                $this->route('book') ? 'nullable' : 'required',
+                'integer',
+                'exists:' . Book::class . ',id'],
+            'user_id' => [
+                'required',
+                'integer',
+                'exists:' . User::class . ',id'
+            ],
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'comment' => ['required', 'string'],
         ];
