@@ -38,8 +38,12 @@ Route::apiResources([
 Route::controller(BookController::class)->group(function () {
     Route::post('/books/filter', 'filter');
 });
+Route::prefix('books/{book}')->group(function () {
+    Route::post('/reviews', [ReviewController::class, 'storeByBook']);
+});
 Route::prefix('users/{user}')->group(function () {
     Route::get('/posts', [PostController::class, 'indexByUser']);
+    Route::get('/reviews', [ReviewController::class, 'indexByUser']);
     Route::post('/posts', [PostController::class, 'storeByUser']);
 });
 Route::middleware('auth:sanctum')
