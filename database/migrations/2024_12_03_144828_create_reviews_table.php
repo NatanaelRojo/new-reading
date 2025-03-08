@@ -17,7 +17,8 @@ return new class () extends Migration {
                 $table->id();
                 $table->foreignIdFor(Book::class);
                 $table->foreignIdFor(User::class);
-                $table->integer('rating');
+                $table->integer('rating')
+                    ->default(0);
                 $table->text('comment');
                 $table->timestamps();
             });
