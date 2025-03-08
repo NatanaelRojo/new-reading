@@ -6,6 +6,7 @@ use App\Filament\Resources\BookResource\Forms\CreateForm;
 use App\Filament\Resources\BookResource\Pages;
 use App\Filament\Resources\BookResource\RelationManagers;
 use App\Filament\Resources\BookResource\RelationManagers\PostsRelationManager;
+use App\Filament\Resources\BookResource\RelationManagers\ReviewsRelationManager;
 use App\Filament\Resources\BookResource\RelationManagers\UsersRelationManager;
 use App\Filament\Resources\BookResource\Tables\IndexTable;
 use App\Models\API\V1\Book;
@@ -42,6 +43,7 @@ class BookResource extends Resource
     {
         return [
             PostsRelationManager::class,
+            ReviewsRelationManager::class,
             UsersRelationManager::class,
         ];
     }
