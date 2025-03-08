@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use EloquentFilter\Filterable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
@@ -125,6 +126,17 @@ class Book extends Model
         }
 
         return true;
+    }
+
+    /**
+     * Get the average rating of a book.
+     * @return Attribute
+     */
+    public function averageRating(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): float => round($this->reviews()->avg('rating') ?? 0, 2),
+        );
     }
 
     /**
