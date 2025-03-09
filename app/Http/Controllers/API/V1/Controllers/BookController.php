@@ -29,7 +29,6 @@ class BookController
             ->with([
                 'authors',
                 'genres',
-                'tags',
             ])->filter($request->all())
             ->get();
 
