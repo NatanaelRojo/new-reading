@@ -24,6 +24,7 @@ class BookResource extends JsonResource
             'pages_amount' => $this->pages_amount,
             'chapters_amount' => $this->chapters_amount,
             'published_at' => $this->published_at,
+            'rating' => $this->averageRating,
             'image_url' => $this->image_url,
             'authors' => AuthorResource::collection($this->whenLoaded('authors')),
             'genres' => GenreResource::collection($this->whenLoaded('genres')),
