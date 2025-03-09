@@ -20,7 +20,6 @@ class StoreCommentRequest extends FormRequest
     {
         return [
             'user_id' => ['required', 'integer', 'exists:' . User::class . ',id'],
-            'book_id' => ['required', 'integer', 'exists:' . Book::class . ',id'],
             'body' => ['required', 'string', 'min:5', 'max:100'],
         ];
     }
