@@ -15,8 +15,8 @@ return new class () extends Migration {
         if (!Schema::hasTable('comments')) {
             Schema::create('comments', function (Blueprint $table) {
                 $table->id();
-                $table->foreignIdFor(Book::class);
                 $table->foreignIdFor(User::class);
+                $table->morphs('commentable');
                 $table->text('body');
                 $table->string('slug');
                 $table->timestamps();
