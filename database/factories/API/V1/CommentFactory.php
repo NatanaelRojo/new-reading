@@ -4,6 +4,7 @@ namespace Database\Factories\API\V1;
 
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Comment;
+use App\Models\API\V1\Post;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,22 +20,21 @@ class CommentFactory extends Factory
      */
     public function definition(): array
     {
+        $commentable = $this->getRandomCommentable();
+
         return [
             'user_id' => User::factory(),
-            'book_id' => Book::factory(),
-            'body' => fake()->text(),
+            'commentable_id' => $commentable->id,
+            'commentable_type' => $commentable::class,
+            'body' => fake()->sentence(10),
         ];
     }
 
-    // public function configure(): static
-    // {
-    //     return $this->afterCreating(function (Comment $comment) {
-    //         $comment->book_id = Book::inRandomOrder()
-    //             ->first()
-    //             ->id;
-    //         $comment->user_id = User::inRandomOrder()
-    //             ->first()
-    //             ->id;
-    //     });
-    // }
+    private function getRandomCommentable(): Book|Post
+    {
+        return fake()->randomElement([
+            Book::factory()->create(),
+            Post::factory()->create(),
+        ]);
+    }
 }
