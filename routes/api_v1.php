@@ -41,6 +41,14 @@ Route::controller(BookController::class)->group(function () {
 Route::prefix('books/{book}')->group(function () {
     Route::post('/reviews', [ReviewController::class, 'storeByBook']);
 });
+Route::prefix('posts/{post}')->group(function () {
+    Route::get('comments', [CommentController::class, 'indexByPost']);
+    Route::post('comments', [CommentController::class, 'storeByPost']);
+});
+Route::prefix('reviews/{review}')->group(function () {
+    Route::get('comments', [CommentController::class, 'indexByReview']);
+    Route::post('comments', [CommentController::class, 'storeByReview']);
+});
 Route::prefix('users/{user}')->group(function () {
     Route::get('/posts', [PostController::class, 'indexByUser']);
     Route::get('/reviews', [ReviewController::class, 'indexByUser']);
