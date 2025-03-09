@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
@@ -15,10 +16,11 @@ class Comment extends Model
     use HasSlug;
 
     protected $fillable = [
-        'body',
-        'book_id',
-        'slug',
         'user_id',
+        'commentable_id',
+        'commentable_type',
+        'body',
+        'slug',
     ];
 
     /**
@@ -42,12 +44,12 @@ class Comment extends Model
     }
 
     /**
-     * Get the book that owns the comment.
-     * @return BelongsTo<Book, Comment>
+     * Get the commentable model that owns the comment.
+     * @return MorphTo<Model, Comment>
      */
-    public function book(): BelongsTo
+    public function commentable(): MorphTo
     {
-        return $this->belongsTo(Book::class);
+        return $this->morphTo();
     }
 
     /**
