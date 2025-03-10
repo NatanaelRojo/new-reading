@@ -43,7 +43,7 @@ class BookController
         $newBook = Book::query()
         ->create($request->validated());
 
-        return response()->json(new BookResource($newBook), JsonResponse::HTTP_OK);
+        return response()->json(new BookResource($newBook), JsonResponse::HTTP_CREATED);
     }
 
     /**
