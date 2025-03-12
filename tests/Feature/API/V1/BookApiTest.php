@@ -84,4 +84,48 @@ class BookApiTest extends TestCase
         $this->assertArrayHasKey('image_url', $responseData);
         $this->assertDatabaseHas('books', ['title' => $newBook->title]);
     }
+
+    public function test_show_returns_a_book()
+    {
+        // Arrange
+        $book = Book::factory()->create();
+        $controller = new BookController();
+
+        // Act
+        $response = $controller->show($book);
+
+        // Assert
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
+
+        $responseData = json_decode($response->getContent(), true);
+        $this->assertArrayHasKey('title', $responseData);
+        $this->assertArrayHasKey('synopsis', $responseData);
+        $this->assertArrayHasKey('isbn', $responseData);
+        $this->assertArrayHasKey('pages_amount', $responseData);
+        $this->assertArrayHasKey('chapters_amount', $responseData);
+        $this->assertArrayHasKey('published_at', $responseData);
+        $this->assertArrayHasKey('image_url', $responseData);
+
+        $this->assertEquals($book->title, $responseData['title']);
+        $this->assertEquals($book->synopsis, $responseData['synopsis']);
+        $this->assertEquals($book->isbn, $responseData['isbn']);
+        $this->assertEquals($book->pages_amount, $responseData['pages_amount']);
+        $this->assertEquals($book->chapters_amount, $responseData['chapters_amount']);
+        $this->assertEquals($book->published_at, $responseData['published_at']);
+        $this->assertEquals($book->image_url, $responseData['image_url']);
+    }
+
+    public function test_show_returns_not_found_for_nonexistent_book()
+    {
+        // Arrange
+        $book = Book::factory()->make();
+        $controller = new BookController();
+
+        // Act
+        $response = $this->getJson('/api/v1/books/not-existing-slug');
+        // $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        // Assert
+        $response->assertStatus(JsonResponse::HTTP_NOT_FOUND);
+    }
 }
