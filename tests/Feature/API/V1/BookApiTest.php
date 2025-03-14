@@ -3,6 +3,7 @@
 namespace Tests\Feature\API\V1;
 
 use App\Http\Controllers\API\V1\Controllers\BookController;
+use App\Http\Requests\API\V1\Book\UpdateBookRequest;
 use App\Http\Resources\API\V1\Book\BookResource;
 use App\Models\API\V1\Author;
 use App\Models\API\V1\Book;
@@ -128,4 +129,113 @@ class BookApiTest extends TestCase
         // Assert
         $response->assertStatus(JsonResponse::HTTP_NOT_FOUND);
     }
+
+    public function test_updates_a_book()
+    {
+        // Arrange
+        $book = Book::factory()->create();
+        $updatedData = [
+            'title' => 'Updated Book Title',
+            'published_at' => '2023-01-01',
+            'synopsis' => 'Updated book description',
+        ];
+
+        // Act
+        $response = $this->putJson(route('books.update', $book), $updatedData);
+
+        // Assert
+        $response->assertStatus(JsonResponse::HTTP_OK);
+        $response->assertJsonFragment($updatedData);
+        $this->assertDatabaseHas('books', $updatedData);
+    }
+
+    public function test_updates_a_book_with_a_user_and_tag(): void
+    {
+        // Arrange
+        $users = User::factory()
+            ->count(3)
+            ->create();
+        $tags = Tag::factory()
+            ->count(3)
+            ->create();
+        $book = Book::factory()->create();
+
+        $updatedData = [
+            'title' => 'Updated Book Title',
+            'published_at' => '2023-01-01',
+            'synopsis' => 'Updated book description',
+            'pages_read' => 10,
+            'tag_id' => $tags[0]->id,
+            'user_id' => $book->users[0]->id,
+        ];
+
+        // Act
+        $response = $this->putJson(route('books.update', $book), $updatedData);
+
+        // Assert
+        $response->assertStatus(JsonResponse::HTTP_OK);
+        $response->assertJsonFragment([
+            'title' => $updatedData['title'],
+            'synopsis' => $updatedData['synopsis'],
+            'published_at' => $updatedData['published_at'],
+        ]);
+        $this->assertDatabaseHas('books', ['title' => 'Updated Book Title', 'synopsis' => 'Updated book description']);
+        $this->assertDatabaseHas('book_user', [
+            'book_id' => $book->id,
+            'user_id' => $updatedData['user_id'],
+            'tag_id' => $updatedData['tag_id'],
+            'pages_read' => $updatedData['pages_read'],
+        ]);
+    }
+
+    public function test_destroy_deletes_a_book(): void
+    {
+        // Arrange
+        $book = Book::factory()->create();
+        $controller = new BookController();
+
+        // Act
+        $response = $controller->destroy($book);
+
+        // Assert
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(JsonResponse::HTTP_NO_CONTENT, $response->getStatusCode());
+        $this->assertDatabaseMissing('books', ['id' => $book->id]);
+    }
+
+    public function test_it_returns_all_books_without_filters()
+    {
+        $allBooks = $this->getJson(route('books.index'));
+        $response = $this->getJson(route('books.filter'));
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(count($allBooks->json()));
+    }
+
+    public function test_it_returns_filtered_books_by_title()
+    {
+        $book = Book::factory()->create(['title' => 'Test Book']);
+
+        $response = $this->getJson(route('books.filter') . "?title={$book->title}");
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonFragment([
+                'title' => $book->title,
+            ]);
+    }
+
+    public function test_it_returns_filtered_books_by_author()
+    {
+        $author = Author::factory()->create();
+        $book = Book::factory()->create();
+        $book->authors()->attach($author);
+
+        $response = $this->getJson(route('books.filter') . "?author_name={$author->name}");
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonFragment([
+                'title' => $book->title,
+            ]);
+    }
 }
+    
