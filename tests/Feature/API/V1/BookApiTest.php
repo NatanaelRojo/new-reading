@@ -21,7 +21,7 @@ class BookApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_it_returns_an_empty_collection_when_there_are_no_books()
+    public function test_it_returns_an_empty_collection_when_there_are_no_books(): void
     {
         // Arrange
         $controller = new BookController();
@@ -37,7 +37,7 @@ class BookApiTest extends TestCase
         $this->assertEmpty($responseData);
     }
 
-    public function test_it_returns_a_collection_of_books_with_ok_status()
+    public function test_it_returns_a_collection_of_books_with_ok_status(): void
     {
         // Arrange
         Book::factory()->count(3)->create();
@@ -65,7 +65,7 @@ class BookApiTest extends TestCase
         }
     }
 
-    public function test_it_can_store_a_new_book()
+    public function test_it_can_store_a_new_book(): void
     {
         // Arrange
         $newBook = Book::factory()->make();
@@ -86,7 +86,7 @@ class BookApiTest extends TestCase
         $this->assertDatabaseHas('books', ['title' => $newBook->title]);
     }
 
-    public function test_show_returns_a_book()
+    public function test_show_returns_a_book(): void
     {
         // Arrange
         $book = Book::factory()->create();
@@ -117,7 +117,7 @@ class BookApiTest extends TestCase
         $this->assertEquals($book->image_url, $responseData['image_url']);
     }
 
-    public function test_show_returns_not_found_for_nonexistent_book()
+    public function test_show_returns_not_found_for_nonexistent_book(): void
     {
         // Arrange
         $book = Book::factory()->make();
@@ -130,7 +130,7 @@ class BookApiTest extends TestCase
         $response->assertStatus(JsonResponse::HTTP_NOT_FOUND);
     }
 
-    public function test_updates_a_book()
+    public function test_updates_a_book(): void
     {
         // Arrange
         $book = Book::factory()->create();
@@ -203,7 +203,7 @@ class BookApiTest extends TestCase
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
     }
 
-    public function test_it_returns_all_books_without_filters()
+    public function test_it_returns_all_books_without_filters(): void
     {
         $allBooks = $this->getJson(route('books.index'));
         $response = $this->getJson(route('books.filter'));
@@ -212,7 +212,7 @@ class BookApiTest extends TestCase
             ->assertJsonCount(count($allBooks->json()));
     }
 
-    public function test_it_returns_filtered_books_by_title()
+    public function test_it_returns_filtered_books_by_title(): void
     {
         $book = Book::factory()->create(['title' => 'Test Book']);
 
@@ -224,10 +224,14 @@ class BookApiTest extends TestCase
             ]);
     }
 
-    public function test_it_returns_filtered_books_by_author()
+    public function test_it_returns_filtered_books_by_author(): void
     {
+        $books = Book::factory()
+            ->count(10)
+            ->create();
         $author = Author::factory()->create();
-        $book = Book::factory()->create();
+
+        $book = $books->first();
         $book->authors()->attach($author);
 
         $response = $this->getJson(route('books.filter') . "?author_name={$author->name}");
@@ -237,5 +241,102 @@ class BookApiTest extends TestCase
                 'title' => $book->title,
             ]);
     }
+
+    public function test_it_returns_filtered_books_by_genre(): void
+    {
+        $books = Book::factory()
+            ->count(10)
+            ->create();
+        $genre = Genre::factory()->create();
+
+        $book = $books->first();
+        $book->genres()->attach($genre);
+
+        $response = $this->getJson(route('books.filter') . "?genre_name={$genre->name}");
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonFragment([
+                'title' => $book->title,
+            ]);
+    }
+
+    public function test_it_returns_filtered_books_by_title_and_author(): void
+    {
+        $books = Book::factory()
+            ->count(10)
+            ->create();
+        $author = Author::factory()->create();
+
+        $book = $books->first();
+        $book->authors()->attach($author);
+
+        $response = $this->getJson(route('books.filter') . "?title={$book->title}&author_name={$author->name}");
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(1)
+            ->assertJsonFragment([
+                'title' => $book->title,
+            ]);
+    }
+
+    public function test_it_returns_filtered_books_by_title_and_genre(): void
+    {
+        $books = Book::factory()
+            ->count(10)
+            ->create();
+        $genre = Genre::factory()->create();
+
+        $book = $books->first();
+        $book->genres()->attach($genre);
+
+        $response = $this->getJson(route('books.filter') . "?title={$book->title}&genre_name={$genre->name}");
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(1)
+            ->assertJsonFragment([
+                'title' => $book->title,
+            ]);
+    }
+
+    public function test_it_returns_filtered_books_by_title_and_author_and_genre(): void
+    {
+        $books = Book::factory()
+            ->count(10)
+            ->create();
+        $author = Author::factory()->create();
+        $genre = Genre::factory()->create();
+
+        $book = $books->first();
+        $book->authors()->attach($author);
+        $book->genres()->attach($genre);
+
+        $response = $this->getJson(route('books.filter') . "?title={$book->title}&author_name={$author->name}&genre_name={$genre->name}");
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(1)
+            ->assertJsonFragment([
+                'title' => $book->title,
+            ]);
+    }
+
+    public function test_it_returns_filtered_books_by_author_and_genre(): void
+    {
+        $books = Book::factory()
+        ->count(20)
+        ->create();
+        $author = Author::factory()->create();
+        $genre = Genre::factory()->create();
+
+        $book = $books->first();
+        $book->authors()->attach($author);
+        $book->genres()->attach($genre);
+
+        $response = $this->getJson(route('books.filter') . "?author_name={$author->name}&genre_name={$genre->name}");
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(1)
+            ->assertJsonFragment([
+                'title' => $book->title,
+            ]);
+    }
 }
-    
