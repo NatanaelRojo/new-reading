@@ -198,7 +198,7 @@ class BookApiTest extends TestCase
     public function test_it_returns_all_books_without_filters(): void
     {
         $allBooks = $this->getJson(route('books.index'));
-        $response = $this->getJson(route('books.filter'));
+        $response = $this->getJson(route('books.index'));
 
         $response->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonCount(count($allBooks->json()));
@@ -208,7 +208,7 @@ class BookApiTest extends TestCase
     {
         $book = Book::factory()->create(['title' => 'Test Book']);
 
-        $response = $this->getJson(route('books.filter') . "?title={$book->title}");
+        $response = $this->getJson(route('books.index') . "?title={$book->title}");
 
         $response->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonFragment([
@@ -226,7 +226,7 @@ class BookApiTest extends TestCase
         $book = $books->first();
         $book->authors()->attach($author);
 
-        $response = $this->getJson(route('books.filter') . "?author_name={$author->name}");
+        $response = $this->getJson(route('books.index') . "?author_name={$author->name}");
 
         $response->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonFragment([
@@ -244,7 +244,7 @@ class BookApiTest extends TestCase
         $book = $books->first();
         $book->genres()->attach($genre);
 
-        $response = $this->getJson(route('books.filter') . "?genre_name={$genre->name}");
+        $response = $this->getJson(route('books.index') . "?genre_name={$genre->name}");
 
         $response->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonFragment([
@@ -262,7 +262,7 @@ class BookApiTest extends TestCase
         $book = $books->first();
         $book->authors()->attach($author);
 
-        $response = $this->getJson(route('books.filter') . "?title={$book->title}&author_name={$author->name}");
+        $response = $this->getJson(route('books.index') . "?title={$book->title}&author_name={$author->name}");
 
         $response->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonCount(1)
@@ -281,7 +281,7 @@ class BookApiTest extends TestCase
         $book = $books->first();
         $book->genres()->attach($genre);
 
-        $response = $this->getJson(route('books.filter') . "?title={$book->title}&genre_name={$genre->name}");
+        $response = $this->getJson(route('books.index') . "?title={$book->title}&genre_name={$genre->name}");
 
         $response->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonCount(1)
@@ -302,7 +302,7 @@ class BookApiTest extends TestCase
         $book->authors()->attach($author);
         $book->genres()->attach($genre);
 
-        $response = $this->getJson(route('books.filter') . "?title={$book->title}&author_name={$author->name}&genre_name={$genre->name}");
+        $response = $this->getJson(route('books.index') . "?title={$book->title}&author_name={$author->name}&genre_name={$genre->name}");
 
         $response->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonCount(1)
@@ -323,7 +323,7 @@ class BookApiTest extends TestCase
         $book->authors()->attach($author);
         $book->genres()->attach($genre);
 
-        $response = $this->getJson(route('books.filter') . "?author_name={$author->name}&genre_name={$genre->name}");
+        $response = $this->getJson(route('books.index') . "?author_name={$author->name}&genre_name={$genre->name}");
 
         $response->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonCount(1)
