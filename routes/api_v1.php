@@ -36,8 +36,10 @@ Route::apiResources([
 ]);
 
 Route::controller(BookController::class)->group(function () {
-    Route::post('/books/filter', 'filter');
+    Route::get('filter/books', 'filter')
+        ->name('books.filter');
 });
+
 Route::prefix('books/{book}')->group(function () {
     Route::post('/reviews', [ReviewController::class, 'storeByBook']);
 });

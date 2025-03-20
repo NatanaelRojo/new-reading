@@ -22,6 +22,7 @@ class StoreBookRequest extends FormRequest
             'isbn' => ['required', 'string', 'max:255'],
             'pages_amount' => ['required', 'integer', 'min:1'],
             'chapters_amount' => ['required', 'integer', 'min:1'],
+            'published_at' => ['required', 'date'],
         ];
     }
 

@@ -22,6 +22,7 @@ class UpdateBookRequest extends FormRequest
             'title' => ['string', 'max:255'],
             'synopsis' => ['string'],
             'isbn' => ['string', 'max:255'],
+            'published_at' => ['date'],
             'pages_amount' => ['integer', 'min:1'],
             'pages_read' => ['integer', 'min:1'],
             'chapters_amount' => ['integer', 'min:1'],

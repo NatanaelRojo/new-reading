@@ -50,7 +50,7 @@ class BookController
         $newBook = Book::query()
         ->create($request->validated());
 
-        return response()->json(new BookResource($newBook), JsonResponse::HTTP_OK);
+        return response()->json(new BookResource($newBook), JsonResponse::HTTP_CREATED);
     }
 
     /**
@@ -66,13 +66,13 @@ class BookController
      */
     public function update(UpdateBookRequest $request, Book $book): JsonResponse
     {
-        $this->handleBookUserUpdates($request, $book);
         $validatedDataForBook = Arr::except($request->validated(), [
             'tag_id',
             'user_id',
             'pages_read',
         ]);
         $book->update($validatedDataForBook);
+        $this->handleBookUserUpdates($request, $book);
 
         return response()->json(new BookResource($book), JsonResponse::HTTP_OK);
     }
@@ -96,11 +96,9 @@ class BookController
      */
     private function handleBookUserUpdates(UpdateBookRequest $request, Book $book): void
     {
-        if (!$request->has('user_id')) {
-            return;
+        if ($request->has('user_id')) {
+            $book->assignTagToUser($request->user_id, $request->tag_id);
+            $book->updateUserProgress($request->user_id, $request->pages_read);
         }
-
-        $book->assignTagToUser($request->user_id, $request->tag_id);
-        $book->updateUserProgress($request->user_id, $request->pages_read);
     }
 }
