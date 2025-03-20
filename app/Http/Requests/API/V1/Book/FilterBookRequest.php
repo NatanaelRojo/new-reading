@@ -17,9 +17,9 @@ class FilterBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['string', 'max:255'],
-            'author_name' => ['string', 'max:255'],
-            'genre_name' => ['string', 'max:255'],
+            'title' => ['nullable', 'string'],
+            'author_name' => ['nullable', 'string'],
+            'genre_name' => ['nullable', 'string'],
         ];
     }
 

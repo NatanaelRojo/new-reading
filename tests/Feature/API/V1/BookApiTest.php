@@ -23,11 +23,7 @@ class BookApiTest extends TestCase
 
     public function test_it_returns_an_empty_collection_when_there_are_no_books(): void
     {
-        // Arrange
-        $controller = new BookController();
-
         // Act
-        // $response = $controller->index();
         $response = $this->getJson(route('books.index'));
 
         // Assert
