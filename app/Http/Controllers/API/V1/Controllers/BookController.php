@@ -30,18 +30,6 @@ class BookController
         return response()->json(BookResource::collection($books), JsonResponse::HTTP_OK);
     }
 
-    public function filter(Request $request): JsonResponse
-    {
-        $filteredBooks = Book::query()
-            ->with([
-                'authors',
-                'genres',
-            ])->filter($request->all())
-            ->get();
-
-        return response()->json(BookResource::collection($filteredBooks), JsonResponse::HTTP_OK);
-    }
-
     /**
      * Store a newly created resource in storage.
      */
