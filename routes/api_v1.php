@@ -35,11 +35,6 @@ Route::apiResources([
     'reviews' => ReviewController::class
 ]);
 
-Route::controller(BookController::class)->group(function () {
-    Route::get('filter/books', 'filter')
-        ->name('books.filter');
-});
-
 Route::prefix('books/{book}')->group(function () {
     Route::post('/reviews', [ReviewController::class, 'storeByBook']);
 });
