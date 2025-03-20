@@ -27,31 +27,27 @@ class BookApiTest extends TestCase
         $controller = new BookController();
 
         // Act
-        $response = $controller->index();
+        // $response = $controller->index();
+        $response = $this->getJson(route('books.index'));
 
         // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
-
-        $responseData = json_decode($response->getContent(), true);
-        $this->assertEmpty($responseData);
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(0);
     }
 
     public function test_it_returns_a_collection_of_books_with_ok_status(): void
     {
         // Arrange
         Book::factory()->count(3)->create();
-        $controller = new BookController();
 
         // Act
-        $response = $controller->index();
+        $response = $this->getJson(route('books.index'));
 
         // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(3);
 
-        $responseData = json_decode($response->getContent(), true);
-        $this->assertCount(3, $responseData);
+        $responseData = $response->json();
 
         // Check if each book is a valid BookResource
         foreach ($responseData as $bookData) {
