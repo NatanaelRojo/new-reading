@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1\Controllers;
 
+use App\Http\Requests\API\V1\Book\FilterBookRequest;
 use App\Http\Requests\API\V1\Book\StoreBookRequest;
 use App\Http\Requests\API\V1\Book\UpdateBookRequest;
 use App\Http\Resources\API\V1\Book\BookResource;
@@ -16,9 +17,15 @@ class BookController
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(FilterBookRequest $request): JsonResponse
     {
-        $books = Book::all();
+        $books = Book::query()
+            ->with([
+                'authors',
+                'genres',
+            ])
+            ->filter($request->validated())
+            ->get();
 
         return response()->json(BookResource::collection($books), JsonResponse::HTTP_OK);
     }
