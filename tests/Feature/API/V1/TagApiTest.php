@@ -3,13 +3,26 @@
 namespace Tests\Feature\API\V1;
 
 use App\Models\API\V1\Tag;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class TagApiTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // ✅ Create a test user and authenticate with Sanctum
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+    }
+
     /**
      * A basic feature test example.
      */
@@ -78,6 +91,6 @@ class TagApiTest extends TestCase
 
         $response
             ->assertStatus(JsonResponse::HTTP_OK)
-            ->assertJsonCount(8);
+            ->assertJsonCount(Tag::count());
     }
 }

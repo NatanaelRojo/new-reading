@@ -15,11 +15,23 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class BookApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Tag::factory()->count(5)->create();
+
+        // ✅ Create a test user and authenticate with Sanctum
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+    }
 
     public function test_it_returns_an_empty_collection_when_there_are_no_books(): void
     {
@@ -41,7 +53,7 @@ class BookApiTest extends TestCase
 
         // Assert
         $response->assertStatus(JsonResponse::HTTP_OK)
-            ->assertJsonCount(3);
+            ->assertJsonCount(Book::count());
 
         $responseData = $response->json();
 
