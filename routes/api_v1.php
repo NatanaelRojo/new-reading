@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
+    return $request->user()->books;
 })->middleware('auth:sanctum');
 
 // Auth Routes
@@ -21,36 +21,35 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')
     ->group(function () {
+        Route::apiResources([
+            'authors' => AuthorController::class,
+            'books' => BookController::class,
+            'comments' => CommentController::class,
+            'genres' => GenreController::class,
+            'posts' => PostController::class,
+            'users' => UserController::class,
+            'tags' => TagController::class,
+            'reviews' => ReviewController::class
+        ]);
+        Route::prefix('books/{book}')->group(function () {
+            Route::post('/reviews', [ReviewController::class, 'storeByBook']);
+        });
+        Route::prefix('posts/{post}')->group(function () {
+            Route::get('comments', [CommentController::class, 'indexByPost']);
+            Route::post('comments', [CommentController::class, 'storeByPost']);
+        });
+        Route::prefix('reviews/{review}')->group(function () {
+            Route::get('comments', [CommentController::class, 'indexByReview']);
+            Route::post('comments', [CommentController::class, 'storeByReview']);
+        });
+        Route::prefix('users/{user}')->group(function () {
+            Route::get('/posts', [PostController::class, 'indexByUser']);
+            Route::get('/reviews', [ReviewController::class, 'indexByUser']);
+            Route::post('/posts', [PostController::class, 'storeByUser']);
+        });
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 
-Route::apiResources([
-    'authors' => AuthorController::class,
-    'books' => BookController::class,
-    'comments' => CommentController::class,
-    'genres' => GenreController::class,
-    'posts' => PostController::class,
-    'users' => UserController::class,
-    'tags' => TagController::class,
-    'reviews' => ReviewController::class
-]);
-
-Route::prefix('books/{book}')->group(function () {
-    Route::post('/reviews', [ReviewController::class, 'storeByBook']);
-});
-Route::prefix('posts/{post}')->group(function () {
-    Route::get('comments', [CommentController::class, 'indexByPost']);
-    Route::post('comments', [CommentController::class, 'storeByPost']);
-});
-Route::prefix('reviews/{review}')->group(function () {
-    Route::get('comments', [CommentController::class, 'indexByReview']);
-    Route::post('comments', [CommentController::class, 'storeByReview']);
-});
-Route::prefix('users/{user}')->group(function () {
-    Route::get('/posts', [PostController::class, 'indexByUser']);
-    Route::get('/reviews', [ReviewController::class, 'indexByUser']);
-    Route::post('/posts', [PostController::class, 'storeByUser']);
-});
 Route::middleware('auth:sanctum')
     ->group(function () {
         Route::controller(UserController::class)->group(function () {
