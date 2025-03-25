@@ -22,6 +22,8 @@ class BookApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    private User $user;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,8 +31,8 @@ class BookApiTest extends TestCase
         Tag::factory()->count(5)->create();
 
         // ✅ Create a test user and authenticate with Sanctum
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        $this->user = User::factory()->create();
+        Sanctum::actingAs($this->user);
     }
 
     public function test_it_returns_an_empty_collection_when_there_are_no_books(): void
@@ -186,7 +188,7 @@ class BookApiTest extends TestCase
         $this->assertDatabaseHas('books', ['title' => 'Updated Book Title', 'synopsis' => 'Updated book description']);
         $this->assertDatabaseHas('book_user', [
             'book_id' => $book->id,
-            'user_id' => $updatedData['user_id'],
+            'user_id' => $this->user->id,
             'tag_id' => $updatedData['tag_id'],
             'pages_read' => $updatedData['pages_read'],
         ]);
