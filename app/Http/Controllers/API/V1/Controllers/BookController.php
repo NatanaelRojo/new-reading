@@ -10,7 +10,6 @@ use App\Models\API\V1\Book;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Throwable;
 
 class BookController
 {
@@ -56,7 +55,6 @@ class BookController
     {
         $validatedDataForBook = Arr::except($request->validated(), [
             'tag_id',
-            'user_id',
             'pages_read',
         ]);
         $book->update($validatedDataForBook);
@@ -84,9 +82,9 @@ class BookController
      */
     private function handleBookUserUpdates(UpdateBookRequest $request, Book $book): void
     {
-        if ($request->has('user_id')) {
-            $book->assignTagToUser($request->user_id, $request->tag_id);
-            $book->updateUserProgress($request->user_id, $request->pages_read);
+        if ($request->has('tag_id') && $request->has('pages_read')) {
+            $book->assignTagToUser($request->user()->id, $request->tag_id);
+            $book->updateUserProgress($request->user()->id, $request->pages_read);
         }
     }
 }
