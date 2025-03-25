@@ -3,11 +3,11 @@
 namespace App\Http\Requests\API\V1\Post;
 
 use App\Models\API\V1\Book;
-use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 
 class StorePostRequest extends FormRequest
 {
@@ -22,11 +22,12 @@ class StorePostRequest extends FormRequest
             'body' => ['required', 'string', 'min:5', 'max:1000'],
             'progress' => ['required', 'integer', 'min:1',],
             'book_id' => ['required', 'exists:' . Book::class . ',id'],
-            'user_id' => [
-                $this->route('user') ? 'nullable' : 'required',
-                'exists:' . User::class . ',id'
-            ],
         ];
+    }
+
+    public function validated($key = null, $default = null)
+    {
+        return Arr::add(parent::validated(), 'user_id', $this->user()->id);
     }
 
     public function failedValidation(Validator $validator)

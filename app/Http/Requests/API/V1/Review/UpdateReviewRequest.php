@@ -3,11 +3,11 @@
 namespace App\Http\Requests\API\V1\Review;
 
 use App\Models\API\V1\Book;
-use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 
 class UpdateReviewRequest extends FormRequest
 {
@@ -20,10 +20,14 @@ class UpdateReviewRequest extends FormRequest
     {
         return [
             'book_id' => ['integer', 'exists:' . Book::class . ',id'],
-            'user_id' => ['integer', 'exists:' . User::class . ',id'],
             'rating' => ['integer', 'min:1', 'max:5'],
             'comment' => ['string'],
         ];
+    }
+
+    public function validated($key = null, $default = null)
+    {
+        return Arr::add(parent::validated(), 'user_id', $this->user()->id);
     }
 
     public function failedValidation(Validator $validator)

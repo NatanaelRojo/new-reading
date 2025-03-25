@@ -8,17 +8,10 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 
 class UpdatePostRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return false;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -30,8 +23,12 @@ class UpdatePostRequest extends FormRequest
             'body' => ['string', 'min:5', 'max:1000'],
             'progress' => ['integer', 'min:1',],
             'book_id' => ['exists:' . Book::class . ',id'],
-            'user_id' => ['exists:' . User::class . ',id'],
         ];
+    }
+
+    public function validated($key = null, $default = null)
+    {
+        return Arr::add(parent::validated(), 'user_id', $this->user()->id);
     }
 
     public function failedValidation(Validator $validator)

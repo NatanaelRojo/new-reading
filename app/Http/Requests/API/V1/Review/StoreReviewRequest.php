@@ -8,6 +8,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 
 class StoreReviewRequest extends FormRequest
 {
@@ -23,14 +24,14 @@ class StoreReviewRequest extends FormRequest
                 $this->route('book') ? 'nullable' : 'required',
                 'integer',
                 'exists:' . Book::class . ',id'],
-            'user_id' => [
-                'required',
-                'integer',
-                'exists:' . User::class . ',id'
-            ],
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'comment' => ['required', 'string'],
         ];
+    }
+
+    public function validated($key = null, $default = null)
+    {
+        return Arr::add(parent::validated(), 'user_id', $this->user()->id);
     }
 
     public function failedValidation(Validator $validator): void
