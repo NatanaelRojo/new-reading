@@ -4,6 +4,7 @@ namespace Tests\Feature\API\V1;
 
 use App\Models\API\V1\Comment;
 use App\Models\API\V1\Post;
+use App\Models\API\V1\Review;
 use App\Models\API\V1\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,6 +30,9 @@ class CommentApiTest extends TestCase
             ->count(5)
             ->create();
         Post::factory()
+            ->count(20)
+            ->create();
+        Review::factory()
             ->count(20)
             ->create();
 
@@ -87,6 +91,53 @@ class CommentApiTest extends TestCase
         }
     }
 
+    public function test_create_a_comment_for_a_review(): void
+    {
+        $review = Review::inRandomOrder()->first();
+        $this->user->follow($review->user);
+        $reviewCommentBody = fake()->sentence();
+
+        $response = $this->postJson(
+            route('reviews.comments.store', $review->id),
+            [
+                'body' => $reviewCommentBody,
+            ]
+        );
+
+        $response->assertStatus(JsonResponse::HTTP_CREATED)
+            ->assertJsonCount(1)
+            ->assertJsonFragment([
+                'body' => $reviewCommentBody,
+            ]);
+
+        $response = $this->getJson(route('reviews.comments.index', $review->id));
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(1);
+    }
+
+    public function test_create_several_comments_for_a_review(): void
+    {
+        $review = Review::inRandomOrder()->first();
+        $this->user->follow($review->user);
+
+        for ($i = 0; $i < 5; $i++) {
+            $currentCommentBody = fake()->sentence();
+
+            $response = $this->postJson(
+                route('reviews.comments.store', $review->id),
+                [
+                    'body' => $currentCommentBody,
+                ]
+            );
+
+            $response->assertStatus(JsonResponse::HTTP_CREATED)
+                ->assertJsonCount(1)
+                ->assertJsonFragment([
+                    'body' => $currentCommentBody,
+                ]);
+        }
+    }
+
     public function test_show_all_comments_for_a_post(): void
     {
         $post = Post::inRandomOrder()->first();
@@ -102,6 +153,26 @@ class CommentApiTest extends TestCase
         }
 
         $response = $this->getJson(route('posts.comments.index', $post->slug));
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(5);
+    }
+
+    public function test_show_all_comments_for_a_review(): void
+    {
+        $review = Review::inRandomOrder()->first();
+        $this->user->follow($review->user);
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->postJson(
+                route('reviews.comments.store', $review->id),
+                [
+                    'body' => fake()->sentence(),
+                ]
+            );
+        }
+
+        $response = $this->getJson(route('reviews.comments.index', $review->id));
 
         $response->assertStatus(JsonResponse::HTTP_OK)
             ->assertJsonCount(5);
@@ -139,7 +210,7 @@ class CommentApiTest extends TestCase
             ]);
     }
 
-    public function test_delete_comment_for_a_post(): void
+    public function test_delete_a_comment(): void
     {
         $comment = Comment::factory()->create();
 
