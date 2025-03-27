@@ -32,20 +32,30 @@ Route::middleware('auth:sanctum')
             'reviews' => ReviewController::class
         ]);
         Route::prefix('books/{book}')->group(function () {
-            Route::post('/reviews', [ReviewController::class, 'storeByBook']);
+            Route::post('comments', [CommentController::class, 'storeByBook'])
+                ->name('books.comments.store');
+            Route::post('reviews', [ReviewController::class, 'storeByBook'])
+                ->name('books.reviews.store');
         });
         Route::prefix('posts/{post}')->group(function () {
-            Route::get('comments', [CommentController::class, 'indexByPost']);
-            Route::post('comments', [CommentController::class, 'storeByPost']);
+            Route::get('comments', [CommentController::class, 'indexByPost'])
+                ->name('posts.comments.index');
+            Route::post('comments', [CommentController::class, 'storeByPost'])
+                ->name('posts.comments.store');
         });
         Route::prefix('reviews/{review}')->group(function () {
-            Route::get('comments', [CommentController::class, 'indexByReview']);
-            Route::post('comments', [CommentController::class, 'storeByReview']);
+            Route::get('comments', [CommentController::class, 'indexByReview'])
+                ->name('reviews.comments.index');
+            Route::post('comments', [CommentController::class, 'storeByReview'])
+            ->name('reviews.comments.store');
         });
         Route::prefix('users/{user}')->group(function () {
-            Route::get('/posts', [PostController::class, 'indexByUser']);
-            Route::get('/reviews', [ReviewController::class, 'indexByUser']);
-            Route::post('/posts', [PostController::class, 'storeByUser']);
+            Route::get('/posts', [PostController::class, 'indexByUser'])
+                ->name('users.posts.index');
+            Route::get('reviews', [ReviewController::class, 'indexByUser'])
+                ->name('users.reviews.index');
+            Route::post('/posts', [PostController::class, 'storeByUser'])
+                ->name('users.reviews.store');
         });
         Route::post('/logout', [AuthController::class, 'logout']);
     });
