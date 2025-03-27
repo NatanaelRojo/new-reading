@@ -25,7 +25,11 @@ class StoreCommentRequest extends FormRequest
 
     public function validated($key = null, $default = null)
     {
-        return Arr::add(parent::validated(), 'user_id', $this->user()->id);
+        $validatedData = Arr::add(parent::validated(), 'user_id', $this->user()->id);
+        $validatedData = Arr::add($validatedData, 'commentable_id', $this->route('post')->id);
+        $validatedData = Arr::add($validatedData, 'commentable_type', $this->route('post')::class);
+
+        return $validatedData;
     }
 
     public function failedValidation(Validator $validator)
