@@ -47,9 +47,8 @@ class CommentController
     {
         $validatedData = $request->validated();
         $validatedData['post_id'] = $post->id;
-        $user = User::query()->firstWhere('id', $validatedData['user_id']);
 
-        if (!$user->isFollowing($post->user)) {
+        if (!$request->user()->isFollowing($post->user)) {
             return response()
                 ->json('User not following author', JsonResponse::HTTP_CONFLICT);
         }
@@ -70,9 +69,8 @@ class CommentController
     {
         $validatedData = $request->validated();
         $validatedData['review_id'] = $review->id;
-        $user = User::query()->firstWhere('id', $validatedData['user_id']);
 
-        if (!$user->isFollowing($review->user)) {
+        if (!$request->user()->isFollowing($review->user)) {
             return response()
                 ->json('User not following author', JsonResponse::HTTP_CONFLICT);
         }
