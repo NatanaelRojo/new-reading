@@ -87,6 +87,26 @@ class CommentApiTest extends TestCase
         }
     }
 
+    public function test_show_all_comments_for_a_post(): void
+    {
+        $post = Post::inRandomOrder()->first();
+        $this->user->follow($post->user);
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->postJson(
+                route('posts.comments.store', $post->slug),
+                [
+                    'body' => fake()->sentence(),
+                ]
+            );
+        }
+
+        $response = $this->getJson(route('posts.comments.index', $post->slug));
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(5);
+    }
+
     public function test_show_a_comment_for_a_user(): void
     {
         $comment = Comment::factory()->create();
