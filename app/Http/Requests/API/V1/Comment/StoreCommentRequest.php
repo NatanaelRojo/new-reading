@@ -26,8 +26,14 @@ class StoreCommentRequest extends FormRequest
     public function validated($key = null, $default = null)
     {
         $validatedData = Arr::add(parent::validated(), 'user_id', $this->user()->id);
-        $validatedData = Arr::add($validatedData, 'commentable_id', $this->route('post')->id);
-        $validatedData = Arr::add($validatedData, 'commentable_type', $this->route('post')::class);
+
+        if ($this->has('post')) {
+            $validatedData = Arr::add($validatedData, 'commentable_id', $this->route('post')->id);
+            $validatedData = Arr::add($validatedData, 'commentable_type', $this->route('post')::class);
+        } elseif ($this->has('review')) {
+            $validatedData = Arr::add($validatedData, 'commentable_id', $this->route('review')->id);
+            $validatedData = Arr::add($validatedData, 'commentable_type', $this->route('review')::class);
+        }
 
         return $validatedData;
     }
