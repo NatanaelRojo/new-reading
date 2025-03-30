@@ -53,16 +53,13 @@ class ReviewController
 
     public function storeByBook(StoreReviewRequest $request, Book  $book): JsonResponse
     {
-        $validatedData = $request->validated();
-        $validatedData['book_id'] = $book->id;
-
-        if (!$book->isCompletedByUser($validatedData['user_id'])) {
+        if (!$book->isCompletedByUser($request->user()->id)) {
             return response()
                 ->json('Book not completed', JsonResponse::HTTP_CONFLICT);
         }
 
         $newReview = $book->reviews()
-        ->create($validatedData);
+        ->create($request->validated());
 
         return response()
             ->json(new ReviewResource($newReview), JsonResponse::HTTP_CREATED);
