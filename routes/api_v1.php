@@ -34,6 +34,10 @@ Route::middleware('auth:sanctum')
         Route::prefix('books/{book}')->group(function () {
             Route::post('comments', [CommentController::class, 'storeByBook'])
                 ->name('books.comments.store');
+            Route::get('posts', [PostController::class, 'indexByBook'])
+            ->name('books.posts.index');
+            Route::post('posts', [PostController::class, 'storeByBook'])
+            ->name('books.posts.store');
             Route::post('reviews', [ReviewController::class, 'storeByBook'])
                 ->name('books.reviews.store');
         });
@@ -50,12 +54,12 @@ Route::middleware('auth:sanctum')
             ->name('reviews.comments.store');
         });
         Route::prefix('users/{user}')->group(function () {
-            Route::get('/posts', [PostController::class, 'indexByUser'])
-                ->name('users.posts.index');
             Route::get('reviews', [ReviewController::class, 'indexByUser'])
-                ->name('users.reviews.index');
-            Route::post('/posts', [PostController::class, 'storeByUser'])
-                ->name('users.reviews.store');
+            ->name('users.reviews.index');
+            Route::get('posts', [PostController::class, 'indexByUser'])
+                ->name('users.posts.index');
+            Route::post('posts', [PostController::class, 'storeByUser'])
+                ->name('users.posts.store');
         });
         Route::post('/logout', [AuthController::class, 'logout']);
     });
