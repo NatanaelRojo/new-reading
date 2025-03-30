@@ -31,7 +31,14 @@ class StoreReviewRequest extends FormRequest
 
     public function validated($key = null, $default = null)
     {
-        return Arr::add(parent::validated(), 'user_id', $this->user()->id);
+        $validatedData = parent::validated();
+        $validatedData = Arr::add($validatedData, 'user_id', $this->user()->id);
+
+        if ($this->route('book')) {
+            $validatedData = Arr::add($validatedData, 'book_id', $this->route('book')->id);
+        }
+
+        return $validatedData;
     }
 
     public function failedValidation(Validator $validator): void
