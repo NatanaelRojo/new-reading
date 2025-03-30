@@ -19,15 +19,22 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'body' => ['required', 'string', 'min:5', 'max:1000'],
+            'body' => ['required', 'string', 'min:5'],
             'progress' => ['required', 'integer', 'min:1',],
-            'book_id' => ['required', 'exists:' . Book::class . ',id'],
+            'book_id' => $this->route('book') ? ['nullable', 'string'] : ['required', 'integer', 'exists:' . Book::class . ',id'],
         ];
     }
 
     public function validated($key = null, $default = null)
     {
-        return Arr::add(parent::validated(), 'user_id', $this->user()->id);
+        $validatedData = parent::validated();
+        $validatedData = Arr::add($validatedData, 'user_id', $this->user()->id);
+
+        if ($this->route('book')) {
+            $validatedData = Arr::add($validatedData, 'book_id', $this->route('book')->id);
+        }
+
+        return $validatedData;
     }
 
     public function failedValidation(Validator $validator)

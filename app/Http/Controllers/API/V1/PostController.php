@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Requests\API\V1\Post\StorePostRequest;
 use App\Http\Requests\API\V1\Post\UpdatePostRequest;
 use App\Http\Resources\API\V1\Post\PostResource;
+use App\Models\API\V1\Book;
 use App\Models\API\V1\Post;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -22,6 +23,17 @@ class PostController
         return response()
             ->json(
                 PostResource::collection($posts),
+                JsonResponse::HTTP_OK
+            );
+    }
+
+    public function indexByBook(Book $book): JsonResponse
+    {
+        $bookPosts = $book->posts;
+
+        return response()
+            ->json(
+                PostResource::collection($bookPosts),
                 JsonResponse::HTTP_OK
             );
     }
@@ -60,15 +72,29 @@ class PostController
     /**
      * Store a newly created resource in storage.
      * @param \App\Http\Requests\API\V1\Post\StorePostRequest $request
+     * @param \App\Models\API\V1\Book $book
+     * @return JsonResponse|mixed
+     */
+    public function storeByBook(StorePostRequest $request, Book $book): JsonResponse
+    {
+        $newPost = $book->posts()->create($request->validated());
+
+        return response()
+            ->json(
+                new PostResource($newPost),
+                JsonResponse::HTTP_CREATED
+            );
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     * @param \App\Http\Requests\API\V1\Post\StorePostRequest $request
      * @param \App\Models\User $user
      * @return JsonResponse|mixed
      */
     public function storeByUser(StorePostRequest $request, User $user): JsonResponse
     {
-        $validatedData = $request->validated();
-        $validatedData['user_id'] = $user->id;
-
-        $newPost = $user->posts()->create($validatedData);
+        $newPost = $user->posts()->create($request->validated());
 
         return response()
             ->json(
