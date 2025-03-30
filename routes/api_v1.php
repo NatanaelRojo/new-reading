@@ -67,7 +67,9 @@ Route::middleware('auth:sanctum')
 Route::middleware('auth:sanctum')
     ->group(function () {
         Route::controller(UserController::class)->group(function () {
-            Route::post('/users/{user}/follow', 'follow')
+            Route::post('users/{user}/follow', 'follow')
                 ->name('users.follow');
+            Route::delete('users/{user}/follow', 'unfollow')
+                ->name('users.unfollow');
         });
     });
