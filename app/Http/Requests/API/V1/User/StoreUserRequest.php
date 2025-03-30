@@ -2,13 +2,13 @@
 
 namespace App\Http\Requests\API\V1\User;
 
+use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Validation\Rule;
 
-class UpdateUserRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -19,22 +19,17 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'profile_image_url' => ['url'],
-            'first_name' => ['string', 'max:255'],
-            'last_name' => ['string', 'max:255'],
-            'birth_date' => ['date'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'birth_date' => ['required', 'date'],
             'biography' => ['string'],
-            'name' => ['string', 'max:255'],
-            'email' => [
-                'required',
-                Rule::unique('users')->ignore($this->user()->id),
-                'string',
-                'email',
-                'max:255'
-            ],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }
 
-    protected function failedValidation(Validator $validator): void
+    protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
             'success' => false,
