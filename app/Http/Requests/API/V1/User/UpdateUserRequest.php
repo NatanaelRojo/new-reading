@@ -6,6 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -23,7 +24,13 @@ class UpdateUserRequest extends FormRequest
             'birth_date' => ['date'],
             'biography' => ['string'],
             'name' => ['string', 'max:255'],
-            'email' => ['string', 'email', 'max:255'],
+            'email' => [
+                'required',
+                Rule::unique('users')->ignore($this->user()->id),
+                'string',
+                'email',
+                'max:255'
+            ],
         ];
     }
 
