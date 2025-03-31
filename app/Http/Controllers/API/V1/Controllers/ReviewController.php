@@ -53,7 +53,7 @@ class ReviewController
 
     public function storeByBook(StoreReviewRequest $request, Book  $book): JsonResponse
     {
-        if (!$book->isCompletedByUser($request->user()->id)) {
+        if (!$book->isCompletedByUser($request->user())) {
             return response()
                 ->json('Book not completed', JsonResponse::HTTP_CONFLICT);
         }

@@ -116,9 +116,8 @@ class Book extends Model
         return $userBook->pivot->pages_read ? ($userBook->pivot->pages_read / $totalPages) * 100 : 0;
     }
 
-    public function isCompletedByUser(int $userId = null): bool
+    public function isCompletedByUser(User   $user = null): bool
     {
-        $user = $this->users()->firstWhere('user_id', $userId);
         $bookTag = Tag::query()
             ->firstWhere('id', $user->pivot->tag_id);
 
