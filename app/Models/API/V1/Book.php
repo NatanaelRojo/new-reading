@@ -87,11 +87,27 @@ class Book extends Model
      * @param int $pagesRead The number of pages read by the user.
      * @return void
      */
-    public function updateUserProgress(int $userId = null, int $pagesRead = null): void
+    public function updateUserProgress(User $user = null, int $pagesRead = null): void
     {
-        if (!is_null($userId) || !is_null($pagesRead)) {
-            $this->users()->updateExistingPivot($userId, ['pages_read' => $pagesRead]);
+        if (!is_null($user) || !is_null($pagesRead)) {
+            $pagesRead == $this->pages_amount ? $this->completeBook($user) : $this->users()->updateExistingPivot($user->id, ['pages_read' => $pagesRead]);
         }
+    }
+
+    /**
+     * Complete a book for a specific user.
+     *
+     * @param \App\Models\User|null $user
+     * @return void
+     */
+    public function completeBook(User $user = null): void
+    {
+        $tag = Tag::query()
+            ->firstWhere('name', config('tags.default_tags')[2]);
+        $this->users()->updateExistingPivot($user->id, [
+            'tag_id' => $tag->id,
+            'pages_read' => $this->pages_amount,
+        ]);
     }
 
     /**
@@ -121,7 +137,7 @@ class Book extends Model
         $bookTag = Tag::query()
             ->firstWhere('id', $user->pivot->tag_id);
 
-        if ($bookTag->name !== 'Completed') {
+        if ($bookTag->id !== 3) {
             return false;
         }
 
