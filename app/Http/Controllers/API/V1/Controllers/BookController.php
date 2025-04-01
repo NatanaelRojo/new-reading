@@ -84,7 +84,7 @@ class BookController
     {
         if ($request->has('tag_id') && $request->has('pages_read')) {
             $book->assignTagToUser($request->user()->id, $request->tag_id);
-            $book->updateUserProgress($request->user()->id, $request->pages_read);
+            $book->updateUserProgress($request->user(), $request->pages_read);
         }
     }
 }
