@@ -13,8 +13,12 @@ class TagSeeder extends Seeder
      */
     public function run(): void
     {
-        Tag::factory()
-            ->count(20)
-            ->create();
+        foreach (config('tags.default_tags') as $tagName) {
+            Tag::query()->firstOrCreate([
+                'name' => $tagName,
+            ], [
+                'name' => $tagName,
+            ]);
+        }
     }
 }
