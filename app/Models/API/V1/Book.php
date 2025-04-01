@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Validation\ValidationException;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
@@ -90,8 +91,13 @@ class Book extends Model
     public function updateUserProgress(User $user = null, int $pagesRead = null): void
     {
         if (!is_null($user) || !is_null($pagesRead)) {
-            $pagesRead == $this->pages_amount ? $this->completeBook($user) : $this->users()->updateExistingPivot($user->id, ['pages_read' => $pagesRead]);
+            $pagesRead == $this->pages_amount ? $this->completeBook($user) : $this->increaseReadingProgress($pagesRead);
         }
+    }
+
+    public function increaseReadingProgress(int $pagesRead = null): void
+    {
+        if (!is_null($pagesRead) && $this->) {}
     }
 
     /**
@@ -212,4 +218,16 @@ class Book extends Model
             ->withPivot('tag_id', 'pages_read')
             ->withTimestamps();
     }
+
+    public function validateReadingProgress(int $pagesRead): void
+{
+    $user = auth()->user();
+    $currentProgress = $this->users()->where('user_id', $user->id)->value('pages_read');
+
+    if ($pagesRead <= $currentProgress) {
+        throw ValidationException::withMessages([
+            'pages_read' => 'The new progress must be greater than the current progress.',
+        ]);
+    }
+}
 }
