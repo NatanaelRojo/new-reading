@@ -155,42 +155,35 @@ class BookApiTest extends TestCase
         $this->assertDatabaseHas('books', $updatedData);
     }
 
-    public function test_updates_a_book_with_a_user_and_tag(): void
+    public function test_update_a_tag_for_a_book(): void
     {
-        // Arrange
-        $users = User::factory()
-            ->count(3)
-            ->create();
-        $tags = Tag::factory()
-            ->count(3)
-            ->create();
         $book = Book::factory()->create();
+        $tag = Tag::factory()->create();
 
-        $updatedData = [
-            'title' => 'Updated Book Title',
-            'published_at' => '2023-01-01',
-            'synopsis' => 'Updated book description',
-            'pages_read' => 10,
-            'tag_id' => $tags[0]->id,
-            'user_id' => $book->users[0]->id,
-        ];
+        $response = $this->putJson(route('books.tags.update', $book->slug), ['tag_id' => $tag->id]);
 
-        // Act
-        $response = $this->putJson(route('books.update', $book), $updatedData);
-
-        // Assert
         $response->assertStatus(JsonResponse::HTTP_OK);
-        $response->assertJsonFragment([
-            'title' => $updatedData['title'],
-            'synopsis' => $updatedData['synopsis'],
-            'published_at' => $updatedData['published_at'],
-        ]);
-        $this->assertDatabaseHas('books', ['title' => 'Updated Book Title', 'synopsis' => 'Updated book description']);
+
         $this->assertDatabaseHas('book_user', [
             'book_id' => $book->id,
-            'user_id' => $this->user->id,
-            'tag_id' => $updatedData['tag_id'],
-            'pages_read' => $updatedData['pages_read'],
+            'tag_id' => $tag->id,
+        ]);
+    }
+
+    public function test_update_reading_progress_for_a_book(): void
+    {
+        $book = Book::factory()->create();
+        $newReadingProgress = $book->readingProgress + 1;
+
+        $response = $this->putJson(route('books.reading-progress.update', $book->slug), [
+            'pages_read' => $newReadingProgress,
+        ]);
+
+        $response->assertStatus(JsonResponse::HTTP_OK);
+
+        $this->assertDatabaseHas('book_user', [
+            'book_id' => $book->id,
+            'pages_read' => $newReadingProgress,
         ]);
     }
 
@@ -344,5 +337,22 @@ class BookApiTest extends TestCase
             ->assertJsonFragment([
                 'title' => $book->title,
             ]);
+    }
+
+    public function test_it_can_complete_a_book_for_a_user(): void
+    {
+        $book = Book::factory()->create(['pages_amount' => 200]);
+        $user = User::factory()->create();
+        $tag = Tag::factory()->create(['name' => 'Completed']);
+
+        $book->users()->attach($user->id);
+        $book->completeBook($user);
+
+        $this->assertDatabaseHas('book_user', [
+            'book_id' => $book->id,
+            'user_id' => $user->id,
+            'tag_id' => $tag->id,
+            'pages_read' => 200,
+        ]);
     }
 }
