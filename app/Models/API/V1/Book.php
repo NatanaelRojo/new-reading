@@ -52,6 +52,14 @@ class Book extends Model
         return 'slug';
     }
 
+    public function readingProgress(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->getReadingProgress(),
+            set: fn (int $value) => $this->setReadingProgress($value)
+        );
+    }
+
     /**
      * Get the filter class name for the model.
      * @return string
@@ -91,13 +99,8 @@ class Book extends Model
     public function updateUserProgress(User $user = null, int $pagesRead = null): void
     {
         if (!is_null($user) || !is_null($pagesRead)) {
-            $pagesRead == $this->pages_amount ? $this->completeBook($user) : $this->increaseReadingProgress($pagesRead);
+            $pagesRead == $this->pages_amount ? $this->completeBook($user) : $this->readingProgress = $pagesRead;
         }
-    }
-
-    public function increaseReadingProgress(int $pagesRead = null): void
-    {
-        if (!is_null($pagesRead) && $this->) {}
     }
 
     /**
@@ -220,14 +223,40 @@ class Book extends Model
     }
 
     public function validateReadingProgress(int $pagesRead): void
-{
-    $user = auth()->user();
-    $currentProgress = $this->users()->where('user_id', $user->id)->value('pages_read');
+    {
+        $user = auth()->user();
+        $currentProgress = $this->users()->where('user_id', $user->id)->value('pages_read');
 
-    if ($pagesRead <= $currentProgress) {
-        throw ValidationException::withMessages([
-            'pages_read' => 'The new progress must be greater than the current progress.',
-        ]);
+        if ($pagesRead <= $currentProgress) {
+            throw ValidationException::withMessages([
+                'pages_read' => 'The new progress must be greater than the current progress.',
+            ]);
+        }
     }
-}
+
+    /**
+     * Get the reading progress of a book for a specific user.
+     * @return int
+     */
+    private function getReadingProgress(): int
+    {
+        $user = auth()->user();
+        return $this->users()
+            ->where('user_id', $user->id)
+            ->value('pages_read');
+    }
+
+    /**
+     * Set the reading progress of a book for a specific user.
+     * @param int $pagesRead
+     * @return void
+     */
+    private function setReadingProgress(int $pagesRead = null): void
+    {
+        if (!is_null($pagesRead)) {
+            $user = auth()->user();
+            $this->validateReadingProgress($pagesRead);
+            $this->users()->updateExistingPivot($user->id, ['pages_read' => $pagesRead]);
+        }
+    }
 }
