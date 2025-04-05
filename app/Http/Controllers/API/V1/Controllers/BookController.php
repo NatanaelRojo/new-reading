@@ -4,7 +4,9 @@ namespace App\Http\Controllers\API\V1\Controllers;
 
 use App\Http\Requests\API\V1\Book\FilterBookRequest;
 use App\Http\Requests\API\V1\Book\StoreBookRequest;
+use App\Http\Requests\API\V1\Book\UpdateBookReadingProgressRequest;
 use App\Http\Requests\API\V1\Book\UpdateBookRequest;
+use App\Http\Requests\API\V1\Book\UpdateBookTagRequest;
 use App\Http\Resources\API\V1\Book\BookResource;
 use App\Models\API\V1\Book;
 use Illuminate\Http\JsonResponse;
@@ -63,6 +65,24 @@ class BookController
         return response()->json(new BookResource($book), JsonResponse::HTTP_OK);
     }
 
+    public function updateReadingProgress(UpdateBookReadingProgressRequest $request, Book $book): JsonResponse
+    {
+        $book->updateUserProgress($request->user(), $request->pages_read);
+
+        return response()->json(new BookResource($book), JsonResponse::HTTP_OK);
+    }
+
+    public function updateTag(UpdateBookTagRequest $request, Book $book): JsonResponse
+    {
+        $user = $request->user();
+
+        $book->users()->updateExistingPivot($user->id, [
+            'tag_id' => $request->tag_id
+        ]);
+
+        return response()->json(new BookResource($book), JsonResponse::HTTP_OK);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -87,4 +107,5 @@ class BookController
             $book->updateUserProgress($request->user(), $request->pages_read);
         }
     }
+
 }
