@@ -21,6 +21,7 @@ class FilterBookRequest extends FormRequest
             'author_name' => ['nullable', 'string'],
             'genre_name' => ['nullable', 'string'],
             'tag_name' => ['nullable', 'string'],
+            'year' => ['nullable', 'digits:4', 'integer', 'min:1000', 'max:' . now()->year],
         ];
     }
 
