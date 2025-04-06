@@ -42,6 +42,8 @@ Route::middleware('auth:sanctum')
                 ->name('books.tags.update');
             Route::put('reading-progress', [BookController::class, 'updateReadingProgress'])
             ->name('books.reading-progress.update');
+            Route::get('reviews', [ReviewController::class, 'indexByBook'])
+                ->name('books.reviews.index');
             Route::post('reviews', [ReviewController::class, 'storeByBook'])
                 ->name('books.reviews.store');
         });
