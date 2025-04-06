@@ -14,7 +14,8 @@ class IndexTable
     public static function getColumns(): array
     {
         return [
-            TextColumn::make('name'),
+            TextColumn::make('name')
+                ->searchable(),
         ];
     }
 
