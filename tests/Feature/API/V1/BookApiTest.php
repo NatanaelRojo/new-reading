@@ -339,6 +339,25 @@ class BookApiTest extends TestCase
             ]);
     }
 
+    public function test_it_returns_filtered_books_by_tag(): void
+    {
+        $book = Book::factory()
+            ->create();
+        $tag = Tag::factory()->create();
+
+        $pivot = $book->users()->firstWhere('user_id', $this->user->id)->pivot;
+        $pivot->tag_id = $tag->id;
+        $pivot->save();
+
+        $response = $this->getJson(route('books.index') . "?tag_name={$tag->name}");
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(1)
+            ->assertJsonFragment([
+                'title' => $book->title,
+            ]);
+    }
+
     public function test_it_can_complete_a_book_for_a_user(): void
     {
         $book = Book::factory()->create(['pages_amount' => 200]);
