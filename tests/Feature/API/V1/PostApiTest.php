@@ -17,6 +17,7 @@ class PostApiTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+    private int $postsAmount = 5;
 
     protected function setUp(): void
     {
@@ -87,9 +88,8 @@ class PostApiTest extends TestCase
     public function test_get_all_posts_for_a_book(): void
     {
         $book = Book::inRandomOrder()->first();
-        $postsAmount = 5;
 
-        for ($i = 0; $i < $postsAmount; $i++) {
+        for ($i = 0; $i < $this->postsAmount; $i++) {
             $this->postJson(
                 route('books.posts.store', $book->slug),
                 [
@@ -102,15 +102,14 @@ class PostApiTest extends TestCase
         $response = $this->getJson(route('books.posts.index', $book->slug));
 
         $response->assertStatus(JsonResponse::HTTP_OK)
-            ->assertJsonCount($postsAmount);
+            ->assertJsonCount($this->postsAmount);
     }
 
     public function test_get_all_posts_for_a_user(): void
     {
         $book = Book::inRandomOrder()->first();
-        $postsAmount = 5;
 
-        for ($i = 0; $i < $postsAmount; $i++) {
+        for ($i = 0; $i < $this->postsAmount; $i++) {
             $this->postJson(
                 route('users.posts.store', $this->user->id),
                 [
@@ -124,7 +123,7 @@ class PostApiTest extends TestCase
         $response = $this->getJson(route('users.posts.index', $this->user->id));
 
         $response->assertStatus(JsonResponse::HTTP_OK)
-            ->assertJsonCount($postsAmount);
+            ->assertJsonCount($this->postsAmount);
     }
 
     public function test_show_a_post(): void
