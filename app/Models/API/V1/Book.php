@@ -52,7 +52,7 @@ class Book extends Model
         return 'slug';
     }
 
-    public function readingProgress(): Attribute
+    protected function readingProgress(): Attribute
     {
         return Attribute::make(
             get: fn () => $this->getReadingProgress(),
@@ -201,6 +201,13 @@ class Book extends Model
         return $this->hasMany(Post::class);
     }
 
+    public function getUserTag(): ?Tag
+    {
+        return $this->users()
+            ->firstWhere('user_id', auth()->id())
+            ->pivot->tag;
+    }
+
     /**
      * The reviews that belong to the book.
      * @return HasMany<Review, Book>
@@ -218,6 +225,7 @@ class Book extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)
+            ->using(BookUser::class)
             ->withPivot('tag_id', 'pages_read')
             ->withTimestamps();
     }
