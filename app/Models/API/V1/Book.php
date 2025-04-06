@@ -143,10 +143,9 @@ class Book extends Model
 
     public function isCompletedByUser(User   $user = null): bool
     {
-        $bookTag = Tag::query()
-            ->firstWhere('id', $user->pivot->tag_id);
+        $bookTag = $this->getUserTag();
 
-        if ($bookTag->id !== 3) {
+        if ($bookTag->name !== config('tags.default_tags')[2]) {
             return false;
         }
 
