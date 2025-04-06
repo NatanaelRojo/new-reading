@@ -24,6 +24,9 @@ class ReviewApiTest extends TestCase
         parent::setUp();
         Book::factory()->count(5)->create();
         Tag::factory()->count(5)->create();
+        foreach (config('tags.default_tags') as $tagName) {
+            Tag::factory()->create(['name' => $tagName]);
+        }
 
         $this->user = User::factory()->create();
 
@@ -59,30 +62,31 @@ class ReviewApiTest extends TestCase
 
     public function test_create_a_review_for_a_user(): void
     {
-        // $review = Review::factory()->create();
-        // dd($review->user->pivot);
-        // $bookTag = Tag::query()
-        // ->firstWhere('id', $review->user->pivot->tag_id);
-        // $bookTag->update([
-        //     'name' => 'Completed',
-        // ]);
+        $book = Book::inRandomOrder()->first();
+        $tag = Tag::factory()->create(['name' => 'Completed']);
+        $book->users()->attach($this->user);
+        $pivot = $book->users()->firstWhere('user_id', $this->user->id)->pivot;
+        $pivot->tag_id = $tag->id;
+        $pivot->pages_read = $book->pages_amount;
+        $pivot->save();
+        $book->completeBook($this->user);
 
-        // $response = $this->postJson(
-        //     route('books.reviews.store', $review->book->slug),
-        //     [
-        //     'rating' => fake()->numberBetween(1, 5),
-        //     'comment' => fake()->text(),
-        // ]
-        // );
+        $response = $this->postJson(
+            route('books.reviews.store', $book->slug),
+            [
+            'rating' => fake()->numberBetween(1, 5),
+            'comment' => fake()->text(),
+        ]
+        );
 
-        // $response->assertStatus(JsonResponse::HTTP_CREATED)
-        //     ->assertJsonStructure([
-        //         'comment',
-        //         'rating',
-        //     ]);
+        $response->assertStatus(JsonResponse::HTTP_CREATED)
+            ->assertJsonStructure([
+                'comment',
+                'rating',
+            ]);
 
-        // $response = $this->getJson(route('books.reviews.index', $review->book->slug));
-        // $response->assertJsonCount(1);
+        $response = $this->getJson(route('books.reviews.index', $book->slug));
+        $response->assertJsonCount(1);
     }
 
     public function test_get_a_list_of_reviews(): void
@@ -95,7 +99,20 @@ class ReviewApiTest extends TestCase
 
     public function test_get_a_list_of_reviews_for_a_user(): void
     {
-        //
+        $book = Book::factory()->create();
+        $review = Review::factory()->create();
+        $book->completeBook($this->user);
+        $review->update([
+            'user_id' => $this->user->id,
+            'book_id' => $book->id,
+        ]);
+
+        $response = $this->getJson(
+            route('users.reviews.index', $this->user->id)
+        );
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(1);
     }
 
     public function test_show_a_review(): void
