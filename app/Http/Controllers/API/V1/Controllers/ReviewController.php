@@ -28,6 +28,19 @@ class ReviewController
 
     /**
      * Display a listing of the resource.
+     * @param \App\Models\API\V1\Book $book
+     * @return JsonResponse|mixed
+     */
+    public function indexByBook(Book $book): JsonResponse
+    {
+        $bookReviews = $book->reviews;
+
+        return response()
+            ->json(ReviewResource::collection($bookReviews), JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * Display a listing of the resource.
      * @param \App\Models\User $user
      * @return JsonResponse|mixed
      */
