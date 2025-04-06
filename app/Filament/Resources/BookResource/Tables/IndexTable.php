@@ -18,12 +18,16 @@ class IndexTable
     public static function getColumns(): array
     {
         return [
-            TextColumn::make('title'),
-            TextColumn::make('synopsis'),
+            TextColumn::make('title')
+                ->searchable(),
+            TextColumn::make('synopsis')
+                ->limit(30),
             TextColumn::make('isbn'),
             TextColumn::make('pages_amount'),
             TextColumn::make('chapters_amount'),
-            TextColumn::make('published_at'),
+            TextColumn::make('published_at')
+                ->date()
+                ->searchable(),
             TextColumn::make('averageRating'),
         ];
     }
