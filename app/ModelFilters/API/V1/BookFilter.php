@@ -19,11 +19,29 @@ class BookFilter extends ModelFilter
         'genres' => [
             'genre_name' => 'name',
         ],
-        'tags' => [
-            'tag_name' => 'name',
-        ],
     ];
 
+    /**
+     * Filter by tag name.
+     *
+     * @param string $name
+     * @return BookFilter
+     */
+    public function tag(string $name): self
+    {
+        return $this->related('users', function ($query) use ($name) {
+            $query->firstWhere('user_id', auth()->id())
+            ->pivot
+            ->tag()->firstWhere('name', $name);
+        });
+    }
+
+    /**
+     * Filter by title.
+     *
+     * @param string $title
+     * @return BookFilter
+     */
     public function title(string $title): self
     {
         return $this->where('title', 'like', "%$title%");
