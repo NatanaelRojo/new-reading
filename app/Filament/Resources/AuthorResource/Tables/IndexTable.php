@@ -18,10 +18,11 @@ class IndexTable
     public static function getColumns(): array
     {
         return [
-            TextColumn::make('first_name'),
-            TextColumn::make('last_name'),
+            TextColumn::make('full_name')
+                ->searchable(['first_name', 'last_name']),
             TextColumn::make('nationality'),
-            TextColumn::make('biography'),
+            TextColumn::make('biography')
+                ->limit(30),
             TextColumn::make('image_url'),
         ];
     }
