@@ -3,6 +3,7 @@
 namespace App\Models\API\V1;
 
 use EloquentFilter\Filterable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -25,10 +26,16 @@ class Author extends Model
         'slug',
     ];
 
-    // public function getFullNameAttribute(): string
-    // {
-    //     return $this->first_name . ' ' . $this->last_name;
-    // }
+    /**
+     * Get the full name of the author.
+     * @return Attribute
+     */
+    public function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->first_name . ' ' . $this->last_name,
+        );
+    }
 
     /**
      * Get the options for generating the slug.
