@@ -20,6 +20,7 @@ class FilterBookRequest extends FormRequest
             'title' => ['nullable', 'string'],
             'author_name' => ['nullable', 'string'],
             'genre_name' => ['nullable', 'string'],
+            'tag_name' => ['nullable', 'string'],
         ];
     }
 
