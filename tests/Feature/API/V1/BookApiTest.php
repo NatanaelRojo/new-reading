@@ -10,6 +10,7 @@ use App\Models\API\V1\Book;
 use App\Models\API\V1\Genre;
 use App\Models\API\V1\Tag;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
@@ -356,6 +357,21 @@ class BookApiTest extends TestCase
             ->assertJsonFragment([
                 'title' => $book->title,
             ]);
+    }
+
+    public function test_it_returns_filtered_books_by_year(): void
+    {
+        $month = Carbon::now()->month;
+        $day = Carbon::now()->day;
+        $year = Carbon::now()->year;
+
+        Book::factory()
+            ->create(['published_at' => "{$year}-{$month}-{$day}"]);
+
+        $response = $this->getJson(route('books.index') . "?year={$year}");
+
+        $response->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(1);
     }
 
     public function test_it_can_complete_a_book_for_a_user(): void
