@@ -46,4 +46,15 @@ class BookFilter extends ModelFilter
     {
         return $this->where('title', 'like', "%$title%");
     }
+
+    /**
+     * Filter by year.
+     *
+     * @param int $year
+     * @return BookFilter
+     */
+    public function year(int $year): self
+    {
+        return $this->whereYear('published_at', $year);
+    }
 }
