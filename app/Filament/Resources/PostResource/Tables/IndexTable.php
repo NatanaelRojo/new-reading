@@ -14,10 +14,12 @@ class IndexTable
     public static function getColumns(): array
     {
         return [
-            TextColumn::make('user.name'),
-            TextColumn::make('book.title'),
+            TextColumn::make('user.name')
+                ->searchable(),
+            TextColumn::make('book.title')
+                ->searchable(),
             TextColumn::make('body')
-                ->limit(50),
+                ->limit(30),
             TextColumn::make('progress'),
         ];
     }
