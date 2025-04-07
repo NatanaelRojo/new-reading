@@ -15,10 +15,12 @@ class IndexTable
     public static function getTableColumns(): array
     {
         return [
-            TextColumn::make('email'),
-            TextColumn::make('name'),
+            TextColumn::make('email')
+                ->searchable(),
+            TextColumn::make('name')
+                ->searchable(),
             TextColumn::make('description')
-                ->limit(50),
+                ->limit(30),
             TextColumn::make('birth_date')
                 ->date(),
         ];
