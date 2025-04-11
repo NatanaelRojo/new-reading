@@ -3,6 +3,7 @@
 namespace App\Models\API\V1;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,6 +23,13 @@ class Comment extends Model
         'body',
         'slug',
     ];
+
+    public function relatedTo(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->getRelatedModelName(),
+        );
+    }
 
     /**
      * Get the options for generating the slug.
@@ -59,5 +67,14 @@ class Comment extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    private function getRelatedModelName(): string
+    {
+        return match ($this->commentable_type) {
+            Book::class => 'book',
+            Post::class => 'post',
+            default => '',
+        };
     }
 }
