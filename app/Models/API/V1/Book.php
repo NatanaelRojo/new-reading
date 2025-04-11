@@ -159,7 +159,7 @@ class Book extends Model
     public function averageRating(): Attribute
     {
         return Attribute::make(
-            get: fn (): float => round($this->reviews()->avg('rating') ?? 0, 2),
+            get: fn (): string => $this->getFormatedAverageRating(),
         );
     }
 
@@ -265,5 +265,16 @@ class Book extends Model
             $this->validateReadingProgress($pagesRead);
             $this->users()->updateExistingPivot($user->id, ['pages_read' => $pagesRead]);
         }
+    }
+
+    /**
+     * Get the formated average rating of a book.
+     * @return string
+     */
+    private function getFormatedAverageRating(): string
+    {
+        $averageRating = $this->reviews()->avg('rating') ?? 0;
+        $averageRating = number_format((float) $averageRating, 1);
+        return $averageRating;
     }
 }
