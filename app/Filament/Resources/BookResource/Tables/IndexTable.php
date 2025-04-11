@@ -28,7 +28,7 @@ class IndexTable
             TextColumn::make('published_at')
                 ->date()
                 ->searchable(),
-            TextColumn::make('averageRating'),
+            TextColumn::make('average_rating'),
         ];
     }
 
