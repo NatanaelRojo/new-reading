@@ -24,10 +24,14 @@ class Comment extends Model
         'slug',
     ];
 
+    /**
+     * An accessor for the related model name.
+     * @return Attribute
+     */
     public function relatedTo(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->getRelatedModelName(),
+            get: fn (): string => $this->getRelatedModelName(),
         );
     }
 
@@ -69,6 +73,10 @@ class Comment extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Get the related model name.
+     * @return string
+     */
     private function getRelatedModelName(): string
     {
         return match ($this->commentable_type) {
