@@ -5,6 +5,7 @@ namespace Database\Factories\API\V1;
 use App\Models\API\V1\Author;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Genre;
+use App\Models\API\V1\Review;
 use App\Models\API\V1\Tag;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -45,6 +46,9 @@ class BookFactory extends Factory
                     Genre::inRandomOrder()->take(rand(1, 10))
                     ->pluck('id')
                 );
+            Review::factory()
+                ->count(rand(1, 10))
+                ->create(['book_id' => $book->id]);
             $book->users()
                 ->attach(
                     User::inRandomOrder()->take(rand(1, 10))
