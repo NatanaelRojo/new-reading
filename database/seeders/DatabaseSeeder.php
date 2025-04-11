@@ -18,9 +18,9 @@ class DatabaseSeeder extends Seeder
             TagSeeder::class,
             GenreSeeder::class,
             UserSeeder::class,
-            BookSeeder::class,
             CommentSeeder::class,
             ReviewSeeder::class,
+            BookSeeder::class,
             PostSeeder::class,
         ]);
     }
