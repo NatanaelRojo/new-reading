@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Comment;
+use App\Models\API\V1\Like;
 use App\Models\API\V1\Post;
 use App\Models\API\V1\Review;
 use App\Models\API\V1\Tag;
@@ -73,6 +74,39 @@ class User extends Authenticatable
             get: fn () => $this->first_name . ' ' . $this->last_name,
         );
     }
+
+    /**
+     * Like a review for the current user.
+     * @param \App\Models\API\V1\Review $review
+     * @return void
+     */
+    public function likeReview(Review $review): void
+    {
+        $this->likes()
+            ->where('likeable_id', $review->id)
+            ->where('likeable_type', Review::class)
+            ->updateOrCreate(
+                ['user_id', $this->id],
+                ['is_dislike' => false]
+            );
+    }
+
+    /**
+     * Dislike a review for the current user.
+     * @param \App\Models\API\V1\Review $review
+     * @return void
+     */
+    public function dislikeReview(Review $review): void
+    {
+        $this->likes()
+            ->where('likeable_id', $review->id)
+            ->where('likeable_type', Review::class)
+            ->updateOrCreate(
+                ['user_id', $this->id],
+                ['is_dislike' => true]
+            );
+    }
+
 
     /**
      * Assign a tag to a book for the current user.
@@ -169,6 +203,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class);
     }
+
+    /**
+     * Get the likes that belong to the user.
+     * @return HasMany<Like, User>
+     */
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    /**
 
     public function getFullNameAttribute(): string
     {
