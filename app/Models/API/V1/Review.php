@@ -19,6 +19,8 @@ class Review extends Model
         'book_id',
         'comment',
         'rating',
+        'like_count',
+        'dislike_count',
     ];
 
     /**
