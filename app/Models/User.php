@@ -89,6 +89,7 @@ class User extends Authenticatable
                 ['user_id', $this->id],
                 ['is_dislike' => false]
             );
+        $review->updateLikeCounters();
     }
 
     /**
@@ -105,6 +106,7 @@ class User extends Authenticatable
                 ['user_id', $this->id],
                 ['is_dislike' => true]
             );
+        $review->updateLikeCounters();
     }
 
 
