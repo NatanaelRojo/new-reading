@@ -58,6 +58,10 @@ Route::middleware('auth:sanctum')
                 ->name('reviews.comments.index');
             Route::post('comments', [CommentController::class, 'storeByReview'])
             ->name('reviews.comments.store');
+            Route::post('like', [ReviewController::class, 'like'])
+                ->name('reviews.like');
+            Route::post('dislike', [ReviewController::class, 'dislike'])
+                ->name('reviews.dislike');
         });
         Route::prefix('users/{user}')->group(function () {
             Route::get('reviews', [ReviewController::class, 'indexByUser'])
