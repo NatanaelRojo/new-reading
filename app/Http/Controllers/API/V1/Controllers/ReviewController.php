@@ -107,4 +107,46 @@ class ReviewController
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
+
+    /**
+     * Like a review.
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\API\V1\Review $review
+     * @return JsonResponse|mixed
+     */
+    public function like(Request $request, Review $review): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($review->likedBy($user)) {
+            return response()
+                ->json('Review already liked', JsonResponse::HTTP_CONFLICT);
+        }
+
+        $user->likeReview($review);
+
+        return response()
+            ->json('Review liked', JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * Dislike a review.
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\API\V1\Review $review
+     * @return JsonResponse|mixed
+     */
+    public function dislike(Request $request, Review $review): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($review->dislikeBy($user)) {
+            return response()
+                ->json('Review already disliked', JsonResponse::HTTP_CONFLICT);
+        }
+
+        $user->dislikeReview($review);
+
+        return response()
+            ->json('Review disliked', JsonResponse::HTTP_OK);
+    }
 }
