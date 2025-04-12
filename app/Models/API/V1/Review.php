@@ -13,45 +13,71 @@ use Spatie\Sluggable\SlugOptions;
 class Review extends Model
 {
     use HasFactory;
-    // use HasSlug;
 
-    protected $fillable = [
+    protected array $fillable = [
         'user_id',
         'book_id',
         'comment',
         'rating',
-        // 'slug',
     ];
 
     /**
-     * Get the options for generating the slug.
+     * Check if the current user has liked the review.
+     * @param \App\Models\User $user
+     * @return bool
      */
-    // public function getSlugOptions(): SlugOptions
-    // {
-    //     return SlugOptions::create()
-    //     ->generateSlugsFrom('body')
-    //     ->saveSlugsTo('slug');
-    // }
+    public function likedBy(User $user): bool
+    {
+        return $this->likes()->where('user_id', $user->id)
+            ->where('is_dislike', false)
+            ->exists();
+    }
 
     /**
-     * Get the route key for the model.
+     * Check if the current user has disliked the review.
+     * @param \App\Models\User $user
+     * @return bool
      */
-    // public function getRouteKeyName()
-    // {
-    //     return 'slug';
-    // }
+    public function dislikeBy(User $user): bool
+    {
+        return $this->likes()->where('user_id', $user->id)
+            ->where('is_dislike', true)
+            ->exists();
+    }
 
+    /**
+     * Get the book that owns the review.
+     * @return BelongsTo<Book, Review>
+     */
     public function book(): BelongsTo
     {
         return $this->belongsTo(Book::class);
     }
 
+    /**
+     * The likes that belong to the review.
+     * @return MorphMany<Like, Review>
+     */
+    public function likes(): MorphMany
+    {
+        return $this->morphMany(Like::class, 'likeable')
+            ->chaperone();
+    }
+
+    /**
+     * The comments that belong to the review.
+     * @return MorphMany<Comment, Review>
+     */
     public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable')
             ->chaperone();
     }
 
+    /**
+     * Get the user that owns the review.
+     * @return BelongsTo<User, Review>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
