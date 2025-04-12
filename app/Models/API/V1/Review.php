@@ -48,6 +48,17 @@ class Review extends Model
     }
 
     /**
+     * Update the like counters.
+     * @return void
+     */
+    protected function updateLikeCounters(): void
+    {
+        $this->like_count = $this->likes()->where('is_dislike', false)->count();
+        $this->dislike_count = $this->likes()->where('is_dislike', true)->count();
+        $this->save();
+    }
+
+    /**
      * Get the book that owns the review.
      * @return BelongsTo<Book, Review>
      */
