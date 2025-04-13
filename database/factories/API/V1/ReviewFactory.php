@@ -37,8 +37,10 @@ class ReviewFactory extends Factory
     {
         return $this->afterCreating(function (Review $review) {
             Like::factory()
+                ->count(rand(1, 5))
                 ->forLikeable($review)
                 ->create();
+            $review->updateLikeCounters();
         });
     }
 }
