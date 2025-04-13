@@ -174,6 +174,7 @@ class BookApiTest extends TestCase
     public function test_update_reading_progress_for_a_book(): void
     {
         $book = Book::factory()->create();
+        $book->users()->attach($this->user);
         $newReadingProgress = $book->readingProgress + 1;
 
         $response = $this->putJson(route('books.reading-progress.update', $book->slug), [
