@@ -25,6 +25,16 @@ class CreateForm
                 ->integer()
                 ->minValue(1)
                 ->maxValue(5),
+            TextInput::make('like_count')
+                ->required()
+                ->numeric()
+                ->integer()
+                ->minValue(0),
+            TextInput::make('dislike_count')
+                ->required()
+                ->numeric()
+                ->integer()
+                ->minValue(0),
             Textarea::make('comment'),
             Select::make('book_id')
                 ->required()
