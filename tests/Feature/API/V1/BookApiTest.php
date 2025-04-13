@@ -345,8 +345,9 @@ class BookApiTest extends TestCase
         $book = Book::factory()
             ->create();
         $tag = Tag::factory()->create();
+        $bookRandomUser = $book->users()->inRandomOrder()->first();
 
-        $pivot = $book->users()->firstWhere('user_id', $this->user->id)->pivot;
+        $pivot = $book->users()->firstWhere('user_id', $bookRandomUser->id)->pivot;
         $pivot->tag_id = $tag->id;
         $pivot->save();
 
