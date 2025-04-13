@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Comment;
 use App\Models\API\V1\Like;
@@ -82,13 +80,14 @@ class User extends Authenticatable
      */
     public function likeReview(Review $review): void
     {
-        $this->likes()
-            ->where('likeable_id', $review->id)
-            ->where('likeable_type', Review::class)
-            ->updateOrCreate(
-                ['user_id', $this->id],
-                ['is_dislike' => false]
-            );
+        Like::query()->updateOrCreate(
+            ['user_id' => $this->id],
+            [
+                'is_dislike' => false,
+                'likeable_id' => $review->id,
+                'likeable_type' => Review::class,
+            ]
+        );
         $review->updateLikeCounters();
     }
 
@@ -99,16 +98,16 @@ class User extends Authenticatable
      */
     public function dislikeReview(Review $review): void
     {
-        $this->likes()
-            ->where('likeable_id', $review->id)
-            ->where('likeable_type', Review::class)
-            ->updateOrCreate(
-                ['user_id', $this->id],
-                ['is_dislike' => true]
-            );
+        Like::query()->updateOrCreate(
+            ['user_id' => $this->id],
+            [
+                'is_dislike' => true,
+                'likeable_id' => $review->id,
+                'likeable_type' => Review::class,
+            ]
+        );
         $review->updateLikeCounters();
     }
-
 
     /**
      * Assign a tag to a book for the current user.
@@ -216,12 +215,19 @@ class User extends Authenticatable
     }
 
     /**
-
+     * Get the full name of the user.
+     * @return string
+     */
     public function getFullNameAttribute(): string
     {
         return $this->first_name . ' ' . $this->last_name;
     }
 
+    /**
+     * Follow a user.
+     * @param \App\Models\User $user
+     * @return void
+     */
     public function follow(User $user): void
     {
         $this->following()->attach($user);
@@ -269,6 +275,10 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
+    /**
+     * Get the reviews that belong to the user.
+     * @return HasMany<Review, User>
+     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
