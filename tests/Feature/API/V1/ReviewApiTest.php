@@ -163,4 +163,15 @@ class ReviewApiTest extends TestCase
 
         $response->assertStatus(JsonResponse::HTTP_OK);
     }
+
+    public function test_dislike_a_review(): void
+    {
+        $review = Review::factory()->create();
+
+        $response = $this->postJson(
+            route('reviews.dislike', $review->id)
+        );
+
+        $response->assertStatus(JsonResponse::HTTP_OK);
+    }
 }
