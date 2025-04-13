@@ -49,10 +49,12 @@ class BookFactory extends Factory
             Review::factory()
                 ->count(rand(1, 10))
                 ->create(['book_id' => $book->id]);
+            $users = User::factory()
+                ->count(rand(1, 5))
+                ->create();
             $book->users()
                 ->attach(
-                    User::inRandomOrder()->take(rand(1, 10))
-                    ->pluck('id')
+                    $users->pluck('id')
                 );
             foreach ($book->users as $user) {
                 $user->pivot->tag_id = Tag::inRandomOrder()->take(1)->first()->id;

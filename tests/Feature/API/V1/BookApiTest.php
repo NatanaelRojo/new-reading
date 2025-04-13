@@ -159,6 +159,7 @@ class BookApiTest extends TestCase
     public function test_update_a_tag_for_a_book(): void
     {
         $book = Book::factory()->create();
+        $book->users()->attach($this->user);
         $tag = Tag::factory()->create();
 
         $response = $this->putJson(route('books.tags.update', $book->slug), ['tag_id' => $tag->id]);
