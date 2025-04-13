@@ -25,6 +25,8 @@ class IndexTable
             TextColumn::make('rating'),
             TextColumn::make('comment')
                 ->limit(30),
+            TextColumn::make('like_count'),
+            TextColumn::make('dislike_count'),
         ];
     }
 
