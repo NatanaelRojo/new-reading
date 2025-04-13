@@ -14,7 +14,7 @@ class Review extends Model
 {
     use HasFactory;
 
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'book_id',
         'comment',
@@ -51,7 +51,7 @@ class Review extends Model
      * Update the like counters.
      * @return void
      */
-    protected function updateLikeCounters(): void
+    public function updateLikeCounters(): void
     {
         $this->like_count = $this->likes()->where('is_dislike', false)->count();
         $this->dislike_count = $this->likes()->where('is_dislike', true)->count();
