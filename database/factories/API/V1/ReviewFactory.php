@@ -3,6 +3,8 @@
 namespace Database\Factories\API\V1;
 
 use App\Models\API\V1\Book;
+use App\Models\API\V1\Like;
+use App\Models\API\V1\Review;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -24,5 +26,19 @@ class ReviewFactory extends Factory
             'comment' => fake()->text(),
             'rating' => fake()->numberBetween(1, 5),
         ];
+    }
+
+    /**
+     * Configure the model factory to create a review for a book.
+     *
+     * @return ReviewFactory
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Review $review) {
+            Like::factory()
+                ->forLikeable($review)
+                ->create();
+        });
     }
 }
