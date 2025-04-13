@@ -23,8 +23,8 @@ class PostApiTest extends TestCase
     {
         parent::setUp();
 
-        Book::factory()->count(5)->create();
         Tag::factory()->count(5)->create();
+        Book::factory()->count(5)->create();
         User::factory()->count(5)->create();
 
         // ✅ Create a test user and authenticate with Sanctum
