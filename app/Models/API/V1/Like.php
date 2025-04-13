@@ -11,17 +11,19 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Like extends Model
 {
     use HasFactory;
-    
-    protected array $fillable = [
+
+    protected $fillable = [
         'user_id',
         'is_dislike',
+        'likeable_id',
+        'likeable_type',
     ];
 
     /**
      * Get the likable model that owns the like.
      * @return MorphTo<Model, Like>
      */
-    public function likable(): MorphTo
+    public function likeable(): MorphTo
     {
         return $this->morphTo();
     }

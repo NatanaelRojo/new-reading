@@ -64,6 +64,12 @@ class ReviewController
             ->json(new ReviewResource($newReview), JsonResponse::HTTP_CREATED);
     }
 
+    /**
+     * Store a newly created resource in storage.
+     * @param \App\Http\Requests\API\V1\Review\StoreReviewRequest $request
+     * @param \App\Models\API\V1\Book $book
+     * @return JsonResponse|mixed
+     */
     public function storeByBook(StoreReviewRequest $request, Book  $book): JsonResponse
     {
         if (!$book->isCompletedByUser($request->user())) {
