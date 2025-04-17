@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1\Controllers;
 
 use App\Http\Requests\API\V1\Author\StoreAuthorRequest;
 use App\Http\Requests\API\V1\Author\UpdateAuthorRequest;
+use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Resources\API\V1\Author\AuthorResource;
 use App\Models\API\V1\Author;
 use Illuminate\Http\JsonResponse;
@@ -15,10 +16,12 @@ class AuthorController
     /**
      * Display a listing of the resource.
      */
-    public function index(): AnonymousResourceCollection
+    public function index(PaginateRequest $request): AnonymousResourceCollection
     {
+        $per_page = $request->query('per_page', 10);
+
         $authors = Author::with('books')
-        ->paginate(10);
+        ->paginate($per_page);
 
         return AuthorResource::collection($authors);
     }
