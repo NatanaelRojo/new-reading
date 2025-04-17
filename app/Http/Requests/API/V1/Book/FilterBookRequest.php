@@ -17,11 +17,13 @@ class FilterBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['nullable', 'string'],
-            'author_name' => ['nullable', 'string'],
-            'genre_name' => ['nullable', 'string'],
-            'tag_name' => ['nullable', 'string'],
-            'year' => ['nullable', 'digits:4', 'integer', 'min:1000', 'max:' . now()->year],
+            'title' => ['sometimes', 'nullable', 'string'],
+            'author_name' => ['sometimes', 'nullable', 'string'],
+            'genre_name' => ['sometimes', 'nullable', 'string'],
+            'tag_name' => ['sometimes', 'nullable', 'string'],
+            'year' => ['sometimes', 'nullable', 'digits:4', 'integer', 'min:1000', 'max:' . now()->year],
+            'per_page' => ['sometimes', 'integer', 'min:1', 'max:50'],
+            'page' => ['sometimes', 'integer', 'min:1'],
         ];
     }
 
