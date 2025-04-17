@@ -2,11 +2,9 @@
 
 namespace Tests\Feature\API\V1;
 
-use App\Http\Resources\API\V1\Author\AuthorResource;
 use App\Models\API\V1\Author;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -15,86 +13,92 @@ class AuthorApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    private User $user;
+
+    /**
+     * Set up a fresh user and authenticate with Sanctum before each test.
+     */
     protected function setUp(): void
     {
         parent::setUp();
 
-        // ✅ Create a test user and authenticate with Sanctum
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        $this->user = User::factory()->create();
+        Sanctum::actingAs($this->user);
     }
 
     /**
-     * A basic feature test example.
+     * Test that a new author can be created via POST /authors.
+     *
+     * @return void
      */
     public function test_create_an_author(): void
     {
         $newAuthor = Author::factory()->make();
 
-        $response = $this->postJson('/api/v1/authors', $newAuthor->toArray());
-
-        $response->assertStatus(JsonResponse::HTTP_CREATED);
+        $this->postJson(route('authors.store'), $newAuthor->toArray())
+            ->assertStatus(JsonResponse::HTTP_CREATED);
     }
 
     /**
-     * A basic feature test example.
+     * Test that an existing author can be updated via PUT /authors/{slug}.
+     *
+     * @return void
      */
     public function test_update_an_author(): void
     {
-        $newAuthor = Author::factory()->make();
+        $newAuthor = Author::factory()->create();
         $otherAuthor = Author::factory()->make();
 
-        $newAuthor = $this->postJson('/api/v1/authors', $newAuthor->toArray());
-
-        $response = $this->putJson('/api/v1/authors/' . $newAuthor['slug'], $otherAuthor->toArray());
-
-        $response->assertStatus(JsonResponse::HTTP_OK)
+        $this->putJson(route('authors.update', $newAuthor->slug), $otherAuthor->toArray())
+            ->assertStatus(JsonResponse::HTTP_OK)
             ->assertJson($otherAuthor->toArray());
     }
 
+    /**
+     * Test that an existing author can be deleted via DELETE /authors/{slug}.
+     *
+     * @return void
+     */
     public function test_delete_an_author(): void
     {
-        $newAuthor = Author::factory()->make();
+        $newAuthor = Author::factory()->create();
 
-        $newAuthor = $this->postJson('/api/v1/authors', $newAuthor->toArray());
-
-        $response = $this->deleteJson('/api/v1/authors/' . $newAuthor['slug']);
-
-        $response->assertStatus(JsonResponse::HTTP_NO_CONTENT);
+        $this->deleteJson(route('authors.destroy', $newAuthor->slug))
+            ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
     }
 
+    /**
+     * Test that a single author can be retrieved via GET /authors/{slug}.
+     *
+     * @return void
+     */
     public function test_get_an_author(): void
     {
-        $newAuthor = Author::factory()->make();
+        $newAuthor = Author::factory()->create();
 
-        $newAuthor = $this->postJson('/api/v1/authors', $newAuthor->toArray());
-
-        $response = $this->getJson('/api/v1/authors/' . $newAuthor['slug']);
-
-        $response->assertStatus(JsonResponse::HTTP_OK)
+        $this->getJson(route('authors.show', $newAuthor->slug))
+            ->assertStatus(JsonResponse::HTTP_OK)
             ->assertJson([
-                'first_name' => $newAuthor['first_name'],
-                'last_name' => $newAuthor['last_name'],
-                'nationality' => $newAuthor['nationality'],
-                'biography' => $newAuthor['biography'],
-                'image_url' => $newAuthor['image_url'],
-                'slug' => $newAuthor['slug'],
+                'first_name' => $newAuthor->first_name,
+                'last_name' => $newAuthor->last_name,
+                'nationality' => $newAuthor->nationality,
+                'biography' => $newAuthor->biography,
+                'image_url' => $newAuthor->image_url,
+                'slug' => $newAuthor->slug,
             ]);
     }
 
+    /**
+     * Test that a paginated list of authors is returned via GET /authors.
+     *
+     * @return void
+     */
     public function test_get_authors(): void
     {
-        $authors = Author::factory()
-            ->count(5)
-            ->make();
+        Author::factory()->count(5)->create();
 
-        foreach ($authors as $author) {
-            $this->postJson('/api/v1/authors', $author->toArray());
-        }
-
-        $response = $this->getJson('/api/v1/authors');
-
-        $response->assertStatus(JsonResponse::HTTP_OK)
-            ->assertJsonCount(5);
+        $this->getJson(route('authors.index'))
+            ->assertStatus(JsonResponse::HTTP_OK)
+            ->assertJsonCount(5, 'data');
     }
 }
