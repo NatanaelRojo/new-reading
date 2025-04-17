@@ -8,18 +8,19 @@ use App\Http\Resources\API\V1\Author\AuthorResource;
 use App\Models\API\V1\Author;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class AuthorController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
         $authors = Author::with('books')
-        ->get();
+        ->paginate(10);
 
-        return response()->json(AuthorResource::collection($authors), JsonResponse::HTTP_OK);
+        return AuthorResource::collection($authors);
     }
 
     /**
