@@ -25,9 +25,8 @@ class BookController
             ->with([
                 'authors',
                 'genres',
-            ])
-            ->filter($request->validated())
-            ->paginate();
+            ])->filter($request->validated())
+            ->paginate($request->query('per_page', 10));
 
         return BookResource::collection($books);
     }
