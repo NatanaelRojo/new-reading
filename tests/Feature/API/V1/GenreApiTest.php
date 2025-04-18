@@ -14,6 +14,9 @@ class GenreApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * The setUp function creates a test user and authenticates with Sanctum for testing purposes.
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,74 +26,68 @@ class GenreApiTest extends TestCase
         Sanctum::actingAs($user);
     }
 
+
     /**
-     * A basic feature test example.
+     * The function tests the creation of a genre by making a new genre instance, sending a POST
+     * request to the specified API endpoint, and asserting that the response status is HTTP_CREATED.
      */
     public function test_create_a_genre(): void
     {
         $newGenre = Genre::factory()->make();
-        $response = $this->postJson('/api/v1/genres', $newGenre->toArray());
 
-        $response
-            ->assertStatus(JsonResponse::HTTP_CREATED);
+        $this->postJson(route('genres.store'), $newGenre->toArray())
+        ->assertStatus(JsonResponse::HTTP_CREATED);
     }
 
     public function test_update_a_genre(): void
     {
-        $newGenre = Genre::factory()->make();
+        $newGenre = Genre::factory()->create();
         $otherGenre = Genre::factory()->make();
 
-        $newGenre = $this->postJson('/api/v1/genres', $newGenre->toArray());
-
-        $response = $this->putJson('/api/v1/genres/' . $newGenre['slug'], $otherGenre->toArray());
-
-        $response
-            ->assertStatus(JsonResponse::HTTP_OK)
-            ->assertJson($otherGenre->toArray());
+        $this->putJson(route('genres.update', $newGenre->slug), $otherGenre->toArray())
+        ->assertStatus(JsonResponse::HTTP_OK)
+        ->assertJson($otherGenre->toArray());
     }
 
+    /**
+     * This function tests the deletion of a genre through API calls in a PHP environment.
+     */
     public function test_delete_a_genre(): void
     {
-        $newGenre = Genre::factory()->make();
+        $newGenre = Genre::factory()->create();
 
-        $newGenre = $this->postJson('/api/v1/genres', $newGenre->toArray());
-
-        $response = $this->deleteJson('/api/v1/genres/' . $newGenre['slug']);
-
-        $response
-            ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
+        $this->deleteJson(route('genres.destroy', $newGenre->slug))
+        ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
     }
 
+    /**
+     * The function `test_get_a_genre` tests the retrieval of a genre by sending a POST request to
+     * create a new genre and then sending a GET request to retrieve the same genre.
+     */
     public function test_get_a_genre(): void
     {
-        $newGenre = Genre::factory()->make();
+        $newGenre = Genre::factory()->create();
 
-        $newGenre = $this->postJson('/api/v1/genres', $newGenre->toArray());
-
-        $response = $this->getJson('/api/v1/genres/' . $newGenre['slug']);
-
-        $response
-            ->assertStatus(JsonResponse::HTTP_OK)
-            ->assertJson([
-                'name' => $newGenre['name'],
-                'slug' => $newGenre['slug'],
-            ]);
+        $this->getJson(route('genres.show', $newGenre->slug))
+        ->assertStatus(JsonResponse::HTTP_OK)
+        ->assertJson([
+            'name' => $newGenre['name'],
+            'slug' => $newGenre['slug'],
+        ]);
     }
 
+    /**
+     * The function `test_get_genres` tests the retrieval of genres from an API endpoint in a PHP test
+     * case.
+     */
     public function test_get_genres(): void
     {
-        $genres = Genre::factory()
+        Genre::factory()
             ->count(5)
-            ->make();
+            ->create();
 
-        foreach ($genres as $genre) {
-            $this->postJson('/api/v1/genres', $genre->toArray());
-        }
-
-        $response = $this->getJson('/api/v1/genres');
-
-        $response
-            ->assertStatus(JsonResponse::HTTP_OK)
-            ->assertJsonCount(Genre::count());
+        $this->getJson(route('genres.index'))
+        ->assertStatus(JsonResponse::HTTP_OK)
+        ->assertJsonCount(5, 'data');
     }
 }
