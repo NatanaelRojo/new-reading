@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Requests\API\V1\Comment\StoreCommentRequest;
 use App\Http\Requests\API\V1\Comment\UpdateCommentRequest;
+use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Resources\API\V1\Comment\CommentResource;
 use App\Models\API\V1\Comment;
 use App\Models\API\V1\Post;
@@ -11,18 +12,19 @@ use App\Models\API\V1\Review;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CommentController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(PaginateRequest $request): AnonymousResourceCollection
     {
-        $comments = Comment::all();
+        $comments = Comment::query()
+            ->paginate($request->query('per_page', 10));
 
-        return response()
-            ->json(CommentResource::collection($comments), JsonResponse::HTTP_OK);
+        return CommentResource::collection($comments);
     }
 
     /**
@@ -86,12 +88,12 @@ class CommentController
      * @param \App\Models\API\V1\Post $post
      * @return JsonResponse|mixed
      */
-    public function indexByPost(Post $post): JsonResponse
+    public function indexByPost(PaginateRequest $request, Post $post): AnonymousResourceCollection
     {
-        $comments = $post->comments;
+        $comments = $post->comments()
+            ->paginate($request->query('per_page', 10));
 
-        return response()
-            ->json(CommentResource::collection($comments), JsonResponse::HTTP_OK);
+        return CommentResource::collection($comments);
     }
 
     /**
@@ -99,12 +101,12 @@ class CommentController
      * @param \App\Models\API\V1\Review $review
      * @return JsonResponse|mixed
      */
-    public function indexByReview(Review $review): JsonResponse
+    public function indexByReview(PaginateRequest $request, Review $review): AnonymousResourceCollection
     {
-        $comments = $review->comments;
+        $comments = $review->comments()
+            ->paginate($request->query('per_page', 10));
 
-        return response()
-            ->json(CommentResource::collection($comments), JsonResponse::HTTP_OK);
+        return CommentResource::collection($comments);
     }
 
     /**
