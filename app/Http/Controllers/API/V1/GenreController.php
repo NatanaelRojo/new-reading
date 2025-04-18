@@ -4,22 +4,24 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Requests\API\V1\Genre\StoreGenreRequest;
 use App\Http\Requests\API\V1\Genre\UpdateGenreRequest;
+use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Resources\API\V1\Genre\GenreResource;
 use App\Models\API\V1\Genre;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class GenreController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(PaginateRequest $request): AnonymousResourceCollection
     {
         $genres = Genre::with(['books'])
-            ->get();
+            ->paginate($request->query('per_page', 10));
 
-        return response()->json(GenreResource::collection($genres), JsonResponse::HTTP_OK);
+        return GenreResource::collection($genres);
     }
 
     /**
