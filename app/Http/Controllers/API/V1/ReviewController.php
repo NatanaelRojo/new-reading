@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Requests\API\V1\Review\StoreReviewRequest;
 use App\Http\Requests\API\V1\Review\UpdateReviewRequest;
 use App\Http\Resources\API\V1\Review\ReviewResource;
@@ -11,32 +12,19 @@ use App\Models\API\V1\Tag;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ReviewController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(PaginateRequest $request): AnonymousResourceCollection
     {
         $reviews = Review::with(['book', 'user'])
-            ->get();
+            ->paginate($request->query('per_page', 10));
 
-        return response()
-            ->json(ReviewResource::collection($reviews), JsonResponse::HTTP_OK);
-    }
-
-    /**
-     * Display a listing of the resource.
-     * @param \App\Models\API\V1\Book $book
-     * @return JsonResponse|mixed
-     */
-    public function indexByBook(Book $book): JsonResponse
-    {
-        $bookReviews = $book->reviews;
-
-        return response()
-            ->json(ReviewResource::collection($bookReviews), JsonResponse::HTTP_OK);
+        return ReviewResource::collection($reviews);
     }
 
     /**
@@ -44,13 +32,27 @@ class ReviewController
      * @param \App\Models\User $user
      * @return JsonResponse|mixed
      */
-    public function indexByUser(User $user): JsonResponse
+    public function indexByUser(PaginateRequest $request, User $user): AnonymousResourceCollection
     {
-        $userReviews = $user->reviews;
+        $userReviews = $user->reviews()
+            ->paginate($request->query('per_page', 10));
 
-        return response()
-            ->json(ReviewResource::collection($userReviews), JsonResponse::HTTP_OK);
+        return ReviewResource::collection($userReviews);
     }
+
+    /**
+     * Display a listing of the resource.
+     * @param \App\Models\API\V1\Book $book
+     * @return JsonResponse|mixed
+     */
+    public function indexByBook(PaginateRequest $request, Book $book): AnonymousResourceCollection
+    {
+        $bookReviews = $book->reviews()
+            ->paginate($request->query('per_page', 10));
+
+        return ReviewResource::collection($bookReviews);
+    }
+
 
     /**
      * Store a newly created resource in storage.
