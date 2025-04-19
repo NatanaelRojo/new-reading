@@ -2,24 +2,26 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Requests\API\V1\User\StoreUserRequest;
 use App\Http\Requests\API\V1\User\UpdateUserRequest;
 use App\Http\Resources\API\V1\User\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(PaginateRequest $request): AnonymousResourceCollection
     {
         $users = User::with(['following', 'followers'])
-            ->get();
+            ->paginate($request->query('per_page', 10));
 
-        return response()->json(UserResource::collection($users), JsonResponse::HTTP_OK);
+        return UserResource::collection($users);
     }
 
     /**
@@ -100,5 +102,4 @@ class UserController
             'message' => "You have unfollowed {$user->name}."
         ], JsonResponse::HTTP_OK);
     }
-
 }
