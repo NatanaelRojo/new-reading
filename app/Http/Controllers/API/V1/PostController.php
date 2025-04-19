@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Requests\API\V1\Post\StorePostRequest;
 use App\Http\Requests\API\V1\Post\UpdatePostRequest;
 use App\Http\Resources\API\V1\Post\PostResource;
@@ -10,48 +11,58 @@ use App\Models\API\V1\Post;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class PostController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(PaginateRequest $request): AnonymousResourceCollection
     {
-        $posts = Post::all();
+        $posts = Post::query()
+            ->paginate($request->query('per_page', 10));
 
-        return response()
-            ->json(
-                PostResource::collection($posts),
-                JsonResponse::HTTP_OK
-            );
-    }
-
-    public function indexByBook(Book $book): JsonResponse
-    {
-        $bookPosts = $book->posts;
-
-        return response()
-            ->json(
-                PostResource::collection($bookPosts),
-                JsonResponse::HTTP_OK
-            );
+        return PostResource::collection($posts);
     }
 
     /**
-     * Display a listing of the resource.
-     * @param \App\Models\User $user
-     * @return JsonResponse|mixed
+     * This PHP function returns a JSON response containing a collection of posts related to a specific
+     * book.
+     *
+     * @param Book book The `indexByBook` function takes a `Book` object as a parameter. It retrieves
+     * the posts associated with the provided book and returns a JSON response containing a collection
+     * of `PostResource` objects representing those posts. The HTTP status code of the response is set
+     * to 200 (OK).
+     * @return AnonymousResourceCollection A JSON response containing a collection of Post resources related to the
+     * provided Book object is being returned with an HTTP status code of 200 (OK).
      */
-    public function indexByUser(User $user): JsonResponse
+    public function indexByBook(PaginateRequest $request, Book $book): AnonymousResourceCollection
     {
-        $userPosts = $user->posts;
+        $bookPosts = $book->posts()
+            ->paginate($request->query('per_page', 10));
 
-        return response()
-            ->json(
-                PostResource::collection($userPosts),
-                JsonResponse::HTTP_OK
-            );
+        return PostResource::collection($bookPosts);
+    }
+
+    /**
+     * This PHP function retrieves and paginates posts belonging to a specific user and returns them as
+     * a collection of Post resources.
+     *
+     * @param PaginateRequest request The `` parameter is an instance of `PaginateRequest`,
+     * which is used to handle pagination requests. It allows you to retrieve the pagination parameters
+     * such as the page number and the number of items per page.
+     * @param User user The `user` parameter in the `indexByUser` function is an instance of the `User`
+     * model. It is used to retrieve posts associated with a specific user.
+     * @return AnonymousResourceCollection An AnonymousResourceCollection of PostResource objects
+     * representing the paginated posts belonging to the specified user.
+     */
+    public function indexByUser(PaginateRequest $request, User $user): AnonymousResourceCollection
+    {
+        $userPosts = $user->posts()
+            ->paginate($request->query('per_page', 10));
+
+        return PostResource::collection($userPosts);
     }
 
     /**
