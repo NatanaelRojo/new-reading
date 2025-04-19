@@ -14,6 +14,9 @@ class TagApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * The setUp function creates a test user and authenticates with Sanctum for testing purposes.
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,73 +27,74 @@ class TagApiTest extends TestCase
     }
 
     /**
-     * A basic feature test example.
+     * The function `test_create_a_tag` tests the creation of a new tag by sending a POST request to
+     * the specified API endpoint.
      */
     public function test_create_a_tag(): void
     {
         $newTag = Tag::factory()->make();
-        $response = $this->postJson('/api/v1/tags', $newTag->toArray());
 
-        $response
+        $this->postJson(route('tags.store'), $newTag->toArray())
             ->assertStatus(JsonResponse::HTTP_CREATED);
     }
 
+    /**
+     * The function `test_update_a_tag` tests updating a tag by sending a PUT request to the specified
+     * API endpoint.
+     */
     public function test_update_a_tag(): void
     {
-        $newTag = Tag::factory()->make();
+        $newTag = Tag::factory()->create();
         $otherTag = Tag::factory()->make();
 
-        $newTag = $this->postJson('/api/v1/tags', $newTag->toArray());
-
-        $response = $this->putJson('/api/v1/tags/' . $newTag['slug'], $otherTag->toArray());
-
-        $response
-            ->assertStatus(JsonResponse::HTTP_OK)
-            ->assertJson($otherTag->toArray());
+        $this->putJson(route('tags.update', $newTag->slug), $otherTag->toArray())
+        ->assertStatus(JsonResponse::HTTP_OK)
+        ->assertJson($otherTag->toArray());
     }
 
+    /**
+     * The function `test_delete_a_tag` tests the deletion of a tag through API calls in a PHP
+     * environment.
+     */
     public function test_delete_a_tag(): void
     {
-        $newTag = Tag::factory()->make();
+        $newTag = Tag::factory()->create();
 
-        $newTag = $this->postJson('/api/v1/tags', $newTag->toArray());
+        $this->deleteJson(route('tags.destroy', $newTag->slug))
+        ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
 
-        $response = $this->deleteJson('/api/v1/tags/' . $newTag['slug']);
-
-        $response
-            ->assertStatus(JsonResponse::HTTP_NO_CONTENT);
+        $this->assertDatabaseMissing('tags', $newTag->toArray());
     }
 
+    /**
+     * The function `test_get_a_tag` tests the retrieval of a specific tag using API endpoints in a PHP
+     * test case.
+     */
     public function test_get_a_tag(): void
     {
-        $newTag = Tag::factory()->make();
+        $newTag = Tag::factory()->create();
 
-        $newTag = $this->postJson('/api/v1/tags', $newTag->toArray());
-
-        $response = $this->getJson('/api/v1/tags/' . $newTag['slug']);
-
-        $response
+        $this->getJson(route('tags.show', $newTag->slug))
             ->assertStatus(JsonResponse::HTTP_OK)
             ->assertJson([
                 'name' => $newTag['name'],
                 'slug' => $newTag['slug'],
-            ]);
+        ]);
     }
 
+    /**
+     * The function `test_get_tags` tests the retrieval of a list of tags through API calls in a PHP
+     * environment.
+     * @return void
+     */
     public function test_get_tags(): void
     {
-        $tags = Tag::factory()
+        Tag::factory()
             ->count(5)
-            ->make();
+            ->create();
 
-        foreach ($tags as $tag) {
-            $this->postJson('/api/v1/tags', $tag->toArray());
-        }
-
-        $response = $this->getJson('/api/v1/tags');
-
-        $response
+        $this->getJson(route('tags.index'))
             ->assertStatus(JsonResponse::HTTP_OK)
-            ->assertJsonCount(Tag::count());
+            ->assertJsonCount(5, 'data');
     }
 }
