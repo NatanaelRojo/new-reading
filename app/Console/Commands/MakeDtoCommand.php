@@ -30,7 +30,6 @@ class MakeDtoCommand extends Command
         $dtoInput = str($this->argument('dtoName'))->replace('\\', '/');
         $requestOption = $this->option('request');
 
-        // Format paths and class names
         $pathParts = explode('/', $dtoInput);
         $rawClassName = array_pop($pathParts);
         $className = str($rawClassName)->studly()->replace(['Dto', 'DTO'], '') . 'DTO';
@@ -88,6 +87,9 @@ class MakeDtoCommand extends Command
         $propsString = collect($props)->map(
             fn (string $type, string $name): string => "        public readonly {$type} \${$name},"
         )->implode("\n");
+        $attributesArrayString = collect($props)->map(
+            fn (string $type, string $name): string => "            '{$name}' => \$this->{$name},"
+        )->implode("\n");
 
         return <<<PHP
 <?php
@@ -106,6 +108,17 @@ class {$className} extends DataTransferObject
     public function __construct(
 {$propsString}
     ) {}
+
+    /**
+     * Convert the DTO into an array.
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+{$attributesArrayString}
+        ];
+    }
 }
 PHP;
     }
@@ -146,7 +159,7 @@ PHP;
             };
         }
 
-        return 'string'; // fallback
+        return 'string';
     }
 
 }
