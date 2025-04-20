@@ -39,10 +39,8 @@ class MakeDtoCommand extends Command
         $filePath = "{$fullPath}/{$className}.php";
         $namespace = 'App\\DataTransferObjects' . ($relativePath ? '\\' . str_replace('/', '\\', $relativePath) : '');
 
-        // Ensure directory
         File::ensureDirectoryExists($fullPath);
 
-        // If file exists, skip
         if (File::exists($filePath)) {
             $this->error("DTO {$className} already exists.");
             return self::FAILURE;
@@ -52,7 +50,6 @@ class MakeDtoCommand extends Command
 
         if ($requestOption) {
             $fullRequestClass = 'App\\Http\\Requests\\' . str($requestOption)->replace('/', '\\');
-            // dd($fullRequestClass);
 
             if (!class_exists($fullRequestClass)) {
                 $this->error("❌ Request class {$fullRequestClass} not found.");
@@ -66,7 +63,10 @@ class MakeDtoCommand extends Command
             $props = $this->mapRulesToProps($rules);
         }
 
-        File::put($filePath, $this->buildDtoTemplate($namespace, $className, $props));
+        File::put(
+            $filePath,
+            $this->buildDtoTemplate($namespace, $className, $fullRequestClass, $props)
+        );
         $this->info("✅ DTO {$className} created at app/DataTransferObjects/{$relativePath}/");
         return self::SUCCESS;
     }
@@ -78,8 +78,12 @@ class MakeDtoCommand extends Command
      * @param array $props
      * @return string
      */
-    protected function buildDtoTemplate(string $namespace, string $className, array $props = []): string
-    {
+    protected function buildDtoTemplate(
+        string $namespace,
+        string $className,
+        string $requestClassName,
+        array $props = []
+    ): string {
         $baseName = str($className)->replaceLast('DTO', '');
         $propsString = collect($props)->map(
             fn (string $type, string $name): string => "        public readonly {$type} \${$name},"
@@ -95,7 +99,7 @@ use Spatie\DataTransferObject\DataTransferObject;
 /**
  * Data Transfer Object for {$baseName}
  *
- * Auto-generated from FormRequest.
+ * Auto-generated from {$requestClassName}.
  */
 class {$className} extends DataTransferObject
 {
