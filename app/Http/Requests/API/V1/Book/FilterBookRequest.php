@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests\API\V1\Book;
 
+use App\Http\Requests\Base\BaseApiRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
-class FilterBookRequest extends FormRequest
+class FilterBookRequest extends BaseApiRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -25,14 +26,5 @@ class FilterBookRequest extends FormRequest
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:50'],
             'page' => ['sometimes', 'integer', 'min:1'],
         ];
-    }
-
-    public function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'message' => 'Validation errors',
-            'data' => $validator->errors()
-        ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

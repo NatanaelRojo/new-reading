@@ -2,13 +2,14 @@
 
 namespace App\Http\Requests\API\V1\Book;
 
+use App\Http\Requests\Base\BaseApiRequest;
 use App\Models\API\V1\Tag;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
-class UpdateBookTagRequest extends FormRequest
+class UpdateBookTagRequest extends BaseApiRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -20,14 +21,5 @@ class UpdateBookTagRequest extends FormRequest
         return [
             'tag_id' => ['required', 'integer', 'exists:' . Tag::class . ',id'],
         ];
-    }
-
-    public function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'message' => 'Validation errors',
-            'data' => $validator->errors()
-        ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

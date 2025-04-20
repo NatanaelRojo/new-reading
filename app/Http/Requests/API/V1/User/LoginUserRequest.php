@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests\API\V1\User;
 
+use App\Http\Requests\Base\BaseApiRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
-class LoginUserRequest extends FormRequest
+class LoginUserRequest extends BaseApiRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -20,13 +21,5 @@ class LoginUserRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
         ];
-    }
-
-    public function failedValidation(Validator $validator): void
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'message' => $validator->errors(),
-        ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

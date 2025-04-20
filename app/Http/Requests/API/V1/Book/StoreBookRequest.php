@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests\API\V1\Book;
 
+use App\Http\Requests\Base\BaseApiRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
-class StoreBookRequest extends FormRequest
+class StoreBookRequest extends BaseApiRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -24,14 +25,5 @@ class StoreBookRequest extends FormRequest
             'chapters_amount' => ['required', 'integer', 'min:1'],
             'published_at' => ['required', 'date'],
         ];
-    }
-
-    public function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'message' => 'Validation errors',
-            'data' => $validator->errors()
-        ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

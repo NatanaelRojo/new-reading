@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests\API\V1\Comment;
 
+use App\Http\Requests\Base\BaseApiRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
-class UpdateCommentRequest extends FormRequest
+class UpdateCommentRequest extends BaseApiRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -19,14 +20,5 @@ class UpdateCommentRequest extends FormRequest
         return [
             'body' => ['string', 'min:5', 'max:100'],
         ];
-    }
-
-    public function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'message' => 'Validation errors',
-            'data' => $validator->errors(),
-        ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

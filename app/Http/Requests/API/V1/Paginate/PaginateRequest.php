@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests\API\V1\Paginate;
 
+use App\Http\Requests\Base\BaseApiRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
-class PaginateRequest extends FormRequest
+class PaginateRequest extends BaseApiRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -20,13 +21,5 @@ class PaginateRequest extends FormRequest
             'page' => ['sometimes', 'integer', 'min:1'],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ];
-    }
-
-    public function failedValidation(Validator $validator): void
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'message' => $validator->errors(),
-        ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\API\V1\Review;
 
+use App\Http\Requests\Base\BaseApiRequest;
 use App\Models\API\V1\Book;
 use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
@@ -10,7 +11,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 
-class StoreReviewRequest extends FormRequest
+class StoreReviewRequest extends BaseApiRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -29,6 +30,13 @@ class StoreReviewRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get the validated data from the request.
+     *
+     * @param mixed $key
+     * @param mixed $default
+     * @return array
+     */
     public function validated($key = null, $default = null)
     {
         $validatedData = parent::validated();
@@ -39,13 +47,5 @@ class StoreReviewRequest extends FormRequest
         }
 
         return $validatedData;
-    }
-
-    public function failedValidation(Validator $validator): void
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'message' => $validator->errors(),
-        ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

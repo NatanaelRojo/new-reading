@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests\API\V1\Author;
 
+use App\Http\Requests\Base\BaseApiRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\JsonResponse;
 
-class StoreAuthorRequest extends FormRequest
+class StoreAuthorRequest extends BaseApiRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -23,14 +24,5 @@ class StoreAuthorRequest extends FormRequest
             'biography' => ['required', 'string'],
             'image_url' => ['required', 'url'],
         ];
-    }
-
-    public function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'message' => 'Validation errors',
-            'data' => $validator->errors()
-        ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
     }
 }
