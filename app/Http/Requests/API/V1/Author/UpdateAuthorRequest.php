@@ -18,11 +18,11 @@ class UpdateAuthorRequest extends BaseApiRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['string', 'max:255'],
-            'last_name' => ['string', 'max:255'],
-            'nationality' => ['string', 'max:255'],
-            'biography' => ['string'],
-            'image_url' => ['url'],
+            'first_name' => ['sometimes', 'string', 'max:255'],
+            'last_name' => ['sometimes', 'string', 'max:255'],
+            'nationality' => ['sometimes', 'string', 'max:255'],
+            'biography' => ['sometimes', 'string'],
+            'image_url' => ['sometimes', 'string', 'url'],
         ];
     }
 
