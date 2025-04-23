@@ -47,6 +47,8 @@ class MakeDtoCommand extends Command
 
         $props = [];
 
+        $fullRequestClass = '';
+
         if ($requestOption) {
             $fullRequestClass = 'App\\Http\\Requests\\' . str($requestOption)->replace('/', '\\');
 
@@ -85,11 +87,16 @@ class MakeDtoCommand extends Command
     ): string {
         $baseName = str($className)->replaceLast('DTO', '');
         $propsString = collect($props)->map(
-            fn (string $type, string $name): string => "        public readonly {$type} \${$name},"
+            function (string $type, string $name): string {
+                $variableType = "public readonly {$type} \${$name}";
+                $defaultValue = str_starts_with($type, '?') ? ' = null,' : ',';
+                return $variableType . $defaultValue;
+            }
         )->implode("\n");
         $attributesArrayString = collect($props)->map(
             fn (string $type, string $name): string => "            '{$name}' => \$this->{$name},"
         )->implode("\n");
+
 
         return <<<PHP
 <?php
@@ -131,10 +138,16 @@ PHP;
      */
     protected function mapRulesToProps(array $rules): array
     {
-        return collect($rules)->mapWithKeys(function (array|string $rule, string $key): array {
-            $types = is_array($rule) ? $rule : explode('|', $rule);
+        return collect($rules)->mapWithKeys(function (array|string $ruleSet, string $key): array {
+            $types = is_array($ruleSet) ? $ruleSet : explode('|', $ruleSet);
             $type = $this->inferTypeFromRules($types);
+            // $nullable = in_array('nullable', $types) || in_array('sometimes', $types);
 
+            // if ($nullable && !str_starts_with($type, '?')) {
+            //     $type = '?' . $type;
+            // }
+
+            // return [$key => [$type, $nullable]];
             return [$key => $type];
         })->toArray();
     }
@@ -147,19 +160,24 @@ PHP;
      */
     protected function inferTypeFromRules(array $rules): string
     {
+        $type = '';
+
         foreach ($rules as $rule) {
-            return match (true) {
-                $rule === 'integer' => 'int',
-                $rule === 'numeric' => 'float|int',
-                $rule === 'boolean' => 'bool',
-                $rule === 'array' => 'array',
-                $rule === 'date' => "{Carbon::class}|string",
-                $rule === 'nullable' => '?string',
-                default => 'string',
-            };
+            if ($rule === 'sometimes' || $rule === 'nullable') {
+                $type .= '?';
+            } elseif ($rule === 'integer') {
+                $type .= 'int';
+            } elseif ($rule === 'string') {
+                $type .= 'string';
+            } elseif ($rule === 'boolean') {
+                $type .= 'bool';
+            } elseif ($rule === 'array') {
+                $type .= 'array';
+            } elseif ($rule === 'object') {
+                $type .= 'object';
+            }
         }
 
-        return 'string';
+        return $type;
     }
-
 }
