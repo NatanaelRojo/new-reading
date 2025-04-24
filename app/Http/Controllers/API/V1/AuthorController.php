@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Author\StoreAuthorDTO;
+use App\DataTransferObjects\API\V1\Author\UpdateAuthorDTO;
 use App\Http\Requests\API\V1\Author\StoreAuthorRequest;
 use App\Http\Requests\API\V1\Author\UpdateAuthorRequest;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
@@ -31,8 +33,10 @@ class AuthorController
      */
     public function store(StoreAuthorRequest $request): JsonResponse
     {
+        $storeAuthorDto = new StoreAuthorDTO(...$request->validated());
+
         $newAuthor = Author::query()
-        ->create($request->validated());
+        ->create($storeAuthorDto->toArray());
 
         return response()
             ->json(
@@ -54,7 +58,10 @@ class AuthorController
      */
     public function update(UpdateAuthorRequest $request, Author $author): JsonResponse
     {
-        $author->update($request->validated());
+        $updateAuthorDto = new UpdateAuthorDTO(...$request->validated());
+        // dd($updateAuthorDto->toArray());
+
+        $author->update($updateAuthorDto->toArray());
 
         return response()
             ->json(
