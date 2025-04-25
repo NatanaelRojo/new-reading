@@ -97,7 +97,6 @@ class MakeDtoCommand extends Command
             fn (string $type, string $name): string => "            '{$name}' => \$this->{$name},"
         )->implode("\n");
 
-
         return <<<PHP
 <?php
 
@@ -115,17 +114,6 @@ class {$className} extends DataTransferObject
     public function __construct(
 {$propsString}
     ) {}
-
-    /**
-     * Convert the DTO into an array.
-     * @return array<string, mixed>
-     */
-    public function toArray(): array
-    {
-        return [
-{$attributesArrayString}
-        ];
-    }
 }
 PHP;
     }
@@ -141,13 +129,7 @@ PHP;
         return collect($rules)->mapWithKeys(function (array|string $ruleSet, string $key): array {
             $types = is_array($ruleSet) ? $ruleSet : explode('|', $ruleSet);
             $type = $this->inferTypeFromRules($types);
-            // $nullable = in_array('nullable', $types) || in_array('sometimes', $types);
 
-            // if ($nullable && !str_starts_with($type, '?')) {
-            //     $type = '?' . $type;
-            // }
-
-            // return [$key => [$type, $nullable]];
             return [$key => $type];
         })->toArray();
     }
