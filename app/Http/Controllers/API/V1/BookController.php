@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\DataTransferObjects\API\V1\Book\StoreBookDTO;
+use App\DataTransferObjects\API\V1\Book\UpdateBookDTO;
 use App\Http\Requests\API\V1\Book\FilterBookRequest;
 use App\Http\Requests\API\V1\Book\StoreBookRequest;
 use App\Http\Requests\API\V1\Book\UpdateBookReadingProgressRequest;
@@ -58,12 +59,9 @@ class BookController
      */
     public function update(UpdateBookRequest $request, Book $book): JsonResponse
     {
-        $validatedDataForBook = Arr::except($request->validated(), [
-            'tag_id',
-            'pages_read',
-        ]);
-        $book->update($validatedDataForBook);
-        $this->handleBookUserUpdates($request, $book);
+        $updateBookDto = new UpdateBookDTO(...$request->validated());
+
+        $book->update($updateBookDto->toArray());
 
         return response()->json(new BookResource($book), JsonResponse::HTTP_OK);
     }
