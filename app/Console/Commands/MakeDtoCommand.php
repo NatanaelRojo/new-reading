@@ -89,7 +89,9 @@ class MakeDtoCommand extends Command
         $propsString = collect($props)->map(
             function (string $type, string $name): string {
                 $variableType = "public readonly {$type} \${$name}";
-                $defaultValue = str_starts_with($type, '?') ? ' = null,' : ',';
+                $defaultValue = str_contains($type, '?') || str_contains($type, 'null') ?
+                    ' = null,' :
+                    ',';
                 return $variableType . $defaultValue;
             }
         )->implode("\n");
@@ -169,10 +171,13 @@ PHP;
             'date', 'datetime' => '\Carbon\Carbon|string',
             'email' => 'string',
             'url' => 'string',
-            default     => 'string', // Fallback
+            default     => 'string',
         };
 
-        return $nullable ? "?{$type}" : $type;
-    }
+        $unionTypesWithNull = str_contains($type, '|') ? "{$type}|null" : "?{$type}";
 
+        return $nullable
+    ? $unionTypesWithNull
+    : $type;
+    }
 }
