@@ -160,24 +160,37 @@ PHP;
      */
     protected function inferTypeFromRules(array $rules): string
     {
-        $type = '';
+        $nullable = in_array('nullable', $rules) || in_array('sometimes', $rules);
 
-        foreach ($rules as $rule) {
-            if ($rule === 'sometimes' || $rule === 'nullable') {
-                $type .= '?';
-            } elseif ($rule === 'integer') {
-                $type .= 'int';
-            } elseif ($rule === 'string') {
-                $type .= 'string';
-            } elseif ($rule === 'boolean') {
-                $type .= 'bool';
-            } elseif ($rule === 'array') {
-                $type .= 'array';
-            } elseif ($rule === 'object') {
-                $type .= 'object';
-            }
-        }
+        $baseType = collect($rules)->first(function (string $rule) {
+            return match ($rule) {
+                'integer'   => true,
+                'numeric'   => true,
+                'boolean'   => true,
+                'string'    => true,
+                'array'     => true,
+                'object'    => true,
+                'date', 'datetime' => true,
+                'email' => true,
+                'url' => true,
+                default     => false,
+            };
+        });
 
-        return $type;
+        $type = match ($baseType) {
+            'integer'   => 'int',
+            'numeric'   => 'float|int',
+            'boolean'   => 'bool',
+            'string'    => 'string',
+            'array'     => 'array',
+            'object'    => 'object',
+            'date', 'datetime' => '\Carbon\Carbon|string',
+            'email' => 'string',
+            'url' => 'string',
+            default     => 'string', // Fallback
+        };
+
+        return $nullable ? "?{$type}" : $type;
     }
+
 }
