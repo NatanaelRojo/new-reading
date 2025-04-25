@@ -59,7 +59,6 @@ class AuthorController
     public function update(UpdateAuthorRequest $request, Author $author): JsonResponse
     {
         $updateAuthorDto = new UpdateAuthorDTO(...$request->validated());
-        // dd($updateAuthorDto->toArray());
 
         $author->update($updateAuthorDto->toArray());
 

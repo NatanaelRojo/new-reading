@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Book\StoreBookDTO;
 use App\Http\Requests\API\V1\Book\FilterBookRequest;
 use App\Http\Requests\API\V1\Book\StoreBookRequest;
 use App\Http\Requests\API\V1\Book\UpdateBookReadingProgressRequest;
@@ -36,8 +37,10 @@ class BookController
      */
     public function store(StoreBookRequest $request): JsonResponse
     {
+        $storeBookDto = new StoreBookDTO(...$request->validated());
+
         $newBook = Book::query()
-        ->create($request->validated());
+            ->create($storeBookDto->toArray());
 
         return response()->json(new BookResource($newBook), JsonResponse::HTTP_CREATED);
     }
