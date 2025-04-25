@@ -16,14 +16,12 @@ class UpdateBookRequest extends BaseApiRequest
     public function rules(): array
     {
         return [
-            'title' => ['string', 'max:255'],
-            'synopsis' => ['string'],
-            'isbn' => ['string', 'max:255'],
-            'published_at' => ['date'],
-            'pages_amount' => ['integer', 'min:1'],
-            'pages_read' => ['integer', 'min:1'],
-            'chapters_amount' => ['integer', 'min:1'],
-            'tag_id' => ['integer', 'exists:' . Tag::class . ',id'],
+            'title' => ['sometimes', 'string', 'max:255'],
+            'synopsis' => ['sometimes', 'string'],
+            'isbn' => ['sometimes', 'string', 'max:255'],
+            'published_at' => ['sometimes', 'date'],
+            'pages_amount' => ['sometimes', 'integer', 'min:1'],
+            'chapters_amount' => ['sometimes', 'integer', 'min:1'],
         ];
     }
 }
