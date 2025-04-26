@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\User\StoreUserDTO;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Requests\API\V1\User\StoreUserRequest;
 use App\Http\Requests\API\V1\User\UpdateUserRequest;
@@ -29,8 +30,10 @@ class UserController
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
+        $storeUserDDto = new StoreUserDTO(...$request->validated());
+
         $newUser = User::query()
-            ->create($request->validated());
+            ->create($storeUserDDto->toArray());
 
         return response()->json(new UserResource($newUser), JsonResponse::HTTP_CREATED);
     }
