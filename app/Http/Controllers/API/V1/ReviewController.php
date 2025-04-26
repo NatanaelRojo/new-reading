@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Review\StoreReviewDTO;
+use App\DataTransferObjects\API\V1\Review\UpdateReviewDTO;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Requests\API\V1\Review\StoreReviewRequest;
 use App\Http\Requests\API\V1\Review\UpdateReviewRequest;
@@ -59,8 +61,10 @@ class ReviewController
      */
     public function store(StoreReviewRequest $request): JsonResponse
     {
+        $storeReviewDto = StoreReviewDTO::fromRequest($request);
+
         $newReview = Review::query()
-            ->create($request->validated());
+            ->create($storeReviewDto->toArray());
 
         return response()
             ->json(new ReviewResource($newReview), JsonResponse::HTTP_CREATED);
@@ -100,7 +104,9 @@ class ReviewController
      */
     public function update(UpdateReviewRequest $request, Review $review): JsonResponse
     {
-        $review->update($request->validated());
+        $updateReviewDto = UpdateReviewDTO::fromRequest($request);
+
+        $review->update($updateReviewDto->toArray());
 
         return response()
             ->json(new ReviewResource($review), JsonResponse::HTTP_OK);
