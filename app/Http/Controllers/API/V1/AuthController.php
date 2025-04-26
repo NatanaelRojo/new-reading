@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\User\LoginUserDTO;
 use App\DataTransferObjects\API\V1\User\RegisterUserDTO;
 use App\Http\Requests\API\V1\User\LoginUserRequest;
 use App\Http\Requests\API\V1\User\RegisterUserRequest;
@@ -28,11 +29,13 @@ class AuthController
 
     public function login(LoginUserRequest $request): JsonResponse
     {
+        $loginUserDto = new LoginUserDTO(...$request->vlidated());
+
         $user = User::query()
-            ->where('email', $request->email)
+            ->where('email', $loginUserDto->email)
             ->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($loginUserDto->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
