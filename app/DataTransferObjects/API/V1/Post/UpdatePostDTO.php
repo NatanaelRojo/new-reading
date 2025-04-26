@@ -13,8 +13,8 @@ use Spatie\DataTransferObject\DataTransferObject;
 class UpdatePostDTO extends BaseApiDTO
 {
     public function __construct(
-        public readonly int $book_id,
         public readonly int $user_id,
+        public readonly ?int $book_id = null,
         public readonly ?int $progress = null,
         public readonly ?string $body = null,
     ) {
