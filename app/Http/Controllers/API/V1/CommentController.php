@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Comment\UpdateCommentDTO;
 use App\Http\Requests\API\V1\Comment\StoreCommentRequest;
 use App\Http\Requests\API\V1\Comment\UpdateCommentRequest;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
@@ -125,7 +126,9 @@ class CommentController
      */
     public function update(UpdateCommentRequest $request, Comment $comment): JsonResponse
     {
-        $comment->update($request->validated());
+        $updateCommentDto = UpdateCommentDTO::fromRequest($request);
+
+        $comment->update($updateCommentDto->toArray());
 
         return response()
             ->json(new CommentResource($comment), JsonResponse::HTTP_OK);
