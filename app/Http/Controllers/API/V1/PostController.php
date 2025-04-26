@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Post\StorePostDTO;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Requests\API\V1\Post\StorePostRequest;
 use App\Http\Requests\API\V1\Post\UpdatePostRequest;
@@ -70,8 +71,10 @@ class PostController
      */
     public function store(StorePostRequest $request): JsonResponse
     {
+        $storePostDto = StorePostDTO::fromRequest($request);
+
         $newPost = Post::query()
-            ->create($request->validated());
+            ->create($storePostDto->toArray());
 
         return response()
             ->json(
