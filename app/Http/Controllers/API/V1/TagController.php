@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\DataTransferObjects\API\V1\Tag\StoreTagDTO;
+use App\DataTransferObjects\API\V1\Tag\UpdateTagDTO;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Requests\API\V1\Tag\StoreTagRequest;
 use App\Http\Requests\API\V1\Tag\UpdateTagRequest;
@@ -51,7 +52,9 @@ class TagController
      */
     public function update(UpdateTagRequest $request, Tag $tag): JsonResponse
     {
-        $tag->update($request->validated());
+        $updateTagDto = new UpdateTagDTO(...$request->validated());
+
+        $tag->update($updateTagDto->toArray());
 
         return response()->json(
             new TagResource($tag),
