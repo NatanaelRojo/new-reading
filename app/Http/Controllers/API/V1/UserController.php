@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\DataTransferObjects\API\V1\User\StoreUserDTO;
+use App\DataTransferObjects\API\V1\User\UpdateUserDTO;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Requests\API\V1\User\StoreUserRequest;
 use App\Http\Requests\API\V1\User\UpdateUserRequest;
@@ -51,7 +52,9 @@ class UserController
      */
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
-        $user->update($request->validated());
+        $updateUserDto = new UpdateUserDTO(...$request->validated());
+
+        $user->update($updateUserDto->toArray());
 
         return response()->json(new UserResource($user), JsonResponse::HTTP_OK);
     }
