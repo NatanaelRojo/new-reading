@@ -23,7 +23,9 @@ class UpdatePostRequest extends BaseApiRequest
         return [
             'body' => ['sometimes', 'string', 'min:5', 'max:1000'],
             'progress' => ['sometimes', 'integer', 'min:1',],
-            'book_id' => ['integer', 'exists:' . Book::class . ',id'],
+            'book_id' => $this->route('book') ?
+                ['nullable', 'string'] :
+                ['sometimes', 'integer', 'exists:' . Book::class . ',id'],
         ];
     }
 
@@ -39,6 +41,10 @@ class UpdatePostRequest extends BaseApiRequest
         $validatedData = parent::validated();
 
         $validatedData['user_id'] = $this->user()->id;
+
+        if ($this->route('book')) {
+            $validatedData['book_id'] = $this->route('book')->id;
+        }
 
         return $validatedData;
     }

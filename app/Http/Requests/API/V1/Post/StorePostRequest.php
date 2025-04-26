@@ -22,7 +22,9 @@ class StorePostRequest extends BaseApiRequest
         return [
             'body' => ['required', 'string', 'min:5'],
             'progress' => ['required', 'integer', 'min:1',],
-            'book_id' => $this->route('book') ? ['nullable', 'string'] : ['required', 'integer', 'exists:' . Book::class . ',id'],
+            'book_id' => $this->route('book') ?
+                ['nullable', 'integer'] :
+                ['required', 'integer', 'exists:' . Book::class . ',id'],
         ];
     }
 
