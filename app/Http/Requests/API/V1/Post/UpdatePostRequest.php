@@ -21,9 +21,9 @@ class UpdatePostRequest extends BaseApiRequest
     public function rules(): array
     {
         return [
-            'body' => ['string', 'min:5', 'max:1000'],
-            'progress' => ['integer', 'min:1',],
-            'book_id' => ['exists:' . Book::class . ',id'],
+            'body' => ['sometimes', 'string', 'min:5', 'max:1000'],
+            'progress' => ['sometimes', 'integer', 'min:1',],
+            'book_id' => ['integer', 'exists:' . Book::class . ',id'],
         ];
     }
 
@@ -36,6 +36,10 @@ class UpdatePostRequest extends BaseApiRequest
      */
     public function validated($key = null, $default = null)
     {
-        return Arr::add(parent::validated(), 'user_id', $this->user()->id);
+        $validatedData = parent::validated();
+
+        $validatedData['user_id'] = $this->user()->id;
+
+        return $validatedData;
     }
 }
