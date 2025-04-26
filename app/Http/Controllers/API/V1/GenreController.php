@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Genre\StoreGenreDTO;
+use App\DataTransferObjects\API\V1\Genre\UpdateGenreDTO;
 use App\Http\Requests\API\V1\Genre\StoreGenreRequest;
 use App\Http\Requests\API\V1\Genre\UpdateGenreRequest;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
@@ -50,7 +52,9 @@ class GenreController
      */
     public function update(UpdateGenreRequest $request, Genre $genre): JsonResponse
     {
-        $genre->update($request->validated());
+        $updateGenreDto = new UpdateGenreDTO(...$request->validated());
+
+        $genre->update($updateGenreDto->toArray());
 
         return response()->json(new GenreResource($genre), JsonResponse::HTTP_OK);
     }
