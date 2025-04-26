@@ -19,12 +19,12 @@ class UpdateUserRequest extends BaseApiRequest
     public function rules(): array
     {
         return [
-            'profile_image_url' => ['url'],
-            'first_name' => ['string', 'max:255'],
-            'last_name' => ['string', 'max:255'],
-            'birth_date' => ['date'],
-            'biography' => ['string'],
-            'name' => ['string', 'max:255'],
+            'profile_image_url' => ['sometimes', 'url'],
+            'first_name' => ['sometimes', 'string', 'max:255'],
+            'last_name' => ['sometimes', 'string', 'max:255'],
+            'birth_date' => ['sometimes', 'date'],
+            'biography' => ['sometimes', 'string'],
+            'name' => ['sometimes', 'string', 'max:255'],
             'email' => [
                 'required',
                 Rule::unique('users')->ignore($this->user()->id),
@@ -32,6 +32,7 @@ class UpdateUserRequest extends BaseApiRequest
                 'email',
                 'max:255'
             ],
+            'password' => ['sometimes', 'string', 'min:8', 'confirmed'],
         ];
     }
 }
