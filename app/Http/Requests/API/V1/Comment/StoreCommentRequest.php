@@ -31,18 +31,21 @@ class StoreCommentRequest extends BaseApiRequest
      * @param mixed $default
      * @return array
      */
-    public function validated($key = null, $default = null)
+    public function validated($key = null, $default = null): array
     {
-        $validatedData = Arr::add(parent::validated(), 'user_id', $this->user()->id);
+        $validated = parent::validated();
 
-        if ($this->has('post')) {
-            $validatedData = Arr::add($validatedData, 'commentable_id', $this->route('post')->id);
-            $validatedData = Arr::add($validatedData, 'commentable_type', $this->route('post')::class);
-        } elseif ($this->has('review')) {
-            $validatedData = Arr::add($validatedData, 'commentable_id', $this->route('review')->id);
-            $validatedData = Arr::add($validatedData, 'commentable_type', $this->route('review')::class);
+        $validated['user_id'] = $this->user()->id;
+
+        if ($this->route('post')) {
+            $validated['commentable_id'] = $this->route('post')->id;
+            $validated['commentable_type'] = get_class($this->route('post'));
+        } elseif ($this->route('review')) {
+            $validated['commentable_id'] = $this->route('review')->id;
+            $validated['commentable_type'] = get_class($this->route('review'));
         }
 
-        return $validatedData;
+        return $validated;
     }
+
 }
