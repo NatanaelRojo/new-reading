@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Tag\StoreTagDTO;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Requests\API\V1\Tag\StoreTagRequest;
 use App\Http\Requests\API\V1\Tag\UpdateTagRequest;
@@ -29,8 +30,10 @@ class TagController
      */
     public function store(StoreTagRequest $request): JsonResponse
     {
+        $storeTagDto = new StoreTagDTO(...$request->validated());
+
         $newTag = Tag::query()
-            ->create($request->validated());
+            ->create($storeTagDto->toArray());
 
         return response()->json(new TagResource($newTag), JsonResponse::HTTP_CREATED);
     }
