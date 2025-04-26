@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\DataTransferObjects\API\V1\Post\StorePostDTO;
+use App\DataTransferObjects\API\V1\Post\UpdatePostDTO;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Requests\API\V1\Post\StorePostRequest;
 use App\Http\Requests\API\V1\Post\UpdatePostRequest;
@@ -134,7 +135,9 @@ class PostController
      */
     public function update(UpdatePostRequest $request, Post $post): JsonResponse
     {
-        $post->update($request->validated());
+        $updatePostDto = UpdatePostDTO::fromRequest($request);
+
+        $post->update($updatePostDto->toArray());
 
         return response()
             ->json(
