@@ -32,8 +32,10 @@ class CommentController
      */
     public function store(StoreCommentRequest $request): JsonResponse
     {
+        $storeCommentDto = StoreCommentRequest::from($request);
+
         $newComment = Comment::query()
-            ->create($request->validated());
+            ->create($storeCommentDto->toArray());
 
         return response()
             ->json(new CommentResource($newComment), JsonResponse::HTTP_CREATED);
