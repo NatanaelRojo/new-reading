@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\User\RegisterUserDTO;
 use App\Http\Requests\API\V1\User\LoginUserRequest;
 use App\Http\Requests\API\V1\User\RegisterUserRequest;
 use Illuminate\Http\Request;
@@ -15,12 +16,10 @@ class AuthController
 {
     public function register(RegisterUserRequest $request): JsonResponse
     {
+        $registerUserDto = new RegisterUserDTO(...$request->validated());
+
         $user = User::query()
-            ->create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-            ]);
+            ->create($registerUserDto->toArray());
 
         return response()->json([
             'token' => $user->createToken('API Token')->plainTextToken,
