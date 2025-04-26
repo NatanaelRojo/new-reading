@@ -47,5 +47,4 @@ class StoreCommentRequest extends BaseApiRequest
 
         return $validated;
     }
-
 }

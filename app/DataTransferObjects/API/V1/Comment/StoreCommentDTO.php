@@ -2,6 +2,7 @@
 
 namespace App\DataTransferObjects\API\V1\Comment;
 
+use App\DataTransferObjects\Base\BaseApiDTO;
 use Spatie\DataTransferObject\DataTransferObject;
 
 /**
@@ -9,7 +10,7 @@ use Spatie\DataTransferObject\DataTransferObject;
  *
  * Auto-generated from App\Http\Requests\API\V1\Comment\StoreCommentRequest.
  */
-class StoreCommentDTO extends DataTransferObject
+class StoreCommentDTO extends BaseApiDTO
 {
     public function __construct(
         public readonly string $body,
