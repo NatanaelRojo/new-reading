@@ -29,8 +29,10 @@ class GenreController
      */
     public function store(StoreGenreRequest $request): JsonResponse
     {
+        $storeGenreDto = new StoreGenreDTO(...$request->validated());
+
         $newGenre = Genre::query()
-            ->create($request->validated());
+            ->create($storeGenreDto->toArray());
 
         return response()->json(new GenreResource($newGenre), JsonResponse::HTTP_CREATED);
     }
