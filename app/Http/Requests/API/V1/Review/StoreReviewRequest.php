@@ -40,10 +40,11 @@ class StoreReviewRequest extends BaseApiRequest
     public function validated($key = null, $default = null)
     {
         $validatedData = parent::validated();
-        $validatedData = Arr::add($validatedData, 'user_id', $this->user()->id);
+
+        $validatedData['user_id'] = $this->user()->id;
 
         if ($this->route('book')) {
-            $validatedData = Arr::add($validatedData, 'book_id', $this->route('book')->id);
+            $validatedData['book_id'] = $this->route('book')->id;
         }
 
         return $validatedData;

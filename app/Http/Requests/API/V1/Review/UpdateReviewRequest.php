@@ -20,9 +20,9 @@ class UpdateReviewRequest extends BaseApiRequest
     public function rules(): array
     {
         return [
-            'book_id' => ['integer', 'exists:' . Book::class . ',id'],
-            'rating' => ['integer', 'min:1', 'max:5'],
-            'comment' => ['string'],
+            'book_id' => ['sometimes', 'integer', 'exists:' . Book::class . ',id'],
+            'rating' => ['sometimes', 'integer', 'min:1', 'max:5'],
+            'comment' => ['sometimes', 'string'],
         ];
     }
 
