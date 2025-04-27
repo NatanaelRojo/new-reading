@@ -15,12 +15,13 @@ class AuthorService
     /**
      * Get all instances from the database
      *
+     * @param int $perPage
      * @return LengthAwarePaginator
      */
-    public function index(int $per_page = 10): LengthAwarePaginator
+    public function index(int $perPage = 10): LengthAwarePaginator
     {
         return Author::with('books')
-        ->paginate($per_page);
+        ->paginate($perPage);
     }
 
     /**
