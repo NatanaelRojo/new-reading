@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\DataTransferObjects\API\V1\Book\FilterBookDTO;
 use App\DataTransferObjects\API\V1\Book\StoreBookDTO;
 use App\DataTransferObjects\API\V1\Book\UpdateBookDTO;
+use App\DataTransferObjects\API\V1\Book\UpdateBookReadingProgressDTO;
 use App\Http\Requests\API\V1\Book\FilterBookRequest;
 use App\Http\Requests\API\V1\Book\StoreBookRequest;
 use App\Http\Requests\API\V1\Book\UpdateBookReadingProgressRequest;
@@ -82,7 +83,13 @@ class BookController
      */
     public function updateReadingProgress(UpdateBookReadingProgressRequest $request, Book $book): JsonResponse
     {
-        $book->updateUserProgress($request->user(), $request->pages_read);
+        $updateBookReadingProgressDto = new UpdateBookReadingProgressDTO(
+            book: $book,
+            user: $request->user(),
+            pagesRead: $request->pages_read
+        );
+
+        $this->bookService->updateUserProgress($updateBookReadingProgressDto);
 
         return response()->json(new BookResource($book), JsonResponse::HTTP_OK);
     }
