@@ -6,6 +6,7 @@ use App\DataTransferObjects\API\V1\Book\FilterBookDTO;
 use App\DataTransferObjects\API\V1\Book\StoreBookDTO;
 use App\DataTransferObjects\API\V1\Book\UpdateBookDTO;
 use App\DataTransferObjects\API\V1\Book\UpdateBookReadingProgressDTO;
+use App\DataTransferObjects\API\V1\Book\UpdateBookTagDTO;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Tag;
 use App\Models\User;
@@ -73,6 +74,20 @@ class BookService
         if (!is_null($updateBookReadingProgressDto->user) || !is_null($updateBookReadingProgressDto->pagesRead)) {
             $updateBookReadingProgressDto->pagesRead == $updateBookReadingProgressDto->book->pages_amount ? $this->completeBook($updateBookReadingProgressDto->book, $updateBookReadingProgressDto->user) : $updateBookReadingProgressDto->book->readingProgress = $updateBookReadingProgressDto->pagesRead;
         }
+    }
+
+    /**
+     * Update the tag of a user for a specific book.
+     *
+     * @param \App\DataTransferObjects\API\V1\Book\UpdateBookTagDTO $updateBookTagDto
+     * @return void
+     */
+    public function updateTag(UpdateBookTagDTO $updateBookTagDto): void
+    {
+        $updateBookTagDto->book->users()
+            ->updateExistingPivot($updateBookTagDto->user->id, [
+                'tag_id' => $updateBookTagDto->tagId,
+            ]);
     }
 
     /**
