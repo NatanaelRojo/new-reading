@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Book\FilterBookDTO;
 use App\DataTransferObjects\API\V1\Book\StoreBookDTO;
 use App\DataTransferObjects\API\V1\Book\UpdateBookDTO;
 use App\Http\Requests\API\V1\Book\FilterBookRequest;
@@ -11,6 +12,7 @@ use App\Http\Requests\API\V1\Book\UpdateBookRequest;
 use App\Http\Requests\API\V1\Book\UpdateBookTagRequest;
 use App\Http\Resources\API\V1\Book\BookResource;
 use App\Models\API\V1\Book;
+use App\Services\API\V1\BookService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -19,16 +21,22 @@ use Illuminate\Support\Arr;
 class BookController
 {
     /**
+     * Create a new controller instance.
+     *
+     * @param BookService $bookService
+     */
+    public function __construct(private BookService $bookService)
+    {
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(FilterBookRequest $request): AnonymousResourceCollection
     {
-        $books = Book::query()
-            ->with([
-                'authors',
-                'genres',
-            ])->filter($request->validated())
-            ->paginate($request->query('per_page', 10));
+        $filterBookDto = FilterBookDTO::fromRequest($request);
+
+        $books = $this->bookService->index($filterBookDto);
 
         return BookResource::collection($books);
     }
@@ -40,8 +48,7 @@ class BookController
     {
         $storeBookDto = new StoreBookDTO(...$request->validated());
 
-        $newBook = Book::query()
-            ->create($storeBookDto->toArray());
+        $newBook = $this->bookService->store($storeBookDto);
 
         return response()->json(new BookResource($newBook), JsonResponse::HTTP_CREATED);
     }
@@ -61,7 +68,7 @@ class BookController
     {
         $updateBookDto = new UpdateBookDTO(...$request->validated());
 
-        $book->update($updateBookDto->toArray());
+        $this->bookService->update($updateBookDto, $book);
 
         return response()->json(new BookResource($book), JsonResponse::HTTP_OK);
     }
@@ -103,7 +110,7 @@ class BookController
      */
     public function destroy(Book $book): JsonResponse
     {
-        $book->delete();
+        $this->bookService->destroy($book);
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
