@@ -90,36 +90,6 @@ class Book extends Model
     }
 
     /**
-     * Update the progress of a user for a specific book.
-     *
-     * @param int $userId The ID of the user to update the progress for.
-     * @param int $pagesRead The number of pages read by the user.
-     * @return void
-     */
-    public function updateUserProgress(User $user = null, int $pagesRead = null): void
-    {
-        if (!is_null($user) || !is_null($pagesRead)) {
-            $pagesRead == $this->pages_amount ? $this->completeBook($user) : $this->readingProgress = $pagesRead;
-        }
-    }
-
-    /**
-     * Complete a book for a specific user.
-     *
-     * @param \App\Models\User|null $user
-     * @return void
-     */
-    public function completeBook(User $user = null): void
-    {
-        $tag = Tag::query()
-            ->firstWhere('name', config('tags.default_tags')[2]);
-        $this->users()->updateExistingPivot($user->id, [
-            'tag_id' => $tag->id,
-            'pages_read' => $this->pages_amount,
-        ]);
-    }
-
-    /**
      * Get the completion percentage of a book for a specific user.
      *
      * @param int $userId
