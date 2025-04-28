@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\API\V1;
 
+use App\DataTransferObjects\API\V1\Book\UpdateBookReadingProgressDTO;
 use App\Http\Controllers\API\V1\BookController;
 use App\Http\Requests\API\V1\Book\UpdateBookRequest;
 use App\Models\API\V1\Author;
@@ -9,6 +10,7 @@ use App\Models\API\V1\Book;
 use App\Models\API\V1\Genre;
 use App\Models\API\V1\Tag;
 use App\Models\User;
+use App\Services\API\V1\BookService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\JsonResponse;
@@ -23,6 +25,7 @@ class BookApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    private BookService $bookService;
     private User $user;
 
     /**
@@ -35,6 +38,8 @@ class BookApiTest extends TestCase
         parent::setUp();
 
         Tag::factory()->count(5)->create();
+
+        $this->bookService = new BookService();
 
         // ✅ Create a test user and authenticate with Sanctum
         $this->user = User::factory()->create();
@@ -421,7 +426,11 @@ class BookApiTest extends TestCase
         $tag = Tag::factory()->create(['name' => 'Completed']);
 
         $book->users()->attach($user->id);
-        $book->completeBook($user);
+        $this->bookService->updateUserProgress(new UpdateBookReadingProgressDTO(
+            book: $book,
+            user: $user,
+            pagesRead: $book->pages_amount,
+        ));
 
         $this->assertDatabaseHas('book_user', [
             'book_id' => $book->id,
