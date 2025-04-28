@@ -6,6 +6,7 @@ use App\DataTransferObjects\API\V1\Book\FilterBookDTO;
 use App\DataTransferObjects\API\V1\Book\StoreBookDTO;
 use App\DataTransferObjects\API\V1\Book\UpdateBookDTO;
 use App\DataTransferObjects\API\V1\Book\UpdateBookReadingProgressDTO;
+use App\DataTransferObjects\API\V1\Book\UpdateBookTagDTO;
 use App\Http\Requests\API\V1\Book\FilterBookRequest;
 use App\Http\Requests\API\V1\Book\StoreBookRequest;
 use App\Http\Requests\API\V1\Book\UpdateBookReadingProgressRequest;
@@ -103,11 +104,13 @@ class BookController
      */
     public function updateTag(UpdateBookTagRequest $request, Book $book): JsonResponse
     {
-        $user = $request->user();
+        $updateBookTagDto = new UpdateBookTagDTO(
+            book: $book,
+            user: $request->user(),
+            tagId: $request->tag_id
+        );
 
-        $book->users()->updateExistingPivot($user->id, [
-            'tag_id' => $request->tag_id
-        ]);
+        $this->bookService->updateTag($updateBookTagDto);
 
         return response()->json(new BookResource($book), JsonResponse::HTTP_OK);
     }
@@ -121,20 +124,4 @@ class BookController
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
-
-    /**
-     * Handle book user updates like tag assignment and progress updates.
-     *
-     * @param \App\Http\Requests\API\V1\Book\UpdateBookRequest $request
-     * @param \App\Models\API\V1\Book $book
-     * @return void
-     */
-    private function handleBookUserUpdates(UpdateBookRequest $request, Book $book): void
-    {
-        if ($request->has('tag_id') && $request->has('pages_read')) {
-            $book->assignTagToUser($request->user()->id, $request->tag_id);
-            $book->updateUserProgress($request->user(), $request->pages_read);
-        }
-    }
-
 }
