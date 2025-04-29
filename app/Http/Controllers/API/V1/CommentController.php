@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Comment\StoreCommentByPostDTO;
+use App\DataTransferObjects\API\V1\Comment\StoreCommentDTO;
 use App\DataTransferObjects\API\V1\Comment\UpdateCommentDTO;
+use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
+use App\Exceptions\API\V1\User\UserNotFollowingException;
 use App\Http\Requests\API\V1\Comment\StoreCommentRequest;
 use App\Http\Requests\API\V1\Comment\UpdateCommentRequest;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
@@ -11,19 +15,25 @@ use App\Models\API\V1\Comment;
 use App\Models\API\V1\Post;
 use App\Models\API\V1\Review;
 use App\Models\User;
+use App\Services\API\V1\CommentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CommentController
 {
+    public function __construct(private CommentService $commentService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(PaginateRequest $request): AnonymousResourceCollection
     {
-        $comments = Comment::query()
-            ->paginate($request->query('per_page', 10));
+        $paginateDto = PaginateDTO::fromRequest($request);
+
+        $comments = $this->commentService->index($paginateDto);
 
         return CommentResource::collection($comments);
     }
@@ -33,10 +43,9 @@ class CommentController
      */
     public function store(StoreCommentRequest $request): JsonResponse
     {
-        $storeCommentDto = StoreCommentRequest::from($request);
+        $storeCommentDto = StoreCommentDTO::fromRequest($request);
 
-        $newComment = Comment::query()
-            ->create($storeCommentDto->toArray());
+        $newComment = $this->commentService->store($storeCommentDto);
 
         return response()
             ->json(new CommentResource($newComment), JsonResponse::HTTP_CREATED);
@@ -50,18 +59,19 @@ class CommentController
      */
     public function storeByPost(StoreCommentRequest $request, Post $post): JsonResponse
     {
-        $validatedData = $request->validated();
-        $validatedData['post_id'] = $post->id;
+        try {
+            $storeByPostDto = StoreCommentByPostDTO::fromRequest($request);
 
-        if (!$request->user()->isFollowing($post->user)) {
+            $newComment = $this->commentService->storeByPost($storeByPostDto);
+
             return response()
-                ->json('User not following author', JsonResponse::HTTP_CONFLICT);
+                ->json(new CommentResource($newComment), JsonResponse::HTTP_CREATED);
+        } catch (UserNotFollowingException $error) {
+            return response()->json([
+                'success' => false,
+                'message' => $error->getMessage(),
+            ], JsonResponse::HTTP_CONFLICT);
         }
-
-        $newComment = $post->comments()->create($validatedData);
-
-        return response()
-            ->json(new CommentResource($newComment), JsonResponse::HTTP_CREATED);
     }
 
     /**
@@ -128,7 +138,7 @@ class CommentController
     {
         $updateCommentDto = UpdateCommentDTO::fromRequest($request);
 
-        $comment->update($updateCommentDto->toArray());
+        $this->commentService->update($updateCommentDto, $comment);
 
         return response()
             ->json(new CommentResource($comment), JsonResponse::HTTP_OK);
@@ -139,7 +149,7 @@ class CommentController
      */
     public function destroy(Comment $comment): JsonResponse
     {
-        $comment->delete();
+        $this->commentService->destroy($comment);
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
