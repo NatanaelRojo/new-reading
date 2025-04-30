@@ -28,6 +28,19 @@ class CommentService
     }
 
     /**
+     * Get all instances from the database
+     *
+     * @param \App\DataTransferObjects\API\V1\Paginate\PaginateDTO $paginateDto
+     * @param \App\Models\API\V1\Post $post
+     * @return LengthAwarePaginator
+     */
+    public function indexByPost(PaginateDTO $paginateDto, Post $post): LengthAwarePaginator
+    {
+        return $post->comments()
+            ->paginate($paginateDto->perPage ?? 10);
+    }
+
+    /**
      * Store a new instance in the database
      */
     public function store(StoreCommentDTO $storeCommentDto): Comment
