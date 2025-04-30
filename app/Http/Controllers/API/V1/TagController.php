@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
 use App\DataTransferObjects\API\V1\Tag\StoreTagDTO;
 use App\DataTransferObjects\API\V1\Tag\UpdateTagDTO;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
@@ -9,19 +10,25 @@ use App\Http\Requests\API\V1\Tag\StoreTagRequest;
 use App\Http\Requests\API\V1\Tag\UpdateTagRequest;
 use App\Http\Resources\API\V1\Tag\TagResource;
 use App\Models\API\V1\Tag;
+use App\Services\API\V1\TagService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class TagController
 {
+    public function __construct(private TagService $tagService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(PaginateRequest $request): AnonymousResourceCollection
     {
-        $tags = Tag::query()
-            ->paginate($request->query('per_page', 10));
+        $paginateDto = PaginateDTO::fromRequest($request);
+
+        $tags = $this->tagService->index($paginateDto);
 
         return TagResource::collection($tags);
     }
@@ -31,10 +38,9 @@ class TagController
      */
     public function store(StoreTagRequest $request): JsonResponse
     {
-        $storeTagDto = new StoreTagDTO(...$request->validated());
+        $storeTagDto = StoreTagDTO::fromRequest($request);
 
-        $newTag = Tag::query()
-            ->create($storeTagDto->toArray());
+        $newTag = $this->tagService->store($storeTagDto);
 
         return response()->json(new TagResource($newTag), JsonResponse::HTTP_CREATED);
     }
@@ -52,9 +58,9 @@ class TagController
      */
     public function update(UpdateTagRequest $request, Tag $tag): JsonResponse
     {
-        $updateTagDto = new UpdateTagDTO(...$request->validated());
+        $updateTagDto = UpdateTagDTO::fromRequest($request);
 
-        $tag->update($updateTagDto->toArray());
+        $this->tagService->update($updateTagDto, $tag);
 
         return response()->json(
             new TagResource($tag),
@@ -67,7 +73,7 @@ class TagController
      */
     public function destroy(Tag $tag): JsonResponse
     {
-        $tag->delete();
+        $this->tagService->destroy($tag);
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
