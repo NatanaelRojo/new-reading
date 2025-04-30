@@ -3,6 +3,7 @@
 namespace App\Services\API\V1;
 
 use App\DataTransferObjects\API\V1\Comment\StoreCommentByPostDTO;
+use App\DataTransferObjects\API\V1\Comment\StoreCommentByReviewDTO;
 use App\DataTransferObjects\API\V1\Comment\StoreCommentDTO;
 use App\DataTransferObjects\API\V1\Comment\UpdateCommentDTO;
 use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
@@ -50,6 +51,23 @@ class CommentService
 
         return $storeCommentByPostDto->post->comments()
             ->create($storeCommentByPostDto->toArray());
+    }
+
+    /**
+     * Store a new instance in the database
+     *
+     * @param \App\DataTransferObjects\API\V1\Comment\StoreCommentByReviewDTO $storeCommentByReviewDto
+     * @throws \App\Exceptions\API\V1\User\UserNotFollowingException
+     * @return Comment
+     */
+    public function storeByReview(StoreCommentByReviewDTO $storeCommentByReviewDto): Comment
+    {
+        if (!$storeCommentByReviewDto->user->isFollowing($storeCommentByReviewDto->review->user)) {
+            throw new UserNotFollowingException();
+        }
+
+        return $storeCommentByReviewDto->review->comments()
+        ->create($storeCommentByReviewDto->toArray());
     }
 
     /**
