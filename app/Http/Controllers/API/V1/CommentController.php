@@ -119,8 +119,9 @@ class CommentController
      */
     public function indexByReview(PaginateRequest $request, Review $review): AnonymousResourceCollection
     {
-        $comments = $review->comments()
-            ->paginate($request->query('per_page', 10));
+        $paginateDto = PaginateDTO::fromRequest($request);
+
+        $comments = $this->commentService->indexByReview($paginateDto, $review);
 
         return CommentResource::collection($comments);
     }
