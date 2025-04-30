@@ -10,6 +10,7 @@ use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
 use App\Exceptions\API\V1\User\UserNotFollowingException;
 use App\Models\API\V1\Comment;
 use App\Models\API\V1\Post;
+use App\Models\API\V1\Review;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -37,6 +38,12 @@ class CommentService
     public function indexByPost(PaginateDTO $paginateDto, Post $post): LengthAwarePaginator
     {
         return $post->comments()
+            ->paginate($paginateDto->perPage ?? 10);
+    }
+
+    public function indexByReview(PaginateDTO $paginateDto, Review $review): LengthAwarePaginator
+    {
+        return $review->comments()
             ->paginate($paginateDto->perPage ?? 10);
     }
 
