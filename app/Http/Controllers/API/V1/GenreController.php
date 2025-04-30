@@ -4,11 +4,13 @@ namespace App\Http\Controllers\API\V1;
 
 use App\DataTransferObjects\API\V1\Genre\StoreGenreDTO;
 use App\DataTransferObjects\API\V1\Genre\UpdateGenreDTO;
+use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
 use App\Http\Requests\API\V1\Genre\StoreGenreRequest;
 use App\Http\Requests\API\V1\Genre\UpdateGenreRequest;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
 use App\Http\Resources\API\V1\Genre\GenreResource;
 use App\Models\API\V1\Genre;
+use App\Services\API\V1\GenreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -16,12 +18,22 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class GenreController
 {
     /**
+     * Create a new controller instance.
+     *
+     * @param GenreService $genreService
+     */
+    public function __construct(private GenreService $genreService)
+    {
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(PaginateRequest $request): AnonymousResourceCollection
     {
-        $genres = Genre::with(['books'])
-            ->paginate($request->query('per_page', 10));
+        $paginateDto = PaginateDTO::fromRequest($request);
+
+        $genres = $this->genreService->index($paginateDto);
 
         return GenreResource::collection($genres);
     }
@@ -31,10 +43,9 @@ class GenreController
      */
     public function store(StoreGenreRequest $request): JsonResponse
     {
-        $storeGenreDto = new StoreGenreDTO(...$request->validated());
+        $storeGenreDto = StoreGenreDTO::fromRequest($request);
 
-        $newGenre = Genre::query()
-            ->create($storeGenreDto->toArray());
+        $newGenre = $this->genreService->store($storeGenreDto);
 
         return response()->json(new GenreResource($newGenre), JsonResponse::HTTP_CREATED);
     }
@@ -52,9 +63,9 @@ class GenreController
      */
     public function update(UpdateGenreRequest $request, Genre $genre): JsonResponse
     {
-        $updateGenreDto = new UpdateGenreDTO(...$request->validated());
+        $updateGenreDto = UpdateGenreDTO::fromRequest($request);
 
-        $genre->update($updateGenreDto->toArray());
+        $this->genreService->update($updateGenreDto, $genre);
 
         return response()->json(new GenreResource($genre), JsonResponse::HTTP_OK);
     }
@@ -64,7 +75,7 @@ class GenreController
      */
     public function destroy(Genre $genre): JsonResponse
     {
-        $genre->delete();
+        $this->genreService->destroy($genre);
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
