@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\DataTransferObjects\API\V1\Comment\StoreCommentByPostDTO;
+use App\DataTransferObjects\API\V1\Comment\StoreCommentByReviewDTO;
 use App\DataTransferObjects\API\V1\Comment\StoreCommentDTO;
 use App\DataTransferObjects\API\V1\Comment\UpdateCommentDTO;
 use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
@@ -82,18 +83,19 @@ class CommentController
      */
     public function storeByReview(StoreCommentRequest $request, Review $review): JsonResponse
     {
-        $validatedData = $request->validated();
-        $validatedData['review_id'] = $review->id;
+        try {
+            $storeCommentByReviewDto = StoreCommentByReviewDTO::fromRequest($request);
 
-        if (!$request->user()->isFollowing($review->user)) {
+            $newComment = $this->commentService->storeByReview($storeCommentByReviewDto);
+
             return response()
-                ->json('User not following author', JsonResponse::HTTP_CONFLICT);
+                ->json(new CommentResource($newComment), JsonResponse::HTTP_CREATED);
+        } catch (UserNotFollowingException $error) {
+            return response()->json([
+                'success' => false,
+                'message' => $error->getMessage(),
+            ], JsonResponse::HTTP_CONFLICT);
         }
-
-        $newComment = $review->comments()->create($validatedData);
-
-        return response()
-            ->json(new CommentResource($newComment), JsonResponse::HTTP_CREATED);
     }
 
     /**
