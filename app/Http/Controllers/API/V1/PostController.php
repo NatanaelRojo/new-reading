@@ -124,7 +124,9 @@ class PostController
      */
     public function storeByUser(StorePostRequest $request, User $user): JsonResponse
     {
-        $newPost = $user->posts()->create($request->validated());
+        $storePostDto = StorePostDTO::fromRequest($request);
+
+        $newPost = $this->postService->storeByUser($storePostDto, $user);
 
         return response()
             ->json(
