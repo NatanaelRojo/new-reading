@@ -2,10 +2,12 @@
 
 namespace Tests\Feature\API\V1;
 
+use App\DataTransferObjects\API\V1\Book\UpdateBookReadingProgressDTO;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Review;
 use App\Models\API\V1\Tag;
 use App\Models\User;
+use App\Services\API\V1\BookService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
@@ -17,6 +19,7 @@ class ReviewApiTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+    private BookService $bookService;
     private int $reviewsAmount = 5;
 
     /**
@@ -30,6 +33,8 @@ class ReviewApiTest extends TestCase
             Tag::factory()->create(['name' => $tagName]);
         }
         Book::factory()->count(5)->create();
+
+        $this->bookService = new BookService();
 
         $this->user = User::factory()->create();
 
@@ -71,7 +76,11 @@ class ReviewApiTest extends TestCase
         $pivot->tag_id = $tag->id;
         $pivot->pages_read = $book->pages_amount;
         $pivot->save();
-        $book->completeBook($this->user);
+        $this->bookService->updateUserProgress(new UpdateBookReadingProgressDTO(
+            book: $book,
+            user: $this->user,
+            pagesRead: $book->pages_amount,
+        ));
 
         $this->postJson(
             route('books.reviews.store', $book->slug),
@@ -113,7 +122,11 @@ class ReviewApiTest extends TestCase
     {
         $book = Book::factory()->create();
         $review = Review::factory()->create();
-        $book->completeBook($this->user);
+        $this->bookService->updateUserProgress(new UpdateBookReadingProgressDTO(
+            book: $book,
+            user: $this->user,
+            pagesRead: $book->pages_amount,
+        ));
         $review->update([
             'user_id' => $this->user->id,
             'book_id' => $book->id,
