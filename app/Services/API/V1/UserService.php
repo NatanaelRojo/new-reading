@@ -54,4 +54,11 @@ class UserService
     {
         $user->delete();
     }
+
+    public function follow(User $currentUser, User $userToFollow): void
+    {
+        if (!$currentUser->isFollowing($userToFollow)) {
+            $currentUser->follow($userToFollow);
+        }
+    }
 }
