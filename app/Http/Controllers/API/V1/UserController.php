@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
 use App\DataTransferObjects\API\V1\User\StoreUserDTO;
 use App\DataTransferObjects\API\V1\User\UpdateUserDTO;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
@@ -9,19 +10,25 @@ use App\Http\Requests\API\V1\User\StoreUserRequest;
 use App\Http\Requests\API\V1\User\UpdateUserRequest;
 use App\Http\Resources\API\V1\User\UserResource;
 use App\Models\User;
+use App\Services\API\V1\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserController
 {
+    public function __construct(private UserService $userService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(PaginateRequest $request): AnonymousResourceCollection
     {
-        $users = User::with(['following', 'followers'])
-            ->paginate($request->query('per_page', 10));
+        $paginateDto = PaginateDTO::fromRequest($request);
+
+        $users = $this->userService->index($paginateDto);
 
         return UserResource::collection($users);
     }
@@ -31,10 +38,9 @@ class UserController
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $storeUserDDto = new StoreUserDTO(...$request->validated());
+        $storeUserDDto = StoreUserDTO::fromRequest($request);
 
-        $newUser = User::query()
-            ->create($storeUserDDto->toArray());
+        $newUser = $this->userService->store($storeUserDDto);
 
         return response()->json(new UserResource($newUser), JsonResponse::HTTP_CREATED);
     }
@@ -52,9 +58,9 @@ class UserController
      */
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
-        $updateUserDto = new UpdateUserDTO(...$request->validated());
+        $updateUserDto = UpdateUserDTO::fromRequest($request);
 
-        $user->update($updateUserDto->toArray());
+        $this->userService->update($updateUserDto, $user);
 
         return response()->json(new UserResource($user), JsonResponse::HTTP_OK);
     }
@@ -64,7 +70,7 @@ class UserController
      */
     public function destroy(User $user): JsonResponse
     {
-        $user->delete();
+        $this->userService->destroy($user);
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
