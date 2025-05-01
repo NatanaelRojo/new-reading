@@ -84,11 +84,7 @@ class UserController
      */
     public function follow(Request $request, User $user): JsonResponse
     {
-        $authUser = $request->user();
-
-        if (!$user->isFollowing($authUser)) {
-            $authUser->follow($user);
-        }
+        $this->userService->follow($request->user(), $user);
 
         return response()->json([
             'message' => "You are now following {$user->name}."
