@@ -61,4 +61,11 @@ class UserService
             $currentUser->follow($userToFollow);
         }
     }
+
+    public function unfollow(User $currentUser, User $userToUnfollow): void
+    {
+        if ($currentUser->isFollowing($userToUnfollow)) {
+            $currentUser->unfollow($userToUnfollow);
+        }
+    }
 }
