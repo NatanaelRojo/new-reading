@@ -100,11 +100,7 @@ class UserController
      */
     public function unfollow(Request $request, User $user): JsonResponse
     {
-        $authUser = $request->user();
-
-        if ($authUser->isFollowing($user)) {
-            $authUser->unfollow($user);
-        }
+        $this->userService->unfollow($request->user(), $user);
 
         return response()->json([
             'message' => "You have unfollowed {$user->name}."
