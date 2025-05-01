@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
 use App\DataTransferObjects\API\V1\Review\StoreReviewDTO;
 use App\DataTransferObjects\API\V1\Review\UpdateReviewDTO;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
@@ -12,6 +13,7 @@ use App\Models\API\V1\Book;
 use App\Models\API\V1\Review;
 use App\Models\API\V1\Tag;
 use App\Models\User;
+use App\Services\API\V1\ReviewService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -19,12 +21,22 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class ReviewController
 {
     /**
+     * Create a new controller instance.
+     *
+     * @param ReviewService $reviewService
+     */
+    public function __construct(private ReviewService $reviewService)
+    {
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(PaginateRequest $request): AnonymousResourceCollection
     {
-        $reviews = Review::with(['book', 'user'])
-            ->paginate($request->query('per_page', 10));
+        $paginateDto = PaginateDTO::fromRequest($request);
+
+        $reviews = $this->reviewService->index($paginateDto);
 
         return ReviewResource::collection($reviews);
     }
@@ -55,7 +67,6 @@ class ReviewController
         return ReviewResource::collection($bookReviews);
     }
 
-
     /**
      * Store a newly created resource in storage.
      */
@@ -63,8 +74,7 @@ class ReviewController
     {
         $storeReviewDto = StoreReviewDTO::fromRequest($request);
 
-        $newReview = Review::query()
-            ->create($storeReviewDto->toArray());
+        $newReview = $this->reviewService->store($storeReviewDto);
 
         return response()
             ->json(new ReviewResource($newReview), JsonResponse::HTTP_CREATED);
@@ -106,7 +116,7 @@ class ReviewController
     {
         $updateReviewDto = UpdateReviewDTO::fromRequest($request);
 
-        $review->update($updateReviewDto->toArray());
+        $this->reviewService->update($updateReviewDto, $review);
 
         return response()
             ->json(new ReviewResource($review), JsonResponse::HTTP_OK);
@@ -117,7 +127,7 @@ class ReviewController
      */
     public function destroy(Review $review): JsonResponse
     {
-        $review->delete();
+        $this->reviewService->destroy($review);
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
