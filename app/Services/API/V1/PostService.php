@@ -50,7 +50,6 @@ class PostService
             ->paginate($paginateDTO->perPage ?? 10);
     }
 
-
     /**
      * Store a new instance in the database
      */
@@ -58,6 +57,19 @@ class PostService
     {
         return Post::query()
         ->create($storePostDto->toArray());
+    }
+
+    /**
+     * Store a new instance in the database
+     *
+     * @param \App\DataTransferObjects\API\V1\Post\StorePostDTO $storePostDto
+     * @param \App\Models\API\V1\Book $book
+     * @return Post
+     */
+    public function storeByBook(StorePostDTO $storePostDto, Book $book): Post
+    {
+        return $book->posts()
+            ->create($storePostDto->toArray());
     }
 
     /**
