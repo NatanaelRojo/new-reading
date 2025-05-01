@@ -5,6 +5,7 @@ namespace App\Services\API\V1;
 use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
 use App\DataTransferObjects\API\V1\Review\StoreReviewDTO;
 use App\DataTransferObjects\API\V1\Review\UpdateReviewDTO;
+use App\Exceptions\API\V1\Like\AlreadyDislikedException;
 use App\Exceptions\API\V1\Like\AlreadyLikedException;
 use App\Models\API\V1\Review;
 use App\Models\User;
@@ -71,5 +72,22 @@ class ReviewService
         }
 
         $user->likeReview($review);
+    }
+
+    /**
+     * Dislike a review.
+     *
+     * @param \App\Models\API\V1\Review $review
+     * @param \App\Models\User $user
+     * @throws \App\Exceptions\API\V1\Like\AlreadyLikedException
+     * @return void
+     */
+    public function dislike(Review $review, User $user): void
+    {
+        if ($review->dislikeBy($user)) {
+            throw new AlreadyDislikedException();
+        }
+
+        $user->dislikeReview($review);
     }
 }
