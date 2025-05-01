@@ -140,14 +140,7 @@ class ReviewController
      */
     public function like(Request $request, Review $review): JsonResponse
     {
-        $user = $request->user();
-
-        if ($review->likedBy($user)) {
-            return response()
-                ->json('Review already liked', JsonResponse::HTTP_CONFLICT);
-        }
-
-        $user->likeReview($review);
+        $this->reviewService->like($review, $request->user());
 
         return response()
             ->json('Review liked', JsonResponse::HTTP_OK);
