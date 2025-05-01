@@ -105,7 +105,9 @@ class PostController
      */
     public function storeByBook(StorePostRequest $request, Book $book): JsonResponse
     {
-        $newPost = $book->posts()->create($request->validated());
+        $storePostDto = StorePostDTO::fromRequest($request);
+
+        $newPost = $this->postService->storeByBook($storePostDto, $book);
 
         return response()
             ->json(
