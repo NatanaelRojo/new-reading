@@ -154,14 +154,7 @@ class ReviewController
      */
     public function dislike(Request $request, Review $review): JsonResponse
     {
-        $user = $request->user();
-
-        if ($review->dislikeBy($user)) {
-            return response()
-                ->json('Review already disliked', JsonResponse::HTTP_CONFLICT);
-        }
-
-        $user->dislikeReview($review);
+        $this->reviewService->dislike($review, $request->user());
 
         return response()
             ->json('Review disliked', JsonResponse::HTTP_OK);
