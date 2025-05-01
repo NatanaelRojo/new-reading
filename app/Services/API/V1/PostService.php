@@ -23,6 +23,13 @@ class PostService
         ->paginate($paginateDto->perPage ?? 10);
     }
 
+    public function indexByBook(PaginateDTO $paginateDto, Book $book): LengthAwarePaginator
+    {
+        return $book->posts()
+            ->paginate($paginateDto->perPage ?? 10);
+    }
+
+
     /**
      * Store a new instance in the database
      */
