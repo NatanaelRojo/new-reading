@@ -73,6 +73,19 @@ class PostService
     }
 
     /**
+     * Store a new instance in the database
+     *
+     * @param \App\DataTransferObjects\API\V1\Post\StorePostDTO $storePostDto
+     * @param \App\Models\User $user
+     * @return Post
+     */
+    public function storeByUser(StorePostDTO $storePostDto, User $user): Post
+    {
+        return $user->posts()
+            ->create($storePostDto->toArray());
+    }
+
+    /**
      * Get a single instance from the database
      */
     public function show()
