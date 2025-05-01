@@ -53,10 +53,11 @@ class PostController
      */
     public function indexByBook(PaginateRequest $request, Book $book): AnonymousResourceCollection
     {
-        $bookPosts = $book->posts()
-            ->paginate($request->query('per_page', 10));
+        $paginateDto = PaginateDTO::fromRequest($request);
 
-        return PostResource::collection($bookPosts);
+        $postsByBook = $this->postService->indexByBook($paginateDto, $book);
+
+        return PostResource::collection($postsByBook);
     }
 
     /**
