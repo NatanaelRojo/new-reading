@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
 use App\DataTransferObjects\API\V1\Post\StorePostDTO;
 use App\DataTransferObjects\API\V1\Post\UpdatePostDTO;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
@@ -11,6 +12,7 @@ use App\Http\Resources\API\V1\Post\PostResource;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Post;
 use App\Models\User;
+use App\Services\API\V1\PostService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -18,12 +20,22 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class PostController
 {
     /**
+     * Create a new controller instance.
+     *
+     * @param PostService $postService
+     */
+    public function __construct(private PostService $postService)
+    {
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(PaginateRequest $request): AnonymousResourceCollection
     {
-        $posts = Post::query()
-            ->paginate($request->query('per_page', 10));
+        $paginateDto = PaginateDTO::fromRequest($request);
+
+        $posts = $this->postService->index($paginateDto);
 
         return PostResource::collection($posts);
     }
@@ -74,8 +86,7 @@ class PostController
     {
         $storePostDto = StorePostDTO::fromRequest($request);
 
-        $newPost = Post::query()
-            ->create($storePostDto->toArray());
+        $newPost = $this->postService->store($storePostDto);
 
         return response()
             ->json(
