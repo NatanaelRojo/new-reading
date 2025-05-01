@@ -11,6 +11,7 @@ use App\Models\API\V1\Book;
 use App\Models\API\V1\Tag;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Service for BookService
@@ -71,8 +72,21 @@ class BookService
      */
     public function updateUserProgress(UpdateBookReadingProgressDTO $updateBookReadingProgressDto): void
     {
-        if (!is_null($updateBookReadingProgressDto->user) || !is_null($updateBookReadingProgressDto->pagesRead)) {
-            $updateBookReadingProgressDto->pagesRead == $updateBookReadingProgressDto->book->pages_amount ? $this->completeBook($updateBookReadingProgressDto->book, $updateBookReadingProgressDto->user) : $updateBookReadingProgressDto->book->readingProgress = $updateBookReadingProgressDto->pagesRead;
+        if (!is_null($updateBookReadingProgressDto->user)
+            || !is_null($updateBookReadingProgressDto->pagesRead)) {
+            $this->validateReadingProgress(
+                $updateBookReadingProgressDto->book,
+                $updateBookReadingProgressDto->user,
+                $updateBookReadingProgressDto->pagesRead
+            );
+
+            $updateBookReadingProgressDto->pagesRead == $updateBookReadingProgressDto->book->pages_amount ?
+                $this->completeBook($updateBookReadingProgressDto->book, $updateBookReadingProgressDto->user)
+                : $this->setReadingProgress(
+                    $updateBookReadingProgressDto->book,
+                    $updateBookReadingProgressDto->user,
+                    $updateBookReadingProgressDto->pagesRead
+                );
         }
     }
 
@@ -91,6 +105,50 @@ class BookService
     }
 
     /**
+     * Get the completion percentage of a book for a specific user.
+     *
+     * @param \App\Models\API\V1\Book $book
+     * @param \App\Models\User $user
+     * @return float|int|null
+     */
+    public function getUserCompletionPercentage(Book $book, User $user): ?int
+    {
+        $userBook = $book->users()->firstWhere('user_id', $user->id);
+        $totalPages = $book->pages_amount;
+
+        if (!$userBook || !$totalPages) {
+            return null;
+        }
+
+        return $userBook->pivot->pages_read ? ($userBook->pivot->pages_read / $totalPages) * 100 : 0;
+    }
+
+    /**
+     * Get the tag that a user has assigned to a specific book.
+     *
+     * @param \App\Models\API\V1\Book $book
+     * @param \App\Models\User $user
+     */
+    public function getUserTag(Book $book, User $user): ?Tag
+    {
+        return $book->users()->firstWhere('user_id', $user->id)?->pivot?->tag;
+    }
+
+    /**
+     * Get the completion percentage of a book for a specific user.
+     *
+     * @param \App\Models\API\V1\Book $book
+     * @param \App\Models\User $user
+     * @return bool
+     */
+    public function isCompletedByUser(Book $book, User $user): bool
+    {
+        $bookTag = $this->getUserTag($book, $user);
+
+        return $bookTag && $bookTag->name === config('tags.default_tags')[2];
+    }
+
+    /**
      * Complete a book for a specific user.
      *
      * @param \App\Models\API\V1\Book $book
@@ -105,5 +163,31 @@ class BookService
             'tag_id' => $tag->id,
             'pages_read' => $book->pages_amount,
         ]);
+    }
+
+    private function setReadingProgress(Book $book, User $user, int $pagesRead): void
+    {
+        $book->users()->updateExistingPivot($user->id, [
+            'pages_read' => $pagesRead,
+        ]);
+    }
+
+    /**
+     * Validate the reading progress of a book for a specific user.
+     *
+     * @param \App\Models\API\V1\Book $book
+     * @param \App\Models\User $user
+     * @param int $pagesRead
+     * @return void
+     */
+    private function validateReadingProgress(Book $book, User $user, int $pagesRead): void
+    {
+        $currentProgress = $book->users()->where('user_id', $user->id)->value('pages_read');
+
+        if ($pagesRead <= $currentProgress) {
+            throw ValidationException::withMessages([
+                'pages_read' => 'The new progress must be greater than the current progress.',
+            ]);
+        }
     }
 }
