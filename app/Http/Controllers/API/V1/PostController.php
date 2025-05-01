@@ -74,8 +74,9 @@ class PostController
      */
     public function indexByUser(PaginateRequest $request, User $user): AnonymousResourceCollection
     {
-        $userPosts = $user->posts()
-            ->paginate($request->query('per_page', 10));
+        $paginateDto = PaginateDTO::fromRequest($request);
+
+        $userPosts = $this->postService->indexByUser($paginateDto, $user);
 
         return PostResource::collection($userPosts);
     }
