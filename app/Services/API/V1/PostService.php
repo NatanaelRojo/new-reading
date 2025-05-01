@@ -7,6 +7,7 @@ use App\DataTransferObjects\API\V1\Post\StorePostDTO;
 use App\DataTransferObjects\API\V1\Post\UpdatePostDTO;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Post;
+use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -23,10 +24,30 @@ class PostService
         ->paginate($paginateDto->perPage ?? 10);
     }
 
+    /**
+     * Get all instances from the database
+     *
+     * @param \App\DataTransferObjects\API\V1\Paginate\PaginateDTO $paginateDto
+     * @param \App\Models\API\V1\Book $book
+     * @return LengthAwarePaginator
+     */
     public function indexByBook(PaginateDTO $paginateDto, Book $book): LengthAwarePaginator
     {
         return $book->posts()
             ->paginate($paginateDto->perPage ?? 10);
+    }
+
+    /**
+     * Get all instances from the database
+     *
+     * @param \App\DataTransferObjects\API\V1\Paginate\PaginateDTO $paginateDTO
+     * @param \App\Models\User $user
+     * @return LengthAwarePaginator
+     */
+    public function indexByUser(PaginateDTO $paginateDTO, User $user): LengthAwarePaginator
+    {
+        return $user->posts()
+            ->paginate($paginateDTO->perPage ?? 10);
     }
 
 
