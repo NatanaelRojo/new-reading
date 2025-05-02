@@ -75,19 +75,11 @@ class BookService
     {
         if (!is_null($updateBookReadingProgressDto->user)
             || !is_null($updateBookReadingProgressDto->pagesRead)) {
-            $this->validateReadingProgress(
-                $updateBookReadingProgressDto->book,
-                $updateBookReadingProgressDto->user,
-                $updateBookReadingProgressDto->pagesRead
-            );
+            $this->validateReadingProgress($updateBookReadingProgressDto);
 
             $updateBookReadingProgressDto->pagesRead == $updateBookReadingProgressDto->book->pages_amount ?
                 $this->completeBook($updateBookReadingProgressDto->book, $updateBookReadingProgressDto->user)
-                : $this->setReadingProgress(
-                    $updateBookReadingProgressDto->book,
-                    $updateBookReadingProgressDto->user,
-                    $updateBookReadingProgressDto->pagesRead
-                );
+                : $this->setReadingProgress($updateBookReadingProgressDto);
         }
     }
 
@@ -184,11 +176,18 @@ class BookService
         ]);
     }
 
-    private function setReadingProgress(Book $book, User $user, int $pagesRead): void
+    /**
+     * Set the reading progress of a book for a specific user.
+     *
+     * @param \App\DataTransferObjects\API\V1\Book\UpdateBookReadingProgressDTO $updateBookReadingProgressDto
+     * @return void
+     */
+    private function setReadingProgress(UpdateBookReadingProgressDTO $updateBookReadingProgressDto): void
     {
-        $book->users()->updateExistingPivot($user->id, [
-            'pages_read' => $pagesRead,
-        ]);
+        $updateBookReadingProgressDto->book->users()
+            ->updateExistingPivot($updateBookReadingProgressDto->user->id, [
+                'pages_read' => $updateBookReadingProgressDto->pagesRead,
+            ]);
     }
 
     /**
@@ -199,11 +198,11 @@ class BookService
      * @param int $pagesRead
      * @return void
      */
-    private function validateReadingProgress(Book $book, User $user, int $pagesRead): void
+    private function validateReadingProgress(UpdateBookReadingProgressDTO $updateBookReadingProgressDto): void
     {
-        $currentProgress = $book->users()->where('user_id', $user->id)->value('pages_read');
+        $currentProgress = $updateBookReadingProgressDto->book->users()->where('user_id', $updateBookReadingProgressDto->user->id)->value('pages_read');
 
-        if ($pagesRead <= $currentProgress) {
+        if ($updateBookReadingProgressDto->pagesRead <= $currentProgress) {
             throw ValidationException::withMessages([
                 'pages_read' => 'The new progress must be greater than the current progress.',
             ]);
