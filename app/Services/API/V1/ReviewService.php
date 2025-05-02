@@ -3,8 +3,10 @@
 namespace App\Services\API\V1;
 
 use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
+use App\DataTransferObjects\API\V1\Review\StoreReviewByBookDTO;
 use App\DataTransferObjects\API\V1\Review\StoreReviewDTO;
 use App\DataTransferObjects\API\V1\Review\UpdateReviewDTO;
+use App\Exceptions\API\V1\Book\BookNotCompletedException;
 use App\Exceptions\API\V1\Like\AlreadyDislikedException;
 use App\Exceptions\API\V1\Like\AlreadyLikedException;
 use App\Models\API\V1\Review;
@@ -31,6 +33,24 @@ class ReviewService
     {
         return Review::query()
         ->create($storeReviewDto->toArray());
+    }
+
+    /**
+     * Store a new instance in the database
+     *
+     * @param \App\DataTransferObjects\API\V1\Review\StoreReviewByBookDTO $storeReviewByBookDTO
+     * @param \App\Services\API\V1\BookService $bookService
+     * @throws \App\Exceptions\API\V1\Book\BookNotCompletedException
+     * @return mixed|Review|\Illuminate\Http\JsonResponse
+     */
+    public function storeByBook(StoreReviewByBookDTO $storeReviewByBookDTO, BookService $bookService): Review
+    {
+        if (!$bookService->isCompletedByUser($storeReviewByBookDTO->book, $storeReviewByBookDTO->user)) {
+            throw new BookNotCompletedException();
+        }
+
+        return $storeReviewByBookDTO->book->reviews()
+            ->create($storeReviewByBookDTO->toArray());
     }
 
     /**
