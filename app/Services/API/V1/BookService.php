@@ -2,6 +2,7 @@
 
 namespace App\Services\API\V1;
 
+use App\DataTransferObjects\API\V1\Book\AssignTagToUserDTO;
 use App\DataTransferObjects\API\V1\Book\FilterBookDTO;
 use App\DataTransferObjects\API\V1\Book\StoreBookDTO;
 use App\DataTransferObjects\API\V1\Book\UpdateBookDTO;
@@ -146,6 +147,24 @@ class BookService
         $bookTag = $this->getUserTag($book, $user);
 
         return $bookTag && $bookTag->name === config('tags.default_tags')[2];
+    }
+
+    /**
+     * Assign a tag to a user for the current book.
+     *
+     * @param int $userId The ID of the user to assign the tag to.
+     * @param int $tagId The ID of the tag to assign to the user.
+     * @return void
+     */
+    public function assignTagToUser(AssignTagToUserDTO $assignTagToUserDto): void
+    {
+        if (!$assignTagToUserDto->book->users()->where('user_id', $assignTagToUserDto->user->id)->exists()) {
+            $assignTagToUserDto->book->users()
+                ->attach($assignTagToUserDto->user->id, ['tag_id' => $assignTagToUserDto->tag->id]);
+        }
+
+        $assignTagToUserDto->book->users()
+            ->updateExistingPivot($assignTagToUserDto->user->id, ['tag_id' => $assignTagToUserDto->tag->id]);
     }
 
     /**
