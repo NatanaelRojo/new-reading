@@ -70,26 +70,6 @@ class Book extends Model
     }
 
     /**
-     * Assign a tag to a user for the current book.
-     *
-     * @param int $userId The ID of the user to assign the tag to.
-     * @param int $tagId The ID of the tag to assign to the user.
-     * @return void
-     */
-    public function assignTagToUser(int $userId = null, int $tagId = null): void
-    {
-        if (is_null($userId) || is_null($tagId)) {
-            return;
-        }
-
-        if (!$this->users()->where('user_id', $userId)->exists()) {
-            $this->users()->attach($userId, ['tag_id' => $tagId]);
-        }
-
-        $this->users()->updateExistingPivot($userId, ['tag_id' => $tagId]);
-    }
-
-    /**
      * Get the completion percentage of a book for a specific user.
      *
      * @param int $userId
@@ -109,17 +89,6 @@ class Book extends Model
         }
 
         return $userBook->pivot->pages_read ? ($userBook->pivot->pages_read / $totalPages) * 100 : 0;
-    }
-
-    public function isCompletedByUser(User   $user = null): bool
-    {
-        $bookTag = $this->getUserTag();
-
-        if ($bookTag->name !== config('tags.default_tags')[2]) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -170,13 +139,6 @@ class Book extends Model
         return $this->hasMany(Post::class);
     }
 
-    public function getUserTag(): ?Tag
-    {
-        return $this->users()
-            ->firstWhere('user_id', auth()->id())
-            ->pivot->tag;
-    }
-
     /**
      * The reviews that belong to the book.
      * @return HasMany<Review, Book>
@@ -197,18 +159,6 @@ class Book extends Model
             ->using(BookUser::class)
             ->withPivot('tag_id', 'pages_read')
             ->withTimestamps();
-    }
-
-    public function validateReadingProgress(int $pagesRead): void
-    {
-        $user = auth()->user();
-        $currentProgress = $this->users()->where('user_id', $user->id)->value('pages_read');
-
-        if ($pagesRead <= $currentProgress) {
-            throw ValidationException::withMessages([
-                'pages_read' => 'The new progress must be greater than the current progress.',
-            ]);
-        }
     }
 
     /**
