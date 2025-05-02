@@ -72,10 +72,6 @@ class ReviewApiTest extends TestCase
         $book = Book::inRandomOrder()->first();
         $tag = Tag::factory()->create(['name' => 'Completed']);
         $book->users()->attach($this->user);
-        $pivot = $book->users()->firstWhere('user_id', $this->user->id)->pivot;
-        $pivot->tag_id = $tag->id;
-        $pivot->pages_read = $book->pages_amount;
-        $pivot->save();
         $this->bookService->updateUserProgress(new UpdateBookReadingProgressDTO(
             book: $book,
             user: $this->user,
