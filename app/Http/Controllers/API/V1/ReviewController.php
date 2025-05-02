@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
+use App\DataTransferObjects\API\V1\Review\StoreReviewByBookDTO;
 use App\DataTransferObjects\API\V1\Review\StoreReviewDTO;
 use App\DataTransferObjects\API\V1\Review\UpdateReviewDTO;
 use App\Http\Requests\API\V1\Paginate\PaginateRequest;
@@ -13,6 +14,7 @@ use App\Models\API\V1\Book;
 use App\Models\API\V1\Review;
 use App\Models\API\V1\Tag;
 use App\Models\User;
+use App\Services\API\V1\BookService;
 use App\Services\API\V1\ReviewService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,8 +27,10 @@ class ReviewController
      *
      * @param ReviewService $reviewService
      */
-    public function __construct(private ReviewService $reviewService)
-    {
+    public function __construct(
+        private ReviewService $reviewService,
+        private BookService $bookService
+    ) {
     }
 
     /**
@@ -83,18 +87,16 @@ class ReviewController
     /**
      * Store a newly created resource in storage.
      * @param \App\Http\Requests\API\V1\Review\StoreReviewRequest $request
-     * @param \App\Models\API\V1\Book $book
      * @return JsonResponse|mixed
      */
-    public function storeByBook(StoreReviewRequest $request, Book  $book): JsonResponse
+    public function storeByBook(StoreReviewRequest $request): JsonResponse
     {
-        if (!$book->isCompletedByUser($request->user())) {
-            return response()
-                ->json('Book not completed', JsonResponse::HTTP_CONFLICT);
-        }
+        $storeReviewByBookDto = StoreReviewByBookDTO::fromRequest($request);
 
-        $newReview = $book->reviews()
-        ->create($request->validated());
+        $newReview = $this->reviewService->storeByBook(
+            $storeReviewByBookDto,
+            $this->bookService
+        );
 
         return response()
             ->json(new ReviewResource($newReview), JsonResponse::HTTP_CREATED);
