@@ -84,11 +84,7 @@ class BookController
      */
     public function updateReadingProgress(UpdateBookReadingProgressRequest $request, Book $book): JsonResponse
     {
-        $updateBookReadingProgressDto = new UpdateBookReadingProgressDTO(
-            book: $book,
-            user: $request->user(),
-            pagesRead: $request->pages_read
-        );
+        $updateBookReadingProgressDto = UpdateBookReadingProgressDTO::fromRequest($request);
 
         $this->bookService->updateUserProgress($updateBookReadingProgressDto);
 
