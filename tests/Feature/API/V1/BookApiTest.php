@@ -427,8 +427,8 @@ class BookApiTest extends TestCase
 
         $book->users()->attach($user->id);
         $this->bookService->updateUserProgress(new UpdateBookReadingProgressDTO(
-            book: $book,
-            user: $user,
+            bookId: $book->id,
+            userId: $user->id,
             pagesRead: $book->pages_amount,
         ));
 

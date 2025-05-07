@@ -70,11 +70,11 @@ class ReviewApiTest extends TestCase
     public function test_create_a_review_for_a_user(): void
     {
         $book = Book::inRandomOrder()->first();
-        $tag = Tag::factory()->create(['name' => 'Completed']);
+        Tag::factory()->create(['name' => 'Completed']);
         $book->users()->attach($this->user);
         $this->bookService->updateUserProgress(new UpdateBookReadingProgressDTO(
-            book: $book,
-            user: $this->user,
+            bookId: $book->id,
+            userId: $this->user->id,
             pagesRead: $book->pages_amount,
         ));
 
@@ -119,8 +119,8 @@ class ReviewApiTest extends TestCase
         $book = Book::factory()->create();
         $review = Review::factory()->create();
         $this->bookService->updateUserProgress(new UpdateBookReadingProgressDTO(
-            book: $book,
-            user: $this->user,
+            bookId: $book->id,
+            userId: $this->user->id,
             pagesRead: $book->pages_amount,
         ));
         $review->update([
