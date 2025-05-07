@@ -85,13 +85,13 @@ class ReviewService
      * @throws \App\Exceptions\API\V1\Like\AlreadyLikedException
      * @return void
      */
-    public function like(Review $review, User $user): void
+    public function like(Review $review, User $user, UserService $userService): void
     {
         if ($review->likedBy($user)) {
             throw new AlreadyLikedException();
         }
 
-        $user->likeReview($review);
+        $userService->likeReview($user, $review);
     }
 
     /**
@@ -102,12 +102,12 @@ class ReviewService
      * @throws \App\Exceptions\API\V1\Like\AlreadyLikedException
      * @return void
      */
-    public function dislike(Review $review, User $user): void
+    public function dislike(Review $review, User $user, UserService $userService): void
     {
         if ($review->dislikeBy($user)) {
             throw new AlreadyDislikedException();
         }
 
-        $user->dislikeReview($review);
+        $userService->dislikeReview($user, $review);
     }
 }
