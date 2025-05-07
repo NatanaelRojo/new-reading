@@ -16,6 +16,7 @@ use App\Models\API\V1\Tag;
 use App\Models\User;
 use App\Services\API\V1\BookService;
 use App\Services\API\V1\ReviewService;
+use App\Services\API\V1\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -28,8 +29,9 @@ class ReviewController
      * @param ReviewService $reviewService
      */
     public function __construct(
+        private BookService $bookService,
         private ReviewService $reviewService,
-        private BookService $bookService
+        private UserService $userService,
     ) {
     }
 
@@ -89,7 +91,7 @@ class ReviewController
      * @param \App\Http\Requests\API\V1\Review\StoreReviewRequest $request
      * @return JsonResponse|mixed
      */
-    public function storeByBook(StoreReviewRequest $request): JsonResponse
+    public function storeByBook(StoreReviewRequest $request, Book $book): JsonResponse
     {
         $storeReviewByBookDto = StoreReviewByBookDTO::fromRequest($request);
 
@@ -142,7 +144,7 @@ class ReviewController
      */
     public function like(Request $request, Review $review): JsonResponse
     {
-        $this->reviewService->like($review, $request->user());
+        $this->reviewService->like($review, $request->user(), $this->userService);
 
         return response()
             ->json('Review liked', JsonResponse::HTTP_OK);
@@ -156,7 +158,7 @@ class ReviewController
      */
     public function dislike(Request $request, Review $review): JsonResponse
     {
-        $this->reviewService->dislike($review, $request->user());
+        $this->reviewService->dislike($review, $request->user(), $this->userService);
 
         return response()
             ->json('Review disliked', JsonResponse::HTTP_OK);
