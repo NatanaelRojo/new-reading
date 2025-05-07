@@ -16,9 +16,9 @@ use Spatie\DataTransferObject\DataTransferObject;
 class AssignTagToUserDTO extends BaseApiDTO
 {
     public function __construct(
-        public readonly Book $book,
-        public readonly User $user,
-        public readonly Tag $tag,
+        public readonly int $bookId,
+        public readonly int $userId,
+        public readonly int $tagId,
     ) {
     }
 }
