@@ -74,115 +74,47 @@ class User extends Authenticatable
     }
 
     /**
-     * Like a review for the current user.
-     * @param \App\Models\API\V1\Review $review
+     * Follow a user.
+     * @param \App\Models\User $user
      * @return void
      */
-    public function likeReview(Review $review): void
+    public function follow(User $userToFollow): void
     {
-        Like::query()->updateOrCreate(
-            ['user_id' => $this->id],
-            [
-                'is_dislike' => false,
-                'likeable_id' => $review->id,
-                'likeable_type' => Review::class,
-            ]
-        );
-        $review->updateLikeCounters();
+        if (!$this->isFollowing($userToFollow)) {
+            $this->following()->attach($userToFollow);
+        }
     }
 
     /**
-     * Dislike a review for the current user.
-     * @param \App\Models\API\V1\Review $review
+     * Unfollow a user.
+     * @param \App\Models\User $user
      * @return void
      */
-    public function dislikeReview(Review $review): void
+    public function unfollow(User $user): void
     {
-        Like::query()->updateOrCreate(
-            ['user_id' => $this->id],
-            [
-                'is_dislike' => true,
-                'likeable_id' => $review->id,
-                'likeable_type' => Review::class,
-            ]
-        );
-        $review->updateLikeCounters();
-    }
-
-    /**
-     * Assign a tag to a book for the current user.
-     *
-     * @param int $bookId
-     * @param int $tagId
-     * @return void
-     */
-    public function assignTagToBook(int $bookId = null, int $tagId = null): void
-    {
-        if (is_null($bookId) || is_null($tagId)) {
-            return;
-        }
-
-        if (!$this->books()->where('book_id', $bookId)->exists()) {
-            $this->books()->attach($bookId, ['tag_id' => $tagId]);
-        }
-
-        $this->books()->updateExistingPivot($bookId, ['tag_id' => $tagId]);
-    }
-
-    /**
-     * Update the progress of a book for a specific user.
-     *
-     * @param int $bookId The ID of the user to update the progress for.
-     * @param int $pagesRead The number of pages read by the user.
-     * @return void
-     */
-    public function updateBookProgress(int $bookId = null, int $pagesRead = null): void
-    {
-        if (!is_null($bookId) || !is_null($pagesRead)) {
-            $this->users()->updateExistingPivot($bookId, ['pages_read' => $pagesRead]);
+        if ($this->isFollowing($user)) {
+            $this->following()->detach($user);
         }
     }
 
     /**
-     * Get the completion percentage of a book for a specific user.
-     *
-     * @param int $bookId
-     * @return float|int|null
-     */
-    public function getBookCompletionPercentage(int $bookId = null): ?int
-    {
-        if (is_null($bookId)) {
-            return null;
-        }
-
-        $userBook = $this->books()->firstWhere('book_id', $bookId);
-        $totalPages = $userBook->pages_amount;
-
-        if (!$userBook || !$totalPages) {
-            return null;
-        }
-
-        return $userBook->pivot->pages_read ? ($userBook->pivot->pages_read / $totalPages) * 100 : 0;
-    }
-
-    /**
-     * Check if the user has completed a book.
-     *
-     * @param int $bookId
-     * @param array $validatedData
+     * Check if the user is following the current user.
+     * @param \App\Models\User $user
      * @return bool
      */
-    public function hasCompletedBook(array $validatedData): bool
+    public function isFollowing(User $user): bool
     {
-        $userBookToReview = $this->books()->firstWhere('book_id', $validatedData['book_id']);
-        $bookToReviewTag = Tag::query()
-            ->firstWhere('id', $userBookToReview->pivot->tag_id);
+        return $this->following()->where('followed_id', $user->id)->exists();
+    }
 
-        if ($bookToReviewTag->name !== 'Completed') {
-            return false;
-        }
-
-        return true;
+    /**
+     * Check if the user is followed by the current user.
+     * @param \App\Models\User $user
+     * @return bool
+     */
+    public function isFollowedBy(User $user): bool
+    {
+        return $this->followers()->where('follower_id', $user->id)->exists();
     }
 
     /**
@@ -212,40 +144,6 @@ class User extends Authenticatable
     public function likes(): HasMany
     {
         return $this->hasMany(Like::class);
-    }
-
-    /**
-     * Get the full name of the user.
-     * @return string
-     */
-    public function getFullNameAttribute(): string
-    {
-        return $this->first_name . ' ' . $this->last_name;
-    }
-
-    /**
-     * Follow a user.
-     * @param \App\Models\User $user
-     * @return void
-     */
-    public function follow(User $user): void
-    {
-        $this->following()->attach($user);
-    }
-
-    public function unfollow(User $user): void
-    {
-        $this->following()->detach($user);
-    }
-
-    public function isFollowing(User $user): bool
-    {
-        return $this->following()->where('followed_id', $user->id)->exists();
-    }
-
-    public function isFollowedBy(User $user): bool
-    {
-        return $this->followers()->where('follower_id', $user->id)->exists();
     }
 
     /**
