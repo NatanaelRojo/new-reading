@@ -3,8 +3,13 @@
 namespace App\Services\API\V1;
 
 use App\DataTransferObjects\API\V1\Paginate\PaginateDTO;
+use App\DataTransferObjects\API\V1\User\AssignTagToBookDTO;
 use App\DataTransferObjects\API\V1\User\StoreUserDTO;
 use App\DataTransferObjects\API\V1\User\UpdateUserDTO;
+use App\Models\API\V1\Book;
+use App\Models\API\V1\Like;
+use App\Models\API\V1\Review;
+use App\Models\API\V1\Tag;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -55,17 +60,110 @@ class UserService
         $user->delete();
     }
 
-    public function follow(User $currentUser, User $userToFollow): void
+    /**
+     * Like a review for the current user.
+     *
+     * @param \App\Models\User $user
+     * @param \App\Models\API\V1\Review $review
+     * @return void
+     */
+    public function likeReview(User $user, Review $review): void
     {
-        if (!$currentUser->isFollowing($userToFollow)) {
-            $currentUser->follow($userToFollow);
-        }
+        Like::query()->updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'is_dislike' => false,
+                'likeable_id' => $review->id,
+                'likeable_type' => $review::class,
+            ]
+        );
+        $review->updateLikeCounters();
     }
 
-    public function unfollow(User $currentUser, User $userToUnfollow): void
+    /**
+     * Dislike a review for the current user.
+     *
+     * @param \App\Models\User $user
+     * @param \App\Models\API\V1\Review $review
+     * @return void
+     */
+    public function dislikeReview(User $user, Review $review): void
     {
-        if ($currentUser->isFollowing($userToUnfollow)) {
-            $currentUser->unfollow($userToUnfollow);
+        Like::query()->updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'is_dislike' => true,
+                'likeable_id' => $review->id,
+                'likeable_type' => $review::class,
+            ]
+        );
+        $review->updateLikeCounters();
+    }
+
+    /**
+     * Assign a tag to a book for the current user.
+     *
+     * @param \App\DataTransferObjects\API\V1\User\AssignTagToBookDTO $assignTagToBookDto
+     * @return void
+     */
+    public function assignTagToBook(AssignTagToBookDTO $assignTagToBookDto): void
+    {
+        if (!$assignTagToBookDto->user->books()->where('book_id', $assignTagToBookDto->book->id)->exists()) {
+            $assignTagToBookDto->user->books()
+                ->attach($assignTagToBookDto->book->id, ['tag_id' => $assignTagToBookDto->tag->id]);
         }
+
+        $assignTagToBookDto->user->books()
+            ->updateExistingPivot($assignTagToBookDto->book->id, ['tag_id' => $assignTagToBookDto->tag->id]);
+    }
+
+    /**
+     * Update the progress of a book for a specific user.
+     *
+     * @param Book $book The book to update the progress for.
+     * @param int $pagesRead The number of pages read by the user.
+     * @return void
+     */
+    public function updateBookProgress(Book $book, int $pagesRead): void
+    {
+        $book->users()->updateExistingPivot($book->id, ['pages_read' => $pagesRead]);
+    }
+
+    /**
+     * Get the completion percentage of a book for a specific user.
+     *
+     * @param int $bookId
+     * @return float|int|null
+     */
+    public function getBookCompletionPercentage(User $user, int $bookId): ?int
+    {
+        $userBook = $user->books()->firstWhere('book_id', $bookId);
+        $totalPages = $userBook->pages_amount;
+
+        if (!$userBook || !$totalPages) {
+            return null;
+        }
+
+        return $userBook->pivot->pages_read ? ($userBook->pivot->pages_read / $totalPages) * 100 : 0;
+    }
+
+    /**
+     * Check if the user has completed a book.
+     *
+     * @param int $bookId
+     * @param array $validatedData
+     * @return bool
+     */
+    public function hasCompletedBook(User $user, int $bookId): bool
+    {
+        $userBookToReview = $user->books()->firstWhere('book_id', $bookId);
+        $bookToReviewTag = Tag::query()
+            ->firstWhere('id', $userBookToReview->pivot->tag_id);
+
+        if ($bookToReviewTag->name !== 'Completed') {
+            return false;
+        }
+
+        return true;
     }
 }
