@@ -94,8 +94,10 @@ class BookService
      */
     public function updateTag(UpdateBookTagDTO $updateBookTagDto): void
     {
-        $updateBookTagDto->book->users()
-            ->updateExistingPivot($updateBookTagDto->user->id, [
+        $book = Book::query()->firstWhere('id', $updateBookTagDto->bookId);
+
+        $book->users()
+            ->updateExistingPivot($updateBookTagDto->userId, [
                 'tag_id' => $updateBookTagDto->tagId,
             ]);
     }
