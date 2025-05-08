@@ -9,6 +9,7 @@ use App\DataTransferObjects\API\V1\Review\UpdateReviewDTO;
 use App\Exceptions\API\V1\Book\BookNotCompletedException;
 use App\Exceptions\API\V1\Like\AlreadyDislikedException;
 use App\Exceptions\API\V1\Like\AlreadyLikedException;
+use App\Models\API\V1\Book;
 use App\Models\API\V1\Review;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -45,11 +46,14 @@ class ReviewService
      */
     public function storeByBook(StoreReviewByBookDTO $storeReviewByBookDTO, BookService $bookService): Review
     {
-        if (!$bookService->isCompletedByUser($storeReviewByBookDTO->book, $storeReviewByBookDTO->user)) {
+        $book = Book::query()->firstWhere('id', $storeReviewByBookDTO->book_id);
+        $user = User::query()->firstWhere('id', $storeReviewByBookDTO->user_id);
+
+        if (!$bookService->isCompletedByUser($book, $user)) {
             throw new BookNotCompletedException();
         }
 
-        return $storeReviewByBookDTO->book->reviews()
+        return $book->reviews()
             ->create($storeReviewByBookDTO->toArray());
     }
 
