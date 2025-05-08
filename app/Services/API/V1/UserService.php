@@ -108,13 +108,15 @@ class UserService
      */
     public function assignTagToBook(AssignTagToBookDTO $assignTagToBookDto): void
     {
-        if (!$assignTagToBookDto->user->books()->where('book_id', $assignTagToBookDto->book->id)->exists()) {
-            $assignTagToBookDto->user->books()
-                ->attach($assignTagToBookDto->book->id, ['tag_id' => $assignTagToBookDto->tag->id]);
+        $user = User::query()->firstWhere('id', $assignTagToBookDto->user_id);
+
+        if (!$user->books()->where('book_id', $assignTagToBookDto->book_id)->exists()) {
+            $user->books()
+                ->attach($assignTagToBookDto->book_id, ['tag_id' => $assignTagToBookDto->tag_id]);
         }
 
-        $assignTagToBookDto->user->books()
-            ->updateExistingPivot($assignTagToBookDto->book->id, ['tag_id' => $assignTagToBookDto->tag->id]);
+        $user->books()
+            ->updateExistingPivot($assignTagToBookDto->book_id, ['tag_id' => $assignTagToBookDto->tag_id]);
     }
 
     /**
