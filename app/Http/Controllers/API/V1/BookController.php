@@ -100,11 +100,7 @@ class BookController
      */
     public function updateTag(UpdateBookTagRequest $request, Book $book): JsonResponse
     {
-        $updateBookTagDto = new UpdateBookTagDTO(
-            book: $book,
-            user: $request->user(),
-            tagId: $request->tag_id
-        );
+        $updateBookTagDto = UpdateBookTagDTO::fromRequest($request);
 
         $this->bookService->updateTag($updateBookTagDto);
 
