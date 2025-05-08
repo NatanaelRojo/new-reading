@@ -15,9 +15,9 @@ use App\Models\User;
 class AssignTagToBookDTO extends BaseApiDTO
 {
     public function __construct(
-        public readonly Book $book,
-        public readonly User $user,
-        public readonly Tag $tag,
+        public readonly int $book_id,
+        public readonly int $user_id,
+        public readonly int $tag_id,
     ) {
     }
 }
