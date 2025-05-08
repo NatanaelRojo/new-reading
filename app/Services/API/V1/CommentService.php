@@ -65,11 +65,14 @@ class CommentService
      */
     public function storeByPost(StoreCommentByPostDTO $storeCommentByPostDto): Comment
     {
-        if (!$storeCommentByPostDto->user->isFollowing($storeCommentByPostDto->post->user)) {
+        $user = User::query()->firstWhere('id', $storeCommentByPostDto->userId);
+        $post = Post::query()->firstWhere('id', $storeCommentByPostDto->postId);
+
+        if (!$user->isFollowing($post->user)) {
             throw new UserNotFollowingException();
         }
 
-        return $storeCommentByPostDto->post->comments()
+        return $post->comments()
             ->create($storeCommentByPostDto->toArray());
     }
 
