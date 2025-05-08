@@ -12,8 +12,8 @@ class StoreCommentByPostDTO extends BaseApiDTO
 {
     public function __construct(
         public readonly string $body,
-        public readonly User $user,
-        public readonly Post $post,
+        public readonly int $userId,
+        public readonly int $postId,
         public readonly int $commentable_id,
         public readonly string $commentable_type,
     ) {
@@ -29,8 +29,8 @@ class StoreCommentByPostDTO extends BaseApiDTO
     {
         return new StoreCommentByPostDTO(
             body: $request->body,
-            user: $request->user(),
-            post: $request->post,
+            userId: $request->user()->id,
+            postId: $request->post->id,
             commentable_id: $request->post->id,
             commentable_type: $request->post::class,
         );
@@ -40,7 +40,7 @@ class StoreCommentByPostDTO extends BaseApiDTO
     {
         return [
             'body' => $this->body,
-            'user_id' => $this->user->id,
+            'user_id' => $this->userId,
             'commentable_id' => $this->commentable_id,
             'commentable_type' => $this->commentable_type,
         ];
