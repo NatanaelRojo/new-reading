@@ -17,9 +17,8 @@ class StoreCommentByReviewDTO extends BaseApiDTO
 {
     public function __construct(
         public readonly string $body,
-        public readonly User $user,
-        public readonly Review $review,
-        public readonly int $review_id,
+        public readonly int  $userId,
+        public readonly int $reviewId,
         public readonly string $commentable_type,
     ) {
     }
@@ -28,9 +27,8 @@ class StoreCommentByReviewDTO extends BaseApiDTO
     {
         return new StoreCommentByReviewDTO(
             body: $request->body,
-            user: $request->user(),
-            review: $request->review,
-            review_id: $request->review->id,
+            userId: $request->user()->id,
+            reviewId: $request->review->id,
             commentable_type: $request->review::class,
         );
     }
@@ -39,8 +37,8 @@ class StoreCommentByReviewDTO extends BaseApiDTO
     {
         return [
             'body' => $this->body,
-            'user_id' => $this->user->id,
-            'review_id' => $this->review_id,
+            'user_id' => $this->userId,
+            'review_id' => $this->reviewId,
             'commentable_type' => $this->commentable_type,
         ];
     }
