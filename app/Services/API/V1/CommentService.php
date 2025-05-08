@@ -85,11 +85,14 @@ class CommentService
      */
     public function storeByReview(StoreCommentByReviewDTO $storeCommentByReviewDto): Comment
     {
-        if (!$storeCommentByReviewDto->user->isFollowing($storeCommentByReviewDto->review->user)) {
+        $user = User::query()->firstWhere('id', $storeCommentByReviewDto->userId);
+        $review = Review::query()->firstWhere('id', $storeCommentByReviewDto->reviewId);
+
+        if (!$user->isFollowing($review->user)) {
             throw new UserNotFollowingException();
         }
 
-        return $storeCommentByReviewDto->review->comments()
+        return $review->comments()
         ->create($storeCommentByReviewDto->toArray());
     }
 
