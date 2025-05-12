@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\UserResource\Forms;
 
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 
 class CreateForm
@@ -25,6 +26,10 @@ class CreateForm
                 ->required(),
             DatePicker::make('birth_date')
                 ->required(),
+                Select::make('roles')
+    ->multiple()
+    ->relationship('roles', 'name')
+    ->preload(),
         ];
     }
 }

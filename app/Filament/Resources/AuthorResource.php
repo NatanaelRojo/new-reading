@@ -20,6 +20,11 @@ class AuthorResource extends Resource
     protected static ?string $model = Author::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->hasPermissionTo('view any authors');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
