@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Enums\Roles\PanelRoles;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Comment;
 use App\Models\API\V1\Like;
 use App\Models\API\V1\Post;
 use App\Models\API\V1\Review;
 use App\Models\API\V1\Tag;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,7 +21,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasFactory;
     use Notifiable;
@@ -62,6 +65,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasRole(PanelRoles::ADMIN->getValue());
     }
 
     /**
