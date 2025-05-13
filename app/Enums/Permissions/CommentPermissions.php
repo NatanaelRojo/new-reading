@@ -8,11 +8,11 @@ enum CommentPermissions: string
 {
     use HasPermissionMethods;
 
-    case VIEW_ANY_CommentS = 'view any Comments';
-    case VIEW_ONE_Comment = 'view one Comment';
-    case CREATE_CommentS = 'create Comments';
-    case EDIT_CommentS = 'edit Comments';
-    case DELETE_CommentS = 'delete Comments';
-    case RESTORE_CommentS = 'restore Comments';
-    case FORCE_DELETE_CommentS = 'force delete Comments';
+    case VIEW_ANY_COMMENTS = 'view any comments';
+    case VIEW_ONE_COMMENT = 'view one comment';
+    case CREATE_COMMENTS = 'create comments';
+    case EDIT_COMMENTS = 'edit comments';
+    case DELETE_COMMENTS = 'delete comments';
+    case RESTORE_COMMENTS = 'restore comments';
+    case FORCE_DELETE_COMMENTS = 'force delete comments';
 }

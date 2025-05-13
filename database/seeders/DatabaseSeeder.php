@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Database\Seeders\Permissions\Web\V1\AuthorPermissionSeeder;
+use Database\Seeders\Permissions\Web\V1\PermissionsSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -16,7 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleSeeder::class,
-            AuthorPermissionSeeder::class,
+            PermissionsSeeder::class,
             AuthorSeeder::class,
             TagSeeder::class,
             GenreSeeder::class,

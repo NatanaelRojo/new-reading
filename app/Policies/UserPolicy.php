@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Permissions\UserPermissions;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -12,7 +13,7 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->hasPermissionTo(UserPermissions::VIEW_ANY_USERS);
     }
 
     /**
@@ -20,7 +21,7 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return false;
+        return $user->hasPermissionTo(UserPermissions::VIEW_ONE_USER, $model);
     }
 
     /**
@@ -28,7 +29,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasPermissionTo(UserPermissions::CREATE_USERS);
     }
 
     /**
@@ -36,7 +37,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return false;
+        return $user->hasPermissionTo(UserPermissions::EDIT_USERS, $model);
     }
 
     /**
@@ -44,7 +45,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return false;
+        return $user->hasPermissionTo(UserPermissions::DELETE_USERS, $model);
     }
 
     /**
@@ -52,7 +53,7 @@ class UserPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return false;
+        return $user->hasPermissionTo(UserPermissions::RESTORE_USERS, $model);
     }
 
     /**
@@ -60,6 +61,6 @@ class UserPolicy
      */
     public function forceDelete(User $user, User $model): bool
     {
-        return false;
+        return $user->hasPermissionTo(UserPermissions::FORCE_DELETE_USERS, $model);
     }
 }
