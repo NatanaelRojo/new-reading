@@ -22,7 +22,7 @@ class TagPolicy
      */
     public function view(User $user, Tag $tag): bool
     {
-        return $user->hasPermissionTo(TagPermissions::VIEW_ONE_TAG->getValue(), $tag);
+        return $user->hasPermissionTo(TagPermissions::VIEW_ONE_TAG->getValue());
     }
 
     /**
@@ -38,7 +38,7 @@ class TagPolicy
      */
     public function update(User $user, Tag $tag): bool
     {
-        return $user->hasPermissionTo(TagPermissions::EDIT_TAGS, $tag);
+        return $user->hasPermissionTo(TagPermissions::EDIT_TAGS);
     }
 
     /**
@@ -46,7 +46,7 @@ class TagPolicy
      */
     public function delete(User $user, Tag $tag): bool
     {
-        return $user->hasPermissionTo(TagPermissions::DELETE_TAGS->getValue(), $tag);
+        return $user->hasPermissionTo(TagPermissions::DELETE_TAGS->getValue());
     }
 
     /**
@@ -54,7 +54,7 @@ class TagPolicy
      */
     public function restore(User $user, Tag $tag): bool
     {
-        return $user->hasPermissionTo(TagPermissions::RESTORE_TAGS->getValue(), $tag);
+        return $user->hasPermissionTo(TagPermissions::RESTORE_TAGS->getValue());
     }
 
     /**
@@ -62,6 +62,6 @@ class TagPolicy
      */
     public function forceDelete(User $user, Tag $tag): bool
     {
-        return $user->hasPermissionTo(TagPermissions::FORCE_DELETE_TAGS->getValue(), $tag);
+        return $user->hasPermissionTo(TagPermissions::FORCE_DELETE_TAGS->getValue());
     }
 }

@@ -22,7 +22,7 @@ class PostPolicy
      */
     public function view(User $user, Post $post): bool
     {
-        return $user->hasPermissionTo(PostPermissions::VIEW_ONE_POST, $post);
+        return $user->hasPermissionTo(PostPermissions::VIEW_ONE_POST);
     }
 
     /**
@@ -38,7 +38,7 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
-        return $user->hasPermissionTo(PostPermissions::EDIT_POSTS, $post);
+        return $user->hasPermissionTo(PostPermissions::EDIT_POSTS);
     }
 
     /**
@@ -46,7 +46,7 @@ class PostPolicy
      */
     public function delete(User $user, Post $post): bool
     {
-        return $user->hasPermissionTo(PostPermissions::DELETE_POSTS, $post);
+        return $user->hasPermissionTo(PostPermissions::DELETE_POSTS);
     }
 
     /**
@@ -54,7 +54,7 @@ class PostPolicy
      */
     public function restore(User $user, Post $post): bool
     {
-        return $user->hasPermissionTo(PostPermissions::RESTORE_POSTS, $post);
+        return $user->hasPermissionTo(PostPermissions::RESTORE_POSTS);
     }
 
     /**
@@ -62,6 +62,6 @@ class PostPolicy
      */
     public function forceDelete(User $user, Post $post): bool
     {
-        return $user->hasPermissionTo(PostPermissions::FORCE_DELETE_POSTS, $post);
+        return $user->hasPermissionTo(PostPermissions::FORCE_DELETE_POSTS);
     }
 }

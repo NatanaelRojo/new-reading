@@ -22,7 +22,7 @@ class BookPolicy
      */
     public function view(User $user, Book $model): bool
     {
-        return $user->hasPermissionTo(BookPermissions::VIEW_ONE_BOOK, $model);
+        return $user->hasPermissionTo(BookPermissions::VIEW_ONE_BOOK);
     }
 
     /**
@@ -38,7 +38,7 @@ class BookPolicy
      */
     public function update(User $user, Book $model): bool
     {
-        return $user->hasPermissionTo(BookPermissions::EDIT_BOOKS, $model);
+        return $user->hasPermissionTo(BookPermissions::EDIT_BOOKS);
     }
 
     /**
@@ -46,7 +46,7 @@ class BookPolicy
      */
     public function delete(User $user, Book $model): bool
     {
-        return $user->hasPermissionTo(BookPermissions::DELETE_BOOKS, $model);
+        return $user->hasPermissionTo(BookPermissions::DELETE_BOOKS);
     }
 
     /**
@@ -54,7 +54,7 @@ class BookPolicy
      */
     public function restore(User $user, Book $model): bool
     {
-        return $user->hasPermissionTo(BookPermissions::RESTORE_BOOKS, $model);
+        return $user->hasPermissionTo(BookPermissions::RESTORE_BOOKS);
     }
 
     /**
@@ -62,6 +62,6 @@ class BookPolicy
      */
     public function forceDelete(User $user, Book $model): bool
     {
-        return $user->hasPermissionTo(BookPermissions::FORCE_DELETE_BOOKS, $model);
+        return $user->hasPermissionTo(BookPermissions::FORCE_DELETE_BOOKS);
     }
 }

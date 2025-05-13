@@ -21,7 +21,7 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return $user->hasPermissionTo(UserPermissions::VIEW_ONE_USER, $model);
+        return $user->hasPermissionTo(UserPermissions::VIEW_ONE_USER);
     }
 
     /**
@@ -37,7 +37,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->hasPermissionTo(UserPermissions::EDIT_USERS, $model);
+        return $user->hasPermissionTo(UserPermissions::EDIT_USERS);
     }
 
     /**
@@ -45,7 +45,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->hasPermissionTo(UserPermissions::DELETE_USERS, $model);
+        return $user->hasPermissionTo(UserPermissions::DELETE_USERS);
     }
 
     /**
@@ -53,7 +53,7 @@ class UserPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return $user->hasPermissionTo(UserPermissions::RESTORE_USERS, $model);
+        return $user->hasPermissionTo(UserPermissions::RESTORE_USERS);
     }
 
     /**
@@ -61,6 +61,6 @@ class UserPolicy
      */
     public function forceDelete(User $user, User $model): bool
     {
-        return $user->hasPermissionTo(UserPermissions::FORCE_DELETE_USERS, $model);
+        return $user->hasPermissionTo(UserPermissions::FORCE_DELETE_USERS);
     }
 }

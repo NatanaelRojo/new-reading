@@ -22,7 +22,7 @@ class ReviewPolicy
      */
     public function view(User $user, Review $review): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::VIEW_ONE_REVIEW, $review);
+        return $user->hasPermissionTo(ReviewPermissions::VIEW_ONE_REVIEW);
     }
 
     /**
@@ -38,7 +38,7 @@ class ReviewPolicy
      */
     public function update(User $user, Review $review): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::EDIT_REVIEWS, $review);
+        return $user->hasPermissionTo(ReviewPermissions::EDIT_REVIEWS);
     }
 
     /**
@@ -46,7 +46,7 @@ class ReviewPolicy
      */
     public function delete(User $user, Review $review): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::DELETE_REVIEWS, $review);
+        return $user->hasPermissionTo(ReviewPermissions::DELETE_REVIEWS);
     }
 
     /**
@@ -54,7 +54,7 @@ class ReviewPolicy
      */
     public function restore(User $user, Review $review): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::RESTORE_REVIEWS, $review);
+        return $user->hasPermissionTo(ReviewPermissions::RESTORE_REVIEWS);
     }
 
     /**
@@ -62,6 +62,6 @@ class ReviewPolicy
      */
     public function forceDelete(User $user, Review $review): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::FORCE_DELETE_REVIEWS, $review);
+        return $user->hasPermissionTo(ReviewPermissions::FORCE_DELETE_REVIEWS);
     }
 }

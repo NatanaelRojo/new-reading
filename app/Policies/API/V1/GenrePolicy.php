@@ -22,7 +22,7 @@ class GenrePolicy
      */
     public function view(User $user, Genre $genre): bool
     {
-        return $user->hasPermissionTo(GenrePermissions::VIEW_ONE_GENRE, $genre);
+        return $user->hasPermissionTo(GenrePermissions::VIEW_ONE_GENRE);
     }
 
     /**
@@ -38,7 +38,7 @@ class GenrePolicy
      */
     public function update(User $user, Genre $genre): bool
     {
-        return $user->hasPermissionTo(GenrePermissions::EDIT_GENRES, $genre);
+        return $user->hasPermissionTo(GenrePermissions::EDIT_GENRES);
     }
 
     /**
@@ -46,7 +46,7 @@ class GenrePolicy
      */
     public function delete(User $user, Genre $genre): bool
     {
-        return $user->hasPermissionTo(GenrePermissions::DELETE_GENRES, $genre);
+        return $user->hasPermissionTo(GenrePermissions::DELETE_GENRES);
     }
 
     /**
@@ -54,7 +54,7 @@ class GenrePolicy
      */
     public function restore(User $user, Genre $genre): bool
     {
-        return $user->hasPermissionTo(GenrePermissions::RESTORE_GENRES, $genre);
+        return $user->hasPermissionTo(GenrePermissions::RESTORE_GENRES);
     }
 
     /**
@@ -62,6 +62,6 @@ class GenrePolicy
      */
     public function forceDelete(User $user, Genre $genre): bool
     {
-        return $user->hasPermissionTo(GenrePermissions::FORCE_DELETE_GENRES, $genre);
+        return $user->hasPermissionTo(GenrePermissions::FORCE_DELETE_GENRES);
     }
 }

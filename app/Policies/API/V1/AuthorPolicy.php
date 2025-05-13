@@ -22,7 +22,7 @@ class AuthorPolicy
      */
     public function view(User $user, Author $model): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::VIEW_ONE_AUTHOR, $model);
+        return $user->hasPermissionTo(AuthorPermissions::VIEW_ONE_AUTHOR->getValue());
     }
 
     /**
@@ -38,7 +38,7 @@ class AuthorPolicy
      */
     public function update(User $user, Author $model): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::EDIT_AUTHORS, $model);
+        return $user->hasPermissionTo(AuthorPermissions::EDIT_AUTHORS);
     }
 
     /**
@@ -46,7 +46,7 @@ class AuthorPolicy
      */
     public function delete(User $user, Author $model): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::DELETE_AUTHORS, $model);
+        return $user->hasPermissionTo(AuthorPermissions::DELETE_AUTHORS);
     }
 
     /**
@@ -54,7 +54,7 @@ class AuthorPolicy
      */
     public function restore(User $user, Author $model): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::RESTORE_AUTHORS, $model);
+        return $user->hasPermissionTo(AuthorPermissions::RESTORE_AUTHORS);
     }
 
     /**
@@ -62,6 +62,6 @@ class AuthorPolicy
      */
     public function forceDelete(User $user, Author $model): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::FORCE_DELETE_AUTHORS, $model);
+        return $user->hasPermissionTo(AuthorPermissions::FORCE_DELETE_AUTHORS);
     }
 }

@@ -22,7 +22,7 @@ class CommentPolicy
      */
     public function view(User $user, Comment $comment): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::VIEW_ONE_COMMENT->getValue(), $comment);
+        return $user->hasPermissionTo(CommentPermissions::VIEW_ONE_COMMENT->getValue());
     }
 
     /**
@@ -38,7 +38,7 @@ class CommentPolicy
      */
     public function update(User $user, Comment $comment): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::EDIT_COMMENTS->getValue(), $comment);
+        return $user->hasPermissionTo(CommentPermissions::EDIT_COMMENTS->getValue());
     }
 
     /**
@@ -46,7 +46,7 @@ class CommentPolicy
      */
     public function delete(User $user, Comment $comment): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::DELETE_COMMENTS->getValue(), $comment);
+        return $user->hasPermissionTo(CommentPermissions::DELETE_COMMENTS->getValue());
     }
 
     /**
@@ -54,7 +54,7 @@ class CommentPolicy
      */
     public function restore(User $user, Comment $comment): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::RESTORE_COMMENTS->getValue(), $comment);
+        return $user->hasPermissionTo(CommentPermissions::RESTORE_COMMENTS->getValue());
     }
 
     /**
@@ -62,6 +62,6 @@ class CommentPolicy
      */
     public function forceDelete(User $user, Comment $comment): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::FORCE_DELETE_COMMENTS->getValue(), $comment);
+        return $user->hasPermissionTo(CommentPermissions::FORCE_DELETE_COMMENTS);
     }
 }
