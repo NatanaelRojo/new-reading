@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources\PermissionResource\Tables;
 
+use App\Filament\Resources\PermissionResource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Spatie\Permission\Models\Permission;
 
 class IndexTable
 {
@@ -27,11 +29,16 @@ class IndexTable
         ];
     }
 
-    public static function getActions(): array
+    public static function getActions(bool $isRelation = false): array
     {
         return [
                                     ViewAction::make(),
-            EditAction::make(),
+            EditAction::make()
+                ->url(
+                    fn (Permission $record): ?string => $isRelation ?
+                    PermissionResource::getUrl('edit', ['record' => $record])
+                    : null
+                ),
             DeleteAction::make(),
         ];
     }

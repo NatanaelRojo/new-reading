@@ -5,8 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PermissionResource\Forms\CreateForm;
 use App\Filament\Resources\PermissionResource\Pages;
 use App\Filament\Resources\PermissionResource\RelationManagers;
+use App\Filament\Resources\PermissionResource\RelationManagers\RolesRelationManager;
+use App\Filament\Resources\PermissionResource\RelationManagers\UsersRelationManager;
 use App\Filament\Resources\PermissionResource\Tables\IndexTable;
-use App\Models\Permission;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,11 +15,11 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Spatie\Permission\Models\Permission as ModelsPermission;
+use Spatie\Permission\Models\Permission;
 
 class PermissionResource extends Resource
 {
-    protected static ?string $model = ModelsPermission::class;
+    protected static ?string $model = Permission::class;
     protected static ?string $navigationIcon = 'heroicon-o-key';
     protected static ?string $navigationGroup = 'Roles and permissions';
     protected static ?int $navigationSort = 2;
@@ -41,7 +42,8 @@ class PermissionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RolesRelationManager::class,
+            UsersRelationManager::class,
         ];
     }
 

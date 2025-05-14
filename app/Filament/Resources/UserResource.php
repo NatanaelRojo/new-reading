@@ -6,7 +6,9 @@ use App\Filament\Resources\UserResource\Forms\CreateForm;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\BooksRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\PostsRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Filament\Resources\UserResource\Tables\IndexTable;
 use App\Models\User;
 use Filament\Forms;
@@ -42,7 +44,9 @@ class UserResource extends Resource
     {
         return [
             BooksRelationManager::class,
+            PermissionsRelationManager::class,
             PostsRelationManager::class,
+            RolesRelationManager::class,
         ];
     }
 
