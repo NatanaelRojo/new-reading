@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\Roles\PanelRoles;
+use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Comment;
 use App\Models\API\V1\Like;
@@ -69,7 +69,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasRole(PanelRoles::ADMIN->getValue());
+        return $this->hasRole(AppRoles::ADMIN->getValue());
     }
 
     /**

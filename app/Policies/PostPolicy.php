@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\API\V1;
+namespace App\Policies;
 
 use App\Enums\Permissions\PostPermissions;
 use App\Models\API\V1\Post;

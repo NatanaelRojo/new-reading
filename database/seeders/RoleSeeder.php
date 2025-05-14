@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Roles\PanelRoles;
+use App\Enums\Roles\AppRoles;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -16,7 +16,7 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
-        $panelRoles = PanelRoles::cases();
+        $panelRoles = AppRoles::cases();
         $guardName = 'web';
 
         foreach ($panelRoles as $role) {

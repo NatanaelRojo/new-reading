@@ -4,20 +4,20 @@ namespace App\Providers;
 
 use App\Models\API\V1\Author;
 use App\Models\API\V1\Book;
+use App\Models\API\V1\Comment;
 use App\Models\API\V1\Genre;
 use App\Models\API\V1\Post;
 use App\Models\API\V1\Review;
 use App\Models\API\V1\Tag;
 use App\Models\User;
-use App\Policies\API\V1\AuthorPolicy;
-use App\Policies\API\V1\BookPolicy;
-use App\Policies\API\V1\CommentPolicy;
-use App\Policies\API\V1\GenrePolicy;
-use App\Policies\API\V1\PostPolicy;
-use App\Policies\API\V1\ReviewPolicy;
-use App\Policies\API\V1\TagPolicy;
+use App\Policies\AuthorPolicy;
+use App\Policies\BookPolicy;
+use App\Policies\CommentPolicy;
+use App\Policies\GenrePolicy;
+use App\Policies\PostPolicy;
+use App\Policies\ReviewPolicy;
+use App\Policies\TagPolicy;
 use App\Policies\UserPolicy;
-use Dom\Comment;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider

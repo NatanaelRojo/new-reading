@@ -3,7 +3,7 @@
 namespace Database\Seeders\Permissions\Web\V1;
 
 use App\Enums\Permissions\TagPermissions;
-use App\Enums\Roles\PanelRoles;
+use App\Enums\Roles\AppRoles;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -29,7 +29,7 @@ class TagPermissionsSeeder extends Seeder
             $this->command->info('Created permission: ' . $permission->getValue());
         }
 
-        $adminRole = Role::findByName(PanelRoles::ADMIN->getValue(), $guardName);
+        $adminRole = Role::findByName(AppRoles::ADMIN->getValue(), $guardName);
         if ($adminRole) {
             $adminRole->givePermissionTo(TagPermissions::getAllValues());
             $this->command->info("admin role assigned all tag permissions.");
@@ -37,7 +37,7 @@ class TagPermissionsSeeder extends Seeder
             $this->command->warn("Role 'Admin' not found. Skipping permission assignment.");
         }
 
-        $editorRole = Role::findByName(PanelRoles::EDITOR->getValue(), $guardName);
+        $editorRole = Role::findByName(AppRoles::EDITOR->getValue(), $guardName);
         if ($editorRole) {
             $editorRole->givePermissionTo(TagPermissions::getAllValues());
             $this->command->info("editor role assigned all tag permissions.");

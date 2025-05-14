@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\API\V1;
+namespace App\Policies;
 
 use App\Enums\Permissions\TagPermissions;
 use App\Models\API\V1\Tag;
