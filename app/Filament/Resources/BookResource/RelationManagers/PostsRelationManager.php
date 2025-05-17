@@ -31,7 +31,7 @@ class PostsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
-            ->actions(PostRelationManagerTable::getActions())
+            ->actions(PostRelationManagerTable::getActions(relationManager: $this))
             ->bulkActions(PostRelationManagerTable::getBulkActions());
     }
 }

@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\PermissionResource\Forms;
 
+use App\Filament\Resources\Abstract\AbstractCreateForm;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 
-class CreateForm
+class CreateForm extends AbstractCreateForm
 {
     public static function make(): array
     {

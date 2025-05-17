@@ -31,7 +31,7 @@ class BooksRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
-            ->actions(BookRelationManagerTable::getActions())
+            ->actions(BookRelationManagerTable::getActions(relationManager: $this))
             ->bulkActions(BookRelationManagerTable::getBulkActions());
     }
 }

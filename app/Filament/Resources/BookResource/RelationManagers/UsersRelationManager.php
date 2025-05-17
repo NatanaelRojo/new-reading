@@ -32,7 +32,7 @@ class UsersRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
-            ->actions(UserRelationManagerTable::getActions())
+            ->actions(UserRelationManagerTable::getActions(relationManager: $this))
             ->bulkActions(UserRelationManagerTable::getBulkActions());
     }
 }

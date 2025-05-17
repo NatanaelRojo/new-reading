@@ -31,7 +31,7 @@ class PermissionsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
-            ->actions(IndexTable::getActions(isRelation: true))
+            ->actions(IndexTable::getActions(relationManager: $this))
             ->bulkActions(IndexTable::getBulkActions());
     }
 }

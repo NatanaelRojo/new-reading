@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\RoleResource\Tables;
 
+use App\Filament\Resources\Abstract\AbstractTable;
 use App\Filament\Resources\RoleResource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -11,7 +13,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Spatie\Permission\Models\Role;
 
-class IndexTable
+class IndexTable extends AbstractTable
 {
     public static function getColumns(): array
     {
@@ -29,10 +31,19 @@ class IndexTable
         ];
     }
 
-    public static function getActions(bool $isRelation = false): array
+    public static function getHeaderActions(): array
     {
         return [
-                        ViewAction::make(),
+            //
+        ];
+    }
+
+    public static function getActions(?RelationManager $relationManager = null): array
+    {
+        $isRelation = $relationManager instanceof RelationManager;
+
+        return [
+            ViewAction::make(),
             EditAction::make()
                 ->url(
                     fn (Role $record): ?string => $isRelation ?

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AuthorResource\Forms;
 
+use App\Filament\Resources\Abstract\AbstractCreateForm;
 use App\Filament\Resources\BookResource\Forms\CreateForm as FormsCreateForm;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -9,7 +10,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 
-class CreateForm
+class CreateForm extends AbstractCreateForm
 {
     public static function getFields(): array
     {
@@ -27,6 +28,7 @@ class CreateForm
                 ->imageEditor(),
         ];
     }
+
     public static function make(): array
     {
         return [

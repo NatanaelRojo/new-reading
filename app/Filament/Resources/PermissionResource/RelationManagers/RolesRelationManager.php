@@ -31,7 +31,7 @@ class RolesRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
-            ->actions(IndexTable::getActions())
+            ->actions(IndexTable::getActions(relationManager: $this))
             ->bulkActions(IndexTable::getBulkActions());
     }
 }

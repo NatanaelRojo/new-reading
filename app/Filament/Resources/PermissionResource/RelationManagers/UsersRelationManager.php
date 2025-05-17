@@ -26,12 +26,12 @@ class UsersRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('name')
-            ->columns(IndexTable::getTableColumns())
-            ->filters(IndexTable::getTableFilters())
+            ->columns(IndexTable::getColumns())
+            ->filters(IndexTable::getFilters())
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
-            ->actions(IndexTable::getTableActions())
-            ->bulkActions(IndexTable::getTableBulkActions());
+            ->actions(IndexTable::getActions(relationManager: $this))
+            ->bulkActions(IndexTable::getBulkActions());
     }
 }

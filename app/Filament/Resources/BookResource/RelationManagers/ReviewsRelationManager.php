@@ -30,7 +30,7 @@ class ReviewsRelationManager extends RelationManager
             ->filters(ReviewRelationManagerTable::getFilters())
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
-            ])->actions(ReviewRelationManagerTable::getActions())
+            ])->actions(ReviewRelationManagerTable::getActions(relationManager: $this))
             ->bulkActions(ReviewRelationManagerTable::getBulkActions());
     }
 }

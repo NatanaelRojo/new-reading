@@ -34,10 +34,10 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns(IndexTable::getTableColumns())
-            ->filters(IndexTable::getTableFilters())
+            ->columns(IndexTable::getColumns())
+            ->filters(IndexTable::getFilters())
             ->actions(IndexTable::getTableActions())
-            ->bulkActions(IndexTable::getTableBulkActions());
+            ->bulkActions(IndexTable::getBulkActions());
     }
 
     public static function getRelations(): array

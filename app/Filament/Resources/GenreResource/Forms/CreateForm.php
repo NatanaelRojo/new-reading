@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\GenreResource\Forms;
 
+use App\Filament\Resources\Abstract\AbstractCreateForm;
 use Filament\Forms\Components\TextInput;
 
-class CreateForm
+class CreateForm extends AbstractCreateForm
 {
     public static function getFields(): array
     {

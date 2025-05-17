@@ -2,6 +2,10 @@
 
 namespace App\Filament\Resources\UserResource\Tables;
 
+use App\Filament\Resources\Abstract\AbstractTable;
+use App\Filament\Resources\UserResource;
+use App\Models\User;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -10,9 +14,9 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 
-class IndexTable
+class IndexTable extends AbstractTable
 {
-    public static function getTableColumns(): array
+    public static function getColumns(): array
     {
         return [
             TextColumn::make('email')
@@ -26,23 +30,37 @@ class IndexTable
         ];
     }
 
-    public static function getTableFilters(): array
+    public static function getFilters(): array
     {
         return [
             //
         ];
     }
 
-    public static function getTableActions(): array
+    public static function getHeaderActions(): array
     {
         return [
-            ViewAction::make(),
-            EditAction::make(),
+            Tables\Actions\CreateAction::make(),
+        ];
+    }
+
+    public static function getActions(?RelationManager $relationManager = null): array
+    {
+        $isRelation = $relationManager instanceof RelationManager;
+
+        return [
+                        ViewAction::make(),
+            EditAction::make()
+                ->url(
+                    fn (User $record): ?string => $isRelation ?
+                    UserResource::getUrl('edit', ['record' => $record])
+                    : null
+                ),
             DeleteAction::make(),
         ];
     }
 
-    public static function getTableBulkActions(): array
+    public static function getBulkActions(): array
     {
         return [
             BulkActionGroup::make([
