@@ -8,6 +8,7 @@ use App\Http\Resources\API\V1\Review\ReviewResource;
 use App\Models\API\V1\Review;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
@@ -19,7 +20,8 @@ class ReviewRelationManagerTable extends AbstractTable
     public static function getColumns(): array
     {
         return [
-            TextColumn::make('user.name'),
+            TextColumn::make('user.name')
+                ->searchable(),
             TextColumn::make('rating'),
             TextColumn::make('comment'),
         ];
@@ -35,7 +37,7 @@ class ReviewRelationManagerTable extends AbstractTable
     public static function getHeaderActions(): array
     {
         return [
-            //
+            CreateAction::make(),
         ];
     }
 

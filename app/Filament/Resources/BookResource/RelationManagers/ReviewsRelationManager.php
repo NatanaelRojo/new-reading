@@ -28,9 +28,8 @@ class ReviewsRelationManager extends RelationManager
             ->recordTitleAttribute('comment')
             ->columns(ReviewRelationManagerTable::getColumns())
             ->filters(ReviewRelationManagerTable::getFilters())
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])->actions(ReviewRelationManagerTable::getActions(relationManager: $this))
+            ->headerActions(ReviewRelationManagerTable::getHeaderActions())
+            ->actions(ReviewRelationManagerTable::getActions(relationManager: $this))
             ->bulkActions(ReviewRelationManagerTable::getBulkActions());
     }
 }

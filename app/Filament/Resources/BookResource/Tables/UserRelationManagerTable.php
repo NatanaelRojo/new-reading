@@ -9,6 +9,7 @@ use App\Models\API\V1\Tag;
 use App\Models\User;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
@@ -22,7 +23,8 @@ class UserRelationManagerTable extends AbstractTable
     public static function getColumns(): array
     {
         return [
-            TextColumn::make('name'),
+            TextColumn::make('name')
+                ->searchable(),
             SelectColumn::make('tag_id')
                 ->label('tag')
                 ->options(fn (): Collection => Tag::query()->pluck('name', 'id')),
@@ -45,7 +47,7 @@ class UserRelationManagerTable extends AbstractTable
     public static function getHeaderActions(): array
     {
         return [
-            //
+            CreateAction::make(),
         ];
     }
 

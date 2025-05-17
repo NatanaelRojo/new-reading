@@ -28,9 +28,7 @@ class PostsRelationManager extends RelationManager
             ->recordTitleAttribute('body')
             ->columns(PostRelationManagerTable::getColumns())
             ->filters(PostRelationManagerTable::getFilters())
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
+            ->headerActions(PostRelationManagerTable::getHeaderActions())
             ->actions(PostRelationManagerTable::getActions(relationManager: $this))
             ->bulkActions(PostRelationManagerTable::getBulkActions());
     }

@@ -7,6 +7,7 @@ use App\Filament\Resources\PostResource;
 use App\Models\API\V1\Post;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
@@ -18,7 +19,8 @@ class PostRelationManagerTable extends AbstractTable
     public static function getColumns(): array
     {
         return [
-            TextColumn::make('user.name'),
+            TextColumn::make('user.name')
+                ->searchable(),
             TextColumn::make('body'),
             TextColumn::make('progress'),
         ];
@@ -34,7 +36,7 @@ class PostRelationManagerTable extends AbstractTable
     public static function getHeaderActions(): array
     {
         return [
-            //
+            CreateAction::make(),
         ];
     }
 

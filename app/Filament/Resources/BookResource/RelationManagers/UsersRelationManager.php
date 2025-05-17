@@ -29,9 +29,7 @@ class UsersRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns(UserRelationManagerTable::getColumns())
             ->filters(UserRelationManagerTable::getFilters())
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
+            ->headerActions(UserRelationManagerTable::getHeaderActions())
             ->actions(UserRelationManagerTable::getActions(relationManager: $this))
             ->bulkActions(UserRelationManagerTable::getBulkActions());
     }
