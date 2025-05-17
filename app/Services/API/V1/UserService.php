@@ -118,24 +118,4 @@ class UserService
         $user->books()
             ->updateExistingPivot($assignTagToBookDto->book_id, ['tag_id' => $assignTagToBookDto->tag_id]);
     }
-
-    /**
-     * Check if the user has completed a book.
-     *
-     * @param int $bookId
-     * @param array $validatedData
-     * @return bool
-     */
-    public function hasCompletedBook(User $user, int $bookId): bool
-    {
-        $userBookToReview = $user->books()->firstWhere('book_id', $bookId);
-        $bookToReviewTag = Tag::query()
-            ->firstWhere('id', $userBookToReview->pivot->tag_id);
-
-        if ($bookToReviewTag->name !== 'Completed') {
-            return false;
-        }
-
-        return true;
-    }
 }
