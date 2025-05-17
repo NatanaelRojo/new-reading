@@ -102,6 +102,25 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Check if the user has completed a book.
+     *
+     * @param int $bookId
+     * @return bool
+     */
+    public function hasCompletedBook(int $bookId): bool
+    {
+        $userBookToReview = $this->books()->firstWhere('book_id', $bookId);
+        $bookToReviewTag = Tag::query()
+            ->firstWhere('id', $userBookToReview->pivot->tag_id);
+
+        if ($bookToReviewTag->name !== 'Completed') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Update the progress of a book for a specific user.
      *
      * @param Book $book The book to update the progress for.
