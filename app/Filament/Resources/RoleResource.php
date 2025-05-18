@@ -24,6 +24,7 @@ class RoleResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-finger-print';
     protected static ?string $navigationGroup = 'Roles and permissions';
     protected static ?int $navigationSort = 1;
+    protected static string $searchPlaceHolderMessage = 'Search for role\'s name...';
 
     public static function form(Form $form): Form
     {
@@ -34,6 +35,7 @@ class RoleResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchPlaceholder(static::$searchPlaceHolderMessage)
             ->columns(IndexTable::getColumns())
             ->filters(IndexTable::getFilters())
             ->actions(IndexTable::getActions())
