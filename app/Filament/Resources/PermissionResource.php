@@ -23,6 +23,7 @@ class PermissionResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-key';
     protected static ?string $navigationGroup = 'Roles and permissions';
     protected static ?int $navigationSort = 2;
+    protected static string $searchPlaceHolderMessage = 'Search by permission\'s name...';
 
     public static function form(Form $form): Form
     {
@@ -33,6 +34,7 @@ class PermissionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchPlaceholder(static::$searchPlaceHolderMessage)
             ->columns(IndexTable::getColumns())
             ->filters(IndexTable::getFilters())
             ->actions(IndexTable::getActions())
