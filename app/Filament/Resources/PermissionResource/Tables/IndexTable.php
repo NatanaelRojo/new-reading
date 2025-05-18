@@ -6,6 +6,7 @@ use App\Filament\Resources\Abstract\AbstractTable;
 use App\Filament\Resources\PermissionResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
@@ -34,13 +35,14 @@ class IndexTable extends AbstractTable
     public static function getHeaderActions(): array
     {
         return [
-            //
+            CreateAction::make(),
         ];
     }
 
     public static function getActions(?RelationManager $relationManager = null): array
     {
         $isRelation = $relationManager instanceof RelationManager;
+
         return [
                                     ViewAction::make(),
             EditAction::make()
