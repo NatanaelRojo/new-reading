@@ -36,7 +36,7 @@ class UserResource extends Resource
         return $table
             ->columns(IndexTable::getColumns())
             ->filters(IndexTable::getFilters())
-            ->actions(IndexTable::getTableActions())
+            ->actions(IndexTable::getActions())
             ->bulkActions(IndexTable::getBulkActions());
     }
 
