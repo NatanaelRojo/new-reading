@@ -26,7 +26,8 @@ class IndexTable extends AbstractTable
     public static function getColumns(): array
     {
         return [
-            TextColumn::make('user.name')->searchable(),
+            TextColumn::make('user.name')
+                ->searchable(),
             TextColumn::make('related_to'),
             TextColumn::make('body')->limit(50),
         ];
