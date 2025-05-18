@@ -28,9 +28,7 @@ class BooksRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns(BookRelationManagerTable::getColumns())
             ->filters(BookRelationManagerTable::getFilters())
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
+            ->headerActions(BookRelationManagerTable::getHeaderActions())
             ->actions(BookRelationManagerTable::getActions(relationManager: $this))
             ->bulkActions(BookRelationManagerTable::getBulkActions());
     }
