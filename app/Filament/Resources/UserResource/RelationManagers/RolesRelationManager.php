@@ -28,9 +28,7 @@ class RolesRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns(IndexTable::getColumns())
             ->filters(IndexTable::getFilters())
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
+            ->headerActions(IndexTable::getHeaderActions())
             ->actions(IndexTable::getActions(relationManager: $this))
             ->bulkActions(IndexTable::getBulkActions());
     }
