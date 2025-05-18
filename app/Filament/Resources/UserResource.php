@@ -22,8 +22,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string $searchPlaceHolderMessage = 'Search by email, or name';
 
     public static function form(Form $form): Form
     {
@@ -34,6 +34,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchPlaceholder(static::$searchPlaceHolderMessage)
             ->columns(IndexTable::getColumns())
             ->filters(IndexTable::getFilters())
             ->actions(IndexTable::getActions())
