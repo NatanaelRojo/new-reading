@@ -18,8 +18,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string $searchPlaceHolderMessage = 'Search by user, or book...';
 
     public static function form(Form $form): Form
     {
@@ -30,6 +30,7 @@ class PostResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchPlaceholder(static::$searchPlaceHolderMessage)
             ->columns(IndexTable::getColumns())
             ->filters(IndexTable::getFilters())
             ->actions(IndexTable::getActions())
