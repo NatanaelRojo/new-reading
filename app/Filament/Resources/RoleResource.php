@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources;
 
-use Althinect\FilamentSpatieRolesPermissions\Resources\RoleResource\RelationManager\UserRelationManager;
 use App\Filament\Resources\RoleResource\Forms\CreateForm;
 use App\Filament\Resources\RoleResource\Pages;
 use App\Filament\Resources\RoleResource\RelationManagers;
 use App\Filament\Resources\RoleResource\RelationManagers\PermissionsRelationManager;
+use App\Filament\Resources\RoleResource\RelationManagers\UsersRelationManager;
 use App\Filament\Resources\RoleResource\Tables\IndexTable;
 use App\Models\Role;
 use Filament\Forms;
@@ -44,7 +44,7 @@ class RoleResource extends Resource
     {
         return [
             PermissionsRelationManager::class,
-            UserRelationManager::class,
+            UsersRelationManager::class,
         ];
     }
 
