@@ -19,6 +19,7 @@ class ReviewsResource extends Resource
 {
     protected static ?string $model = Review::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string $searchPlaceHolderMessage = 'Search by user, or book...';
 
     public static function form(Form $form): Form
     {
@@ -29,6 +30,7 @@ class ReviewsResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchPlaceholder(static::$searchPlaceHolderMessage)
             ->columns(IndexTable::getColumns())
             ->filters(IndexTable::getFilters())
             ->actions(IndexTable::getActions())
