@@ -28,6 +28,7 @@ class AdPanelProvider extends PanelProvider
             ->id('ad')
             ->path('ad')
             ->login()
+            ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::Amber,
             ])
