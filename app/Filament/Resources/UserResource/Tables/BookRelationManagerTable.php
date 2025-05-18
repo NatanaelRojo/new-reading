@@ -8,6 +8,7 @@ use App\Models\API\V1\Book;
 use App\Models\API\V1\Tag;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
@@ -21,7 +22,8 @@ class BookRelationManagerTable extends AbstractTable
     public static function getColumns(): array
     {
         return [
-            TextColumn::make('title'),
+            TextColumn::make('title')
+                ->searchable(),
             SelectColumn::make('tag_id')
                 ->label('tag')
                 ->options(fn (): Collection => Tag::query()->pluck('name', 'id')),
@@ -44,7 +46,7 @@ class BookRelationManagerTable extends AbstractTable
     public static function getHeaderActions(): array
     {
         return [
-            //
+            CreateAction::make(),
         ];
     }
 
