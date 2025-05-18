@@ -7,10 +7,13 @@ use App\Filament\Resources\BookResource;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Tag;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\SelectColumn;
@@ -46,6 +49,9 @@ class BookRelationManagerTable extends AbstractTable
     public static function getHeaderActions(): array
     {
         return [
+            AttachAction::make()
+                ->preloadRecordSelect()
+                ->multiple(),
             CreateAction::make(),
         ];
     }
@@ -55,6 +61,7 @@ class BookRelationManagerTable extends AbstractTable
         $isRelation = $relationManager instanceof RelationManager;
 
         return [
+            DetachAction::make(),
                         ViewAction::make(),
             EditAction::make()
                 ->url(
@@ -70,6 +77,7 @@ class BookRelationManagerTable extends AbstractTable
     {
         return [
             BulkActionGroup::make([
+                DetachBulkAction::make(),
                 DeleteBulkAction::make(),
             ]),
         ];

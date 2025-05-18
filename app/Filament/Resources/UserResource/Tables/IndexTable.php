@@ -7,9 +7,13 @@ use App\Filament\Resources\UserResource;
 use App\Models\User;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -40,7 +44,10 @@ class IndexTable extends AbstractTable
     public static function getHeaderActions(): array
     {
         return [
-            Tables\Actions\CreateAction::make(),
+            AttachAction::make()
+                ->preloadRecordSelect()
+                ->multiple(),
+            CreateAction::make(),
         ];
     }
 
@@ -49,6 +56,7 @@ class IndexTable extends AbstractTable
         $isRelation = $relationManager instanceof RelationManager;
 
         return [
+            DetachAction::make(),
                         ViewAction::make(),
             EditAction::make()
                 ->url(
@@ -64,6 +72,7 @@ class IndexTable extends AbstractTable
     {
         return [
             BulkActionGroup::make([
+                DetachBulkAction::make(),
                 DeleteBulkAction::make(),
             ]),
         ];
