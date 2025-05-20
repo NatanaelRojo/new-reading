@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ReviewsResource extends Resource
 {
     protected static ?string $model = Review::class;
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-star';
     protected static string $searchPlaceHolderMessage = 'Search by user, or book...';
 
     public static function form(Form $form): Form
