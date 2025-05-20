@@ -16,8 +16,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ReviewsRelationManager extends RelationManager
 {
     protected static string $relationship = 'reviews';
+    protected static string $searchPlaceHolderMessage = 'Search by user...';
 
-                public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
         return $ownerRecord->reviews()->count();
     }
@@ -32,6 +33,7 @@ class ReviewsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('comment')
+            ->searchPlaceholder(static::$searchPlaceHolderMessage)
             ->columns(ReviewRelationManagerTable::getColumns())
             ->filters(ReviewRelationManagerTable::getFilters())
             ->headerActions(ReviewRelationManagerTable::getHeaderActions())
