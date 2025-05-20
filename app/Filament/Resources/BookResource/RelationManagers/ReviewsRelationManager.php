@@ -10,11 +10,17 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ReviewsRelationManager extends RelationManager
 {
     protected static string $relationship = 'reviews';
+
+                public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+    {
+        return $ownerRecord->reviews()->count();
+    }
 
     public function form(Form $form): Form
     {
@@ -28,9 +34,8 @@ class ReviewsRelationManager extends RelationManager
             ->recordTitleAttribute('comment')
             ->columns(ReviewRelationManagerTable::getColumns())
             ->filters(ReviewRelationManagerTable::getFilters())
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])->actions(ReviewRelationManagerTable::getActions())
+            ->headerActions(ReviewRelationManagerTable::getHeaderActions())
+            ->actions(ReviewRelationManagerTable::getActions(relationManager: $this))
             ->bulkActions(ReviewRelationManagerTable::getBulkActions());
     }
 }

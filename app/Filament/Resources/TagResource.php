@@ -18,8 +18,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class TagResource extends Resource
 {
     protected static ?string $model = Tag::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string $searchPlaceHolderMessage = 'Search by genre\'s name...';
 
     public static function form(Form $form): Form
     {
@@ -30,6 +30,7 @@ class TagResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchPlaceholder(static::$searchPlaceHolderMessage)
             ->columns(IndexTable::getColumns())
             ->filters(IndexTable::getFilters())
             ->actions(IndexTable::getActions())

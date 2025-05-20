@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Comment;
 use App\Models\API\V1\Like;
 use App\Models\API\V1\Post;
 use App\Models\API\V1\Review;
 use App\Models\API\V1\Tag;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,12 +19,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasFactory;
     use Notifiable;
     use HasApiTokens;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -62,6 +67,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasRole(AppRoles::ADMIN->getValue());
+    }
+
     /**
      * Get the full name of the user.
      * @return Attribute
@@ -71,6 +81,55 @@ class User extends Authenticatable
         return Attribute::make(
             get: fn () => $this->first_name . ' ' . $this->last_name,
         );
+    }
+
+    /**
+     * Get the completion percentage of a book for a specific user.
+     *
+     * @param int $bookId
+     * @return float|int|null
+     */
+    public function getBookCompletionPercentage(int $bookId): ?int
+    {
+        $userBook = $this->books()->firstWhere('book_id', $bookId);
+        $totalPages = $userBook->pages_amount;
+
+        if (!$userBook || !$totalPages) {
+            return null;
+        }
+
+        return $userBook->pivot->pages_read ? ($userBook->pivot->pages_read / $totalPages) * 100 : 0;
+    }
+
+    /**
+     * Check if the user has completed a book.
+     *
+     * @param int $bookId
+     * @return bool
+     */
+    public function hasCompletedBook(int $bookId): bool
+    {
+        $userBookToReview = $this->books()->firstWhere('book_id', $bookId);
+        $bookToReviewTag = Tag::query()
+            ->firstWhere('id', $userBookToReview->pivot->tag_id);
+
+        if ($bookToReviewTag->name !== 'Completed') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Update the progress of a book for a specific user.
+     *
+     * @param Book $book The book to update the progress for.
+     * @param int $pagesRead The number of pages read by the user.
+     * @return void
+     */
+    public function updateBookProgress(Book $book, int $pagesRead): void
+    {
+        $book->users()->updateExistingPivot($book->id, ['pages_read' => $pagesRead]);
     }
 
     /**

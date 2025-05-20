@@ -2,13 +2,14 @@
 
 namespace App\Filament\Resources\PostResource\Forms;
 
+use App\Filament\Resources\Abstract\AbstractCreateForm;
 use App\Filament\Resources\BookResource\Forms\CreateForm as BookResourceFormsCreateForm;
 use App\Filament\Resources\UserResource\Forms\CreateForm as FormsCreateForm;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 
-class CreateForm
+class CreateForm extends AbstractCreateForm
 {
     public static function make(): array
     {

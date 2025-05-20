@@ -10,11 +10,17 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PostsRelationManager extends RelationManager
 {
     protected static string $relationship = 'posts';
+
+                public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+    {
+        return $ownerRecord->posts()->count();
+    }
 
     public function form(Form $form): Form
     {
@@ -28,10 +34,8 @@ class PostsRelationManager extends RelationManager
             ->recordTitleAttribute('body')
             ->columns(PostRelationManagerTable::getColumns())
             ->filters(PostRelationManagerTable::getFilters())
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
-            ->actions(PostRelationManagerTable::getActions())
+            ->headerActions(PostRelationManagerTable::getHeaderActions())
+            ->actions(PostRelationManagerTable::getActions(relationManager: $this))
             ->bulkActions(PostRelationManagerTable::getBulkActions());
     }
 }

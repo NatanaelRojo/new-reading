@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ReviewsResource\Forms;
 
+use App\Filament\Resources\Abstract\AbstractCreateForm;
 use App\Filament\Resources\BookResource\Forms\CreateForm as FormsCreateForm;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
@@ -14,7 +15,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CreateForm
+class CreateForm extends AbstractCreateForm
 {
     public static function make(): array
     {

@@ -2,23 +2,31 @@
 
 namespace App\Filament\Resources\UserResource\Tables;
 
+use App\Filament\Resources\Abstract\AbstractTable;
+use App\Filament\Resources\BookResource;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Tag;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Collection;
 
-class BookRelationManagerTable
+class BookRelationManagerTable extends AbstractTable
 {
     public static function getColumns(): array
     {
         return [
-            TextColumn::make('title'),
+            TextColumn::make('title')
+                ->searchable(),
             SelectColumn::make('tag_id')
                 ->label('tag')
                 ->options(fn (): Collection => Tag::query()->pluck('name', 'id')),
@@ -38,11 +46,29 @@ class BookRelationManagerTable
         ];
     }
 
-    public static function getActions(): array
+    public static function getHeaderActions(): array
     {
         return [
-            ViewAction::make(),
-            EditAction::make(),
+            AttachAction::make()
+                ->preloadRecordSelect()
+                ->multiple(),
+            CreateAction::make(),
+        ];
+    }
+
+    public static function getActions(?RelationManager $relationManager = null): array
+    {
+        $isRelation = $relationManager instanceof RelationManager;
+
+        return [
+            DetachAction::make(),
+                        ViewAction::make(),
+            EditAction::make()
+                ->url(
+                    fn (Book $record): ?string => $isRelation ?
+                    BookResource::getUrl('edit', ['record' => $record])
+                    : null
+                ),
             DeleteAction::make(),
         ];
     }
@@ -51,6 +77,7 @@ class BookRelationManagerTable
     {
         return [
             BulkActionGroup::make([
+                DetachBulkAction::make(),
                 DeleteBulkAction::make(),
             ]),
         ];

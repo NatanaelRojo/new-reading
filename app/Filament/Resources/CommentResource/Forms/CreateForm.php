@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CommentResource\Forms;
 
+use App\Filament\Resources\Abstract\AbstractCreateForm;
 use App\Filament\Resources\BookResource\Forms\CreateForm as FormsCreateForm;
 use App\Filament\Resources\UserResource\Forms\CreateForm as UserResourceFormsCreateForm;
 use App\Models\API\V1\Book;
@@ -11,7 +12,7 @@ use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 
-class CreateForm
+class CreateForm extends AbstractCreateForm
 {
     public static function make(): array
     {

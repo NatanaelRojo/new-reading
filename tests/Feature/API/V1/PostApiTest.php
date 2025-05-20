@@ -59,7 +59,7 @@ class PostApiTest extends TestCase
             route('books.posts.store', $book->slug),
             [
                 'body' => fake()->sentence(),
-                'progress' => fake()->numberBetween(0, 100),
+                'progress' => fake()->numberBetween(1, 100),
             ]
         )->assertStatus(JsonResponse::HTTP_CREATED)
             ->assertJsonStructure([

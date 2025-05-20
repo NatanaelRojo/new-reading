@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Filament\Resources\PermissionResource\Tables;
+
+use App\Filament\Resources\Abstract\AbstractTable;
+use App\Filament\Resources\PermissionResource;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\DetachBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Spatie\Permission\Models\Permission;
+
+class IndexTable extends AbstractTable
+{
+    public static function getColumns(): array
+    {
+        return [
+            TextColumn::make('name')
+                ->searchable(),
+            TextColumn::make('guard_name'),
+        ];
+    }
+
+    public static function getFilters(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getHeaderActions(): array
+    {
+        return [
+            AttachAction::make()
+                ->preloadRecordSelect()
+                ->multiple(),
+            CreateAction::make(),
+        ];
+    }
+
+    public static function getActions(?RelationManager $relationManager = null): array
+    {
+        $isRelation = $relationManager instanceof RelationManager;
+
+        return [
+            DetachAction::make(),
+                                    ViewAction::make(),
+            EditAction::make()
+                ->url(
+                    fn (Permission $record): ?string => $isRelation ?
+                    PermissionResource::getUrl('edit', ['record' => $record])
+                    : null
+                ),
+            DeleteAction::make(),
+        ];
+    }
+
+    public static function getBulkActions(): array
+    {
+        return [
+                                    BulkActionGroup::make([
+                DetachBulkAction::make(),
+                DeleteBulkAction::make(),
+            ]),
+        ];
+    }
+}
