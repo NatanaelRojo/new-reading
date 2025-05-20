@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class AuthorResource extends Resource
 {
     protected static ?string $model = Author::class;
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user';
     protected static string $searchPlaceHolderMessage = 'Search by author\'s name...';
 
     public static function form(Form $form): Form
