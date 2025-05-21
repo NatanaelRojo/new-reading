@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class UsersRelationManager extends RelationManager
 {
     protected static string $relationship = 'users';
+    protected static string $searchPlaceHolderMessage = 'Search by name, or email...';
 
     public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
@@ -32,6 +33,7 @@ class UsersRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('name')
+            ->searchPlaceholder(static::$searchPlaceHolderMessage)
             ->columns(IndexTable::getColumns())
             ->filters(IndexTable::getFilters())
             ->headerActions(IndexTable::getHeaderActions())
