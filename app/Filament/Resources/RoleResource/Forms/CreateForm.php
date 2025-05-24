@@ -13,7 +13,8 @@ class CreateForm extends AbstractCreateForm
         return [
                              TextInput::make('name')
                     ->required()
-                    ->unique(ignoreRecord: true),
+                    ->unique(ignoreRecord: true)
+                    ->readOnly(fn (string $operation): bool => $operation === 'edit'),
                  Select::make('guard_name')
                     ->options(['web' => 'Web', 'api' => 'API'])
                     ->required()
