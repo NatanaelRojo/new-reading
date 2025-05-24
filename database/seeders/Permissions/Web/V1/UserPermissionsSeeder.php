@@ -29,21 +29,5 @@ class UserPermissionsSeeder extends Seeder
             ]);
             $this->command->info('Created permission: ' . $permission->getValue());
         }
-
-        $adminRole = Role::findByName(AppRoles::ADMIN->getValue(), $guardName);
-        if ($adminRole) {
-            $adminRole->givePermissionTo(UserPermissions::getAllValues());
-            $this->command->info("admin role assigned all user permissions.");
-        } else {
-            $this->command->warn("Role 'Admin' not found. Skipping permission assignment.");
-        }
-
-        $editorRole = Role::findByName(AppRoles::EDITOR->getValue(), $guardName);
-        if ($editorRole) {
-            $editorRole->givePermissionTo(UserPermissions::getAllValues());
-            $this->command->info("editor role assigned all user permissions.");
-        } else {
-            $this->command->warn("Role 'Editor' not found. Skipping permission assignment.");
-        }
     }
 }

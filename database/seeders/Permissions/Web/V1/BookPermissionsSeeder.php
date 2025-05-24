@@ -29,21 +29,5 @@ class BookPermissionsSeeder extends Seeder
             ]);
             $this->command->info('Created permission: ' . $permission->getValue());
         }
-
-        $adminRole = Role::findByName(AppRoles::ADMIN->getValue(), $guardName);
-        if ($adminRole) {
-            $adminRole->givePermissionTo(BookPermissions::getAllValues());
-            $this->command->info("admin role assigned all book permissions.");
-        } else {
-            $this->command->warn("Role 'Admin' not found. Skipping permission assignment.");
-        }
-
-        $editorRole = Role::findByName(AppRoles::EDITOR->getValue(), $guardName);
-        if ($editorRole) {
-            $editorRole->givePermissionTo(BookPermissions::getAllValues());
-            $this->command->info("editor role assigned all book permissions.");
-        } else {
-            $this->command->warn("Role 'Editor' not found. Skipping permission assignment.");
-        }
     }
 }
