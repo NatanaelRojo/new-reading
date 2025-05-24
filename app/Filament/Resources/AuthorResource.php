@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\AuthorResource\Forms\CreateForm;
 use App\Filament\Resources\AuthorResource\Pages;
 use App\Filament\Resources\AuthorResource\RelationManagers;
+use App\Filament\Resources\AuthorResource\RelationManagers\BooksRelationManager;
 use App\Filament\Resources\AuthorResource\Tables\IndexTable;
 use App\Models\API\V1\Author;
 use Filament\Forms;
@@ -48,7 +49,7 @@ class AuthorResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            BooksRelationManager::class,
         ];
     }
 
