@@ -148,7 +148,6 @@ class Book extends Model
         return $this->hasMany(Review::class);
     }
 
-
     /**
      * The users that belong to the book.
      * @return BelongsToMany<User, Book>
