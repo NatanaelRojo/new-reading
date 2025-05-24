@@ -28,7 +28,7 @@ class AdPanelProvider extends PanelProvider
             ->id('ad')
             ->path('ad')
             ->login()
-            ->spa()
+            ->unsavedChangesAlerts()
             ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::Amber,
@@ -58,6 +58,7 @@ class AdPanelProvider extends PanelProvider
                 Authenticate::class,
             ])->plugins([
                 FilamentSpatieRolesPermissionsPlugin::make(),
-            ]);
+            ])
+            ->spa();
     }
 }
