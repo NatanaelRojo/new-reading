@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BookResource\Forms\CreateForm;
 use App\Filament\Resources\BookResource\Pages;
 use App\Filament\Resources\BookResource\RelationManagers;
+use App\Filament\Resources\BookResource\RelationManagers\AuthorsRelationManager;
+use App\Filament\Resources\BookResource\RelationManagers\GenresRelationManager;
 use App\Filament\Resources\BookResource\RelationManagers\PostsRelationManager;
 use App\Filament\Resources\BookResource\RelationManagers\ReviewsRelationManager;
 use App\Filament\Resources\BookResource\RelationManagers\UsersRelationManager;
@@ -43,6 +45,8 @@ class BookResource extends Resource
     public static function getRelations(): array
     {
         return [
+            AuthorsRelationManager::class,
+            GenresRelationManager::class,
             PostsRelationManager::class,
             ReviewsRelationManager::class,
             UsersRelationManager::class,
