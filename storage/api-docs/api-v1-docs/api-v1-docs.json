@@ -1,0 +1,477 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "New Reading Api",
+        "description": "API documentation for your Laravel application.",
+        "contact": {
+            "email": "rojonatanael99@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://my-default-host.com",
+            "description": "Demo API Server"
+        }
+    ],
+    "paths": {
+        "/api/authors": {
+            "get": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Get a paginated list of authors",
+                "description": "Returns a paginated list of authors, optionally filtered.",
+                "operationId": "getAuthorsList",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page (default: 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Create a new author",
+                "description": "Creates a new author record in the database.",
+                "operationId": "createAuthor",
+                "requestBody": {
+                    "description": "Author data to store",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreAuthorRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Author created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Author"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "name": [
+                                                    "The name field is required."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/authors/{author}": {
+            "get": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Get a single author by ID",
+                "description": "Returns a single author record.",
+                "operationId": "getAuthorById",
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "path",
+                        "description": "ID of the author to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Author"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Author not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Update an existing author",
+                "description": "Updates an existing author record by ID.",
+                "operationId": "updateAuthor",
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "path",
+                        "description": "ID of the author to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Author data to update",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateAuthorRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Author updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Author"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Author not found"
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "email": [
+                                                    "The email has already been taken."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Delete an author",
+                "description": "Deletes an author record by ID.",
+                "operationId": "deleteAuthor",
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "path",
+                        "description": "ID of the author to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Author deleted successfully (No Content)"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Author not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "StoreAuthorRequest": {
+                "title": "Store Author Request",
+                "description": "Request body for creating a new author",
+                "required": [
+                    "first_name",
+                    "last_name",
+                    "nationality",
+                    "biography",
+                    "image_url"
+                ],
+                "properties": {
+                    "first_name": {
+                        "description": "The first name of the author",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "John"
+                    },
+                    "last_name": {
+                        "description": "The last name of the author",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Doe"
+                    },
+                    "nationality": {
+                        "description": "The nationality of the author",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "American"
+                    },
+                    "biography": {
+                        "description": "A short biography of the author",
+                        "type": "string",
+                        "example": "John Doe is a prolific writer known for his captivating sci-fi novels."
+                    },
+                    "image_url": {
+                        "description": "URL to the author's profile image",
+                        "type": "string",
+                        "format": "url",
+                        "example": "https://example.com/images/john_doe.jpg"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateAuthorRequest": {
+                "title": "Update Author Request",
+                "description": "Request body for updating an existing author. All fields are optional, providing only the ones to be updated.",
+                "properties": {
+                    "first_name": {
+                        "description": "The updated first name of the author",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Janet"
+                    },
+                    "last_name": {
+                        "description": "The updated last name of the author",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Smith"
+                    },
+                    "nationality": {
+                        "description": "The updated nationality of the author",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "British"
+                    },
+                    "biography": {
+                        "description": "An updated biography of the author",
+                        "type": "string",
+                        "example": "Janet Smith is a celebrated author known for her historical fiction."
+                    },
+                    "image_url": {
+                        "description": "Updated URL to the author's profile image",
+                        "type": "string",
+                        "format": "url",
+                        "example": "https://example.com/images/janet_smith_new.jpg"
+                    }
+                },
+                "type": "object"
+            },
+            "Author": {
+                "title": "Author",
+                "description": "Author model representing a creative writer or artist.",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the author",
+                        "type": "integer",
+                        "format": "int64",
+                        "readOnly": true,
+                        "example": 1
+                    },
+                    "first_name": {
+                        "description": "The first name of the author",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "J.K."
+                    },
+                    "last_name": {
+                        "description": "The last name of the author",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Rowling"
+                    },
+                    "full_name": {
+                        "description": "The concatenated full name of the author (first_name + last_name)",
+                        "type": "string",
+                        "readOnly": true,
+                        "example": "J.K. Rowling"
+                    },
+                    "nationality": {
+                        "description": "The nationality of the author",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "British"
+                    },
+                    "biography": {
+                        "description": "A brief biographical summary of the author",
+                        "type": "string",
+                        "example": "Joanne Rowling, most famously known as J.K. Rowling, is a British author, screenwriter, and producer best known for writing the Harry Potter fantasy series."
+                    },
+                    "image_url": {
+                        "description": "URL to the author's profile image or photograph",
+                        "type": "string",
+                        "format": "url",
+                        "example": "https://example.com/images/jk_rowling.jpg"
+                    },
+                    "slug": {
+                        "description": "Unique URL-friendly slug for the author (generated from full name)",
+                        "type": "string",
+                        "maxLength": 255,
+                        "readOnly": true,
+                        "example": "jk-rowling"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the author record was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2023-01-01T12:30:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the author record was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2023-01-05T15:45:00Z"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Author"
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Enter token in format (Bearer <token>)"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authors",
+            "description": "API Endpoints for Authors"
+        }
+    ]
+}
