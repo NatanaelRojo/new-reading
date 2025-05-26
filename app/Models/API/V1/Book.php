@@ -15,12 +15,120 @@ use Illuminate\Validation\ValidationException;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
+/**
+ * @OA\Schema(
+ * title="Book",
+ * description="Book model representing a published literary work.",
+ * @OA\Xml(
+ * name="Book"
+ * )
+ * )
+ */
 class Book extends Model
 {
     use HasFactory;
     use HasSlug;
     use Filterable;
 
+    /**
+     * @OA\Property(
+     * property="id",
+     * type="integer",
+     * format="int64",
+     * description="The unique identifier of the book.",
+     * readOnly=true,
+     * example=101
+     * )
+     * @OA\Property(
+     * property="title",
+     * type="string",
+     * description="The title of the book.",
+     * maxLength=255,
+     * example="The Hitchhiker's Guide to the Galaxy"
+     * )
+     * @OA\Property(
+     * property="synopsis",
+     * type="string",
+     * description="A brief summary or outline of the book's plot and themes.",
+     * example="Arthur Dent's journey through space after Earth is destroyed to make way for a hyperspace bypass."
+     * )
+     * @OA\Property(
+     * property="isbn",
+     * type="string",
+     * description="The International Standard Book Number, a unique commercial book identifier.",
+     * maxLength=255,
+     * example="978-0-345-39180-3"
+     * )
+     * @OA\Property(
+     * property="pages_amount",
+     * type="integer",
+     * format="int32",
+     * description="The total number of pages in the book.",
+     * minimum=1,
+     * example=193
+     * )
+     * @OA\Property(
+     * property="chapters_amount",
+     * type="integer",
+     * format="int32",
+     * description="The total number of chapters in the book.",
+     * minimum=1,
+     * example=35
+     * )
+     * @OA\Property(
+     * property="published_at",
+     * type="string",
+     * format="date",
+     * description="The date when the book was originally published (YYYY-MM-DD).",
+     * example="1979-10-12"
+     * )
+     * @OA\Property(
+     * property="slug",
+     * type="string",
+     * description="A URL-friendly, unique identifier for the book, derived from its title.",
+     * readOnly=true,
+     * example="the-hitchhikers-guide-to-the-galaxy"
+     * )
+     * @OA\Property(
+     * property="image_url",
+     * type="string",
+     * format="url",
+     * description="The URL to the book's cover image.",
+     * nullable=true,
+     * example="https://example.com/books/hitchhikers_guide.jpg"
+     * )
+     * @OA\Property(
+     * property="reading_progress",
+     * type="integer",
+     * format="int32",
+     * description="The current authenticated user's reading progress percentage for this book (0-100).",
+     * readOnly=true,
+     * example=50
+     * )
+     * @OA\Property(
+     * property="average_rating",
+     * type="string",
+     * description="The calculated average rating of the book, formatted to one decimal place.",
+     * readOnly=true,
+     * example="4.2"
+     * )
+     * @OA\Property(
+     * property="created_at",
+     * type="string",
+     * format="date-time",
+     * description="The timestamp when the book record was created.",
+     * readOnly=true,
+     * example="2023-01-01T10:00:00Z"
+     * )
+     * @OA\Property(
+     * property="updated_at",
+     * type="string",
+     * format="date-time",
+     * description="The timestamp when the book record was last updated.",
+     * readOnly=true,
+     * example="2023-01-01T11:00:00Z"
+     * )
+     */
     protected $fillable = [
         'title',
         'synopsis',
@@ -88,7 +196,7 @@ class Book extends Model
             return null;
         }
 
-        return $userBook->pivot->pages_read ? ($userBook->pivot->pages_read / $totalPages) * 100 : 0;
+        return $userBook->pivot->pages_read ? (int)(($userBook->pivot->pages_read / $totalPages) * 100) : 0;
     }
 
     /**
@@ -167,9 +275,12 @@ class Book extends Model
     private function getReadingProgress(): int
     {
         $user = auth()->user();
+        if (!$user) {
+            return 0; // Or throw an exception if not authenticated
+        }
         return $this->users()
             ->where('user_id', $user->id)
-            ->value('pages_read');
+            ->value('pages_read') ?? 0;
     }
 
     /**
@@ -181,7 +292,11 @@ class Book extends Model
     {
         if (!is_null($pagesRead)) {
             $user = auth()->user();
-            $this->validateReadingProgress($pagesRead);
+            if (!$user) {
+                // Handle case where user is not authenticated
+                throw ValidationException::withMessages(['user' => 'Authentication required to set reading progress.']);
+            }
+            $this->validateReadingProgress($pagesRead); // Assuming this method exists
             $this->users()->updateExistingPivot($user->id, ['pages_read' => $pagesRead]);
         }
     }

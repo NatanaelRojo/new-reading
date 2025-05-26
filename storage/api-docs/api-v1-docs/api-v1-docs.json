@@ -302,6 +302,434 @@
                     }
                 ]
             }
+        },
+        "/api/v1/books": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get a list of books",
+                "operationId": "bookIndex",
+                "parameters": [
+                    {
+                        "name": "filter[title]",
+                        "in": "query",
+                        "description": "Filter books by title (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[isbn]",
+                        "in": "query",
+                        "description": "Filter books by ISBN",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[min_pages]",
+                        "in": "query",
+                        "description": "Filter books by minimum pages amount",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "filter[max_pages]",
+                        "in": "query",
+                        "description": "Filter books by maximum pages amount",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "filter[published_from]",
+                        "in": "query",
+                        "description": "Filter books published from a specific date (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "filter[published_to]",
+                        "in": "query",
+                        "description": "Filter books published up to a specific date (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "description": "Include related resources (e.g., authors, genres, reviews)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "authors,genres"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Book"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Create a new book",
+                "operationId": "bookStore",
+                "requestBody": {
+                    "description": "Data to create a new book",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreBookRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Book created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Book"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/books/{book}": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get a single book by slug",
+                "operationId": "bookShow",
+                "parameters": [
+                    {
+                        "name": "book",
+                        "in": "path",
+                        "description": "Slug of the book to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "the-lord-of-the-rings"
+                        }
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "description": "Include related resources (e.g., authors, genres, reviews)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "authors,genres,reviews"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Book"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Book not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Update an existing book",
+                "operationId": "bookUpdate",
+                "parameters": [
+                    {
+                        "name": "book",
+                        "in": "path",
+                        "description": "Slug of the book to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "the-lord-of-the-rings"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data to update the book (all fields are optional but at least one must be provided)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateBookRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Book updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Book"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Book not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Delete a book",
+                "operationId": "bookDestroy",
+                "parameters": [
+                    {
+                        "name": "book",
+                        "in": "path",
+                        "description": "Slug of the book to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "the-book-to-delete"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Book deleted successfully (No Content)",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Book not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/books/{book}/reading-progress": {
+            "patch": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Update a user's reading progress for a specific book",
+                "operationId": "bookUpdateReadingProgress",
+                "parameters": [
+                    {
+                        "name": "book",
+                        "in": "path",
+                        "description": "Slug of the book to update progress for",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "the-lord-of-the-rings"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "New reading progress data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateBookReadingProgressRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Reading progress updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Book"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Book or User-Book relationship not found"
+                    },
+                    "422": {
+                        "description": "Validation error (e.g., pages_read exceeds total pages)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/books/{book}/tag": {
+            "patch": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Update a user's tag for a specific book",
+                "operationId": "bookUpdateTag",
+                "parameters": [
+                    {
+                        "name": "book",
+                        "in": "path",
+                        "description": "Slug of the book to update tag for",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "the-lord-of-the-rings"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "New tag data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateBookTagRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Book tag updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Book"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Book or User-Book relationship not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -385,6 +813,195 @@
                 },
                 "type": "object"
             },
+            "StoreBookRequest": {
+                "title": "Store Book Request",
+                "description": "Request body for creating a new Book. All fields are required as per validation rules.",
+                "required": [
+                    "title",
+                    "synopsis",
+                    "isbn",
+                    "pages_amount",
+                    "chapters_amount",
+                    "published_at"
+                ],
+                "properties": {
+                    "title": {
+                        "description": "Title of the book",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "The Secret Garden"
+                    },
+                    "synopsis": {
+                        "description": "A brief summary or outline of the book's plot.",
+                        "type": "string",
+                        "example": "A classic story about a young girl who discovers a hidden garden."
+                    },
+                    "isbn": {
+                        "description": "International Standard Book Number (unique identifier)",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "978-1234567890"
+                    },
+                    "pages_amount": {
+                        "description": "Total number of pages in the book",
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1,
+                        "example": 288
+                    },
+                    "chapters_amount": {
+                        "description": "Total number of chapters in the book",
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1,
+                        "example": 27
+                    },
+                    "published_at": {
+                        "description": "The date the book was first published (YYYY-MM-DD)",
+                        "type": "string",
+                        "format": "date",
+                        "example": "1911-08-01"
+                    },
+                    "image_url": {
+                        "description": "Optional URL to the book's cover image",
+                        "type": "string",
+                        "format": "url",
+                        "example": "https://example.com/images/secret_garden_cover.jpg",
+                        "nullable": true
+                    },
+                    "author_ids": {
+                        "description": "Optional array of author IDs to associate with the book",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        },
+                        "nullable": true
+                    },
+                    "genre_ids": {
+                        "description": "Optional array of genre IDs to associate with the book",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        },
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateBookReadingProgressRequest": {
+                "title": "Update Book Reading Progress Request",
+                "description": "Request body for updating a user's reading progress on a specific book.",
+                "required": [
+                    "pages_read"
+                ],
+                "properties": {
+                    "pages_read": {
+                        "description": "The current page number the user has read up to for this book.",
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1,
+                        "example": 150
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateBookRequest": {
+                "title": "Update Book Request",
+                "description": "Request body for updating an existing Book. All fields are optional, and only provided fields will be updated.",
+                "properties": {
+                    "title": {
+                        "description": "The updated title of the book.",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "The Completely Revised Hitchhiker's Guide",
+                        "nullable": true
+                    },
+                    "synopsis": {
+                        "description": "An updated brief summary or outline of the book's plot.",
+                        "type": "string",
+                        "example": "Arthur Dent's continuing misadventures across the universe.",
+                        "nullable": true
+                    },
+                    "isbn": {
+                        "description": "The updated International Standard Book Number.",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "978-1-840-23652-3",
+                        "nullable": true
+                    },
+                    "published_at": {
+                        "description": "The updated publication date (YYYY-MM-DD).",
+                        "type": "string",
+                        "format": "date",
+                        "example": "1980-01-01",
+                        "nullable": true
+                    },
+                    "pages_amount": {
+                        "description": "The updated total number of pages in the book.",
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1,
+                        "example": 250,
+                        "nullable": true
+                    },
+                    "chapters_amount": {
+                        "description": "The updated total number of chapters in the book.",
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1,
+                        "example": 40,
+                        "nullable": true
+                    },
+                    "image_url": {
+                        "description": "Optional URL to the book's new cover image.",
+                        "type": "string",
+                        "format": "url",
+                        "example": "https://example.com/images/new_hitchhikers_cover.jpg",
+                        "nullable": true
+                    },
+                    "author_ids": {
+                        "description": "Optional array of author IDs to associate with the book. This will overwrite existing associations.",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        },
+                        "nullable": true
+                    },
+                    "genre_ids": {
+                        "description": "Optional array of genre IDs to associate with the book. This will overwrite existing associations.",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        },
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateBookTagRequest": {
+                "title": "Update Book Tag Request",
+                "description": "Request body for updating a user's tag association for a specific book.",
+                "required": [
+                    "tag_id"
+                ],
+                "properties": {
+                    "tag_id": {
+                        "description": "The ID of the tag to associate with the book for the current user. Must be an existing tag ID.",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
             "Author": {
                 "title": "Author",
                 "description": "Author model representing a creative writer or artist.",
@@ -457,6 +1074,100 @@
                 "xml": {
                     "name": "Author"
                 }
+            },
+            "Book": {
+                "title": "Book",
+                "description": "Book model representing a published literary work.",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the book.",
+                        "type": "integer",
+                        "format": "int64",
+                        "readOnly": true,
+                        "example": 101
+                    },
+                    "title": {
+                        "description": "The title of the book.",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "The Hitchhiker's Guide to the Galaxy"
+                    },
+                    "synopsis": {
+                        "description": "A brief summary or outline of the book's plot and themes.",
+                        "type": "string",
+                        "example": "Arthur Dent's journey through space after Earth is destroyed to make way for a hyperspace bypass."
+                    },
+                    "isbn": {
+                        "description": "The International Standard Book Number, a unique commercial book identifier.",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "978-0-345-39180-3"
+                    },
+                    "pages_amount": {
+                        "description": "The total number of pages in the book.",
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1,
+                        "example": 193
+                    },
+                    "chapters_amount": {
+                        "description": "The total number of chapters in the book.",
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1,
+                        "example": 35
+                    },
+                    "published_at": {
+                        "description": "The date when the book was originally published (YYYY-MM-DD).",
+                        "type": "string",
+                        "format": "date",
+                        "example": "1979-10-12"
+                    },
+                    "slug": {
+                        "description": "A URL-friendly, unique identifier for the book, derived from its title.",
+                        "type": "string",
+                        "readOnly": true,
+                        "example": "the-hitchhikers-guide-to-the-galaxy"
+                    },
+                    "image_url": {
+                        "description": "The URL to the book's cover image.",
+                        "type": "string",
+                        "format": "url",
+                        "example": "https://example.com/books/hitchhikers_guide.jpg",
+                        "nullable": true
+                    },
+                    "reading_progress": {
+                        "description": "The current authenticated user's reading progress percentage for this book (0-100).",
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true,
+                        "example": 50
+                    },
+                    "average_rating": {
+                        "description": "The calculated average rating of the book, formatted to one decimal place.",
+                        "type": "string",
+                        "readOnly": true,
+                        "example": "4.2"
+                    },
+                    "created_at": {
+                        "description": "The timestamp when the book record was created.",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2023-01-01T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "The timestamp when the book record was last updated.",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2023-01-01T11:00:00Z"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Book"
+                }
             }
         },
         "securitySchemes": {
@@ -472,6 +1183,10 @@
         {
             "name": "Authors",
             "description": "API Endpoints for Authors"
+        },
+        {
+            "name": "Books",
+            "description": "API Endpoints for Books"
         }
     ]
 }

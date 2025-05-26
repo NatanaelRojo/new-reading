@@ -20,6 +20,12 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Arr;
 
+/**
+ * @OA\Tag(
+ * name="Books",
+ * description="API Endpoints for Books"
+ * )
+ */
 class BookController
 {
     /**
@@ -32,7 +38,78 @@ class BookController
     }
 
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     * path="/api/v1/books",
+     * summary="Get a list of books",
+     * operationId="bookIndex",
+     * tags={"Books"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="filter[title]",
+     * in="query",
+     * description="Filter books by title (partial match)",
+     * required=false,
+     * @OA\Schema(type="string")
+     * ),
+     * @OA\Parameter(
+     * name="filter[isbn]",
+     * in="query",
+     * description="Filter books by ISBN",
+     * required=false,
+     * @OA\Schema(type="string")
+     * ),
+     * @OA\Parameter(
+     * name="filter[min_pages]",
+     * in="query",
+     * description="Filter books by minimum pages amount",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32")
+     * ),
+     * @OA\Parameter(
+     * name="filter[max_pages]",
+     * in="query",
+     * description="Filter books by maximum pages amount",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32")
+     * ),
+     * @OA\Parameter(
+     * name="filter[published_from]",
+     * in="query",
+     * description="Filter books published from a specific date (YYYY-MM-DD)",
+     * required=false,
+     * @OA\Schema(type="string", format="date")
+     * ),
+     * @OA\Parameter(
+     * name="filter[published_to]",
+     * in="query",
+     * description="Filter books published up to a specific date (YYYY-MM-DD)",
+     * required=false,
+     * @OA\Schema(type="string", format="date")
+     * ),
+     * @OA\Parameter(
+     * name="include",
+     * in="query",
+     * description="Include related resources (e.g., authors, genres, reviews)",
+     * required=false,
+     * @OA\Schema(type="string", example="authors,genres")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(
+     * type="array",
+     * @OA\Items(ref="#/components/schemas/Book")
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated",
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden",
+     * )
+     * )
      */
     public function index(FilterBookRequest $request): AnonymousResourceCollection
     {
@@ -44,7 +121,35 @@ class BookController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     * path="/api/v1/books",
+     * summary="Create a new book",
+     * operationId="bookStore",
+     * tags={"Books"},
+     * security={{"bearerAuth": {}}},
+     * @OA\RequestBody(
+     * required=true,
+     * description="Data to create a new book",
+     * @OA\JsonContent(ref="#/components/schemas/StoreBookRequest")
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Book created successfully",
+     * @OA\JsonContent(ref="#/components/schemas/Book")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated",
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden",
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error",
+     * )
+     * )
      */
     public function store(StoreBookRequest $request): JsonResponse
     {
@@ -56,7 +161,44 @@ class BookController
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     * path="/api/v1/books/{book}",
+     * summary="Get a single book by slug",
+     * operationId="bookShow",
+     * tags={"Books"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="book",
+     * in="path",
+     * description="Slug of the book to retrieve",
+     * required=true,
+     * @OA\Schema(type="string", example="the-lord-of-the-rings")
+     * ),
+     * @OA\Parameter(
+     * name="include",
+     * in="query",
+     * description="Include related resources (e.g., authors, genres, reviews)",
+     * required=false,
+     * @OA\Schema(type="string", example="authors,genres,reviews")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(ref="#/components/schemas/Book")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated",
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden",
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Book not found",
+     * )
+     * )
      */
     public function show(Book $book): JsonResponse
     {
@@ -64,7 +206,46 @@ class BookController
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     * path="/api/v1/books/{book}",
+     * summary="Update an existing book",
+     * operationId="bookUpdate",
+     * tags={"Books"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="book",
+     * in="path",
+     * description="Slug of the book to update",
+     * required=true,
+     * @OA\Schema(type="string", example="the-lord-of-the-rings")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="Data to update the book (all fields are optional but at least one must be provided)",
+     * @OA\JsonContent(ref="#/components/schemas/UpdateBookRequest")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Book updated successfully",
+     * @OA\JsonContent(ref="#/components/schemas/Book")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated",
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden",
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Book not found",
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error",
+     * )
+     * )
      */
     public function update(UpdateBookRequest $request, Book $book): JsonResponse
     {
@@ -76,11 +257,46 @@ class BookController
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param \App\Http\Requests\API\V1\Book\UpdateBookReadingProgressRequest $request
-     * @param \App\Models\API\V1\Book $book
-     * @return JsonResponse|mixed
+     * @OA\Patch(
+     * path="/api/v1/books/{book}/reading-progress",
+     * summary="Update a user's reading progress for a specific book",
+     * operationId="bookUpdateReadingProgress",
+     * tags={"Books"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="book",
+     * in="path",
+     * description="Slug of the book to update progress for",
+     * required=true,
+     * @OA\Schema(type="string", example="the-lord-of-the-rings")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="New reading progress data",
+     * @OA\JsonContent(ref="#/components/schemas/UpdateBookReadingProgressRequest")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Reading progress updated successfully",
+     * @OA\JsonContent(ref="#/components/schemas/Book")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated",
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden",
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Book or User-Book relationship not found",
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error (e.g., pages_read exceeds total pages)",
+     * )
+     * )
      */
     public function updateReadingProgress(UpdateBookReadingProgressRequest $request, Book $book): JsonResponse
     {
@@ -92,11 +308,46 @@ class BookController
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param \App\Http\Requests\API\V1\Book\UpdateBookTagRequest $request
-     * @param \App\Models\API\V1\Book $book
-     * @return JsonResponse|mixed
+     * @OA\Patch(
+     * path="/api/v1/books/{book}/tag",
+     * summary="Update a user's tag for a specific book",
+     * operationId="bookUpdateTag",
+     * tags={"Books"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="book",
+     * in="path",
+     * description="Slug of the book to update tag for",
+     * required=true,
+     * @OA\Schema(type="string", example="the-lord-of-the-rings")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="New tag data",
+     * @OA\JsonContent(ref="#/components/schemas/UpdateBookTagRequest")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Book tag updated successfully",
+     * @OA\JsonContent(ref="#/components/schemas/Book")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated",
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden",
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Book or User-Book relationship not found",
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error",
+     * )
+     * )
      */
     public function updateTag(UpdateBookTagRequest $request, Book $book): JsonResponse
     {
@@ -108,7 +359,37 @@ class BookController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     * path="/api/v1/books/{book}",
+     * summary="Delete a book",
+     * operationId="bookDestroy",
+     * tags={"Books"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="book",
+     * in="path",
+     * description="Slug of the book to delete",
+     * required=true,
+     * @OA\Schema(type="string", example="the-book-to-delete")
+     * ),
+     * @OA\Response(
+     * response=204,
+     * description="Book deleted successfully (No Content)",
+     * @OA\MediaType(mediaType="application/json")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated",
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden",
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Book not found",
+     * )
+     * )
      */
     public function destroy(Book $book): JsonResponse
     {
