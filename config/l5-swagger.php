@@ -40,9 +40,9 @@ return [
                                 'docs' => storage_path('api-docs/api-v1-docs'), // Output file for v1 spec
                 'annotations' => [
                     base_path('app/Http/Controllers/API/V1'), // Point to V1 controllers
-                    base_path('app/Http/Requests/API/V1'),   // Point to V1 requests
+                    base_path('app/Docs/V1/Requests'),   // Point to V1 requests
                     base_path('app/Models/API/V1'),          // Point to V1 models
-                    base_path('app/Docs'),                   // General OpenAPI info (like @OA\Info, @OA\SecurityScheme)
+                    base_path('app/Docs/V1'),                   // General OpenAPI info (like @OA\Info, @OA\SecurityScheme)
                 ],
                                 'docs_json' => 'api-v1-docs.json', // The filename to be served by the /docs route
                 'format_to_use_for_docs' => 'json', // Explicitly state JSON format

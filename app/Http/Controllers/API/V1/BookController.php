@@ -40,56 +40,63 @@ class BookController
     /**
      * @OA\Get(
      * path="/api/v1/books",
-     * summary="Get a list of books",
+     * summary="Get a list of books with optional filtering and pagination",
      * operationId="bookIndex",
      * tags={"Books"},
      * security={{"bearerAuth": {}}},
      * @OA\Parameter(
-     * name="filter[title]",
+     * name="title",
      * in="query",
-     * description="Filter books by title (partial match)",
+     * description="Filter books by title (partial match).",
      * required=false,
-     * @OA\Schema(type="string")
+     * @OA\Schema(type="string", nullable=true, example="galaxy")
      * ),
      * @OA\Parameter(
-     * name="filter[isbn]",
+     * name="author_name",
      * in="query",
-     * description="Filter books by ISBN",
+     * description="Filter books by author's full name (partial match).",
      * required=false,
-     * @OA\Schema(type="string")
+     * @OA\Schema(type="string", nullable=true, example="douglas adams")
      * ),
      * @OA\Parameter(
-     * name="filter[min_pages]",
+     * name="genre_name",
      * in="query",
-     * description="Filter books by minimum pages amount",
+     * description="Filter books by genre name (partial match).",
      * required=false,
-     * @OA\Schema(type="integer", format="int32")
+     * @OA\Schema(type="string", nullable=true, example="science fiction")
      * ),
      * @OA\Parameter(
-     * name="filter[max_pages]",
+     * name="tag_name",
      * in="query",
-     * description="Filter books by maximum pages amount",
+     * description="Filter books by tag name (partial match).",
      * required=false,
-     * @OA\Schema(type="integer", format="int32")
+     * @OA\Schema(type="string", nullable=true, example="classics")
      * ),
      * @OA\Parameter(
-     * name="filter[published_from]",
+     * name="year",
      * in="query",
-     * description="Filter books published from a specific date (YYYY-MM-DD)",
+     * description="Filter books by publication year. Must be a 4-digit integer.",
      * required=false,
-     * @OA\Schema(type="string", format="date")
+     * @OA\Schema(type="integer", format="int32", minimum=1000, maximum=\App\Docs\V1\MAX_PUBLICATION_YEAR, nullable=true, example=1979)
      * ),
      * @OA\Parameter(
-     * name="filter[published_to]",
+     * name="per_page",
      * in="query",
-     * description="Filter books published up to a specific date (YYYY-MM-DD)",
+     * description="Number of items to return per page.",
      * required=false,
-     * @OA\Schema(type="string", format="date")
+     * @OA\Schema(type="integer", format="int32", minimum=1, maximum=50, nullable=true, example=15)
+     * ),
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="The page number to retrieve.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, nullable=true, example=1)
      * ),
      * @OA\Parameter(
      * name="include",
      * in="query",
-     * description="Include related resources (e.g., authors, genres, reviews)",
+     * description="Include related resources (e.g., authors, genres, reviews). Use comma-separated values.",
      * required=false,
      * @OA\Schema(type="string", example="authors,genres")
      * ),
@@ -108,6 +115,10 @@ class BookController
      * @OA\Response(
      * response=403,
      * description="Forbidden",
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error",
      * )
      * )
      */

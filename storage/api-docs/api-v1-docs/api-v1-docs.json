@@ -308,71 +308,98 @@
                 "tags": [
                     "Books"
                 ],
-                "summary": "Get a list of books",
+                "summary": "Get a list of books with optional filtering and pagination",
                 "operationId": "bookIndex",
                 "parameters": [
                     {
-                        "name": "filter[title]",
+                        "name": "title",
                         "in": "query",
-                        "description": "Filter books by title (partial match)",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "filter[isbn]",
-                        "in": "query",
-                        "description": "Filter books by ISBN",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "filter[min_pages]",
-                        "in": "query",
-                        "description": "Filter books by minimum pages amount",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int32"
-                        }
-                    },
-                    {
-                        "name": "filter[max_pages]",
-                        "in": "query",
-                        "description": "Filter books by maximum pages amount",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int32"
-                        }
-                    },
-                    {
-                        "name": "filter[published_from]",
-                        "in": "query",
-                        "description": "Filter books published from a specific date (YYYY-MM-DD)",
+                        "description": "Filter books by title (partial match).",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "format": "date"
+                            "example": "galaxy",
+                            "nullable": true
                         }
                     },
                     {
-                        "name": "filter[published_to]",
+                        "name": "author_name",
                         "in": "query",
-                        "description": "Filter books published up to a specific date (YYYY-MM-DD)",
+                        "description": "Filter books by author's full name (partial match).",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "format": "date"
+                            "example": "douglas adams",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "genre_name",
+                        "in": "query",
+                        "description": "Filter books by genre name (partial match).",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "science fiction",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "tag_name",
+                        "in": "query",
+                        "description": "Filter books by tag name (partial match).",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "classics",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Filter books by publication year. Must be a 4-digit integer.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 2025,
+                            "minimum": 1000,
+                            "example": 1979,
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items to return per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 15,
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "example": 1,
+                            "nullable": true
                         }
                     },
                     {
                         "name": "include",
                         "in": "query",
-                        "description": "Include related resources (e.g., authors, genres, reviews)",
+                        "description": "Include related resources (e.g., authors, genres, reviews). Use comma-separated values.",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -399,6 +426,9 @@
                     },
                     "403": {
                         "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 },
                 "security": [
@@ -734,6 +764,63 @@
     },
     "components": {
         "schemas": {
+            "FilterBookRequest": {
+                "title": "Filter Book Request",
+                "description": "Request body for filtering and paginating books. All fields are optional.",
+                "properties": {
+                    "title": {
+                        "description": "Filter books by title (partial match).",
+                        "type": "string",
+                        "example": "galaxy",
+                        "nullable": true
+                    },
+                    "author_name": {
+                        "description": "Filter books by author's full name (partial match).",
+                        "type": "string",
+                        "example": "douglas adams",
+                        "nullable": true
+                    },
+                    "genre_name": {
+                        "description": "Filter books by genre name (partial match).",
+                        "type": "string",
+                        "example": "science fiction",
+                        "nullable": true
+                    },
+                    "tag_name": {
+                        "description": "Filter books by tag name (partial match).",
+                        "type": "string",
+                        "example": "classics",
+                        "nullable": true
+                    },
+                    "year": {
+                        "description": "Filter books by publication year. Must be a 4-digit integer.",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 2025,
+                        "minimum": 1000,
+                        "example": 1979,
+                        "nullable": true
+                    },
+                    "per_page": {
+                        "description": "Number of items to return per page.",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 50,
+                        "minimum": 1,
+                        "example": 15,
+                        "nullable": true
+                    },
+                    "page": {
+                        "description": "The page number to retrieve.",
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1,
+                        "example": 1,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreAuthorRequest": {
                 "title": "Store Author Request",
                 "description": "Request body for creating a new author",
@@ -773,42 +860,6 @@
                         "type": "string",
                         "format": "url",
                         "example": "https://example.com/images/john_doe.jpg"
-                    }
-                },
-                "type": "object"
-            },
-            "UpdateAuthorRequest": {
-                "title": "Update Author Request",
-                "description": "Request body for updating an existing author. All fields are optional, providing only the ones to be updated.",
-                "properties": {
-                    "first_name": {
-                        "description": "The updated first name of the author",
-                        "type": "string",
-                        "maxLength": 255,
-                        "example": "Janet"
-                    },
-                    "last_name": {
-                        "description": "The updated last name of the author",
-                        "type": "string",
-                        "maxLength": 255,
-                        "example": "Smith"
-                    },
-                    "nationality": {
-                        "description": "The updated nationality of the author",
-                        "type": "string",
-                        "maxLength": 255,
-                        "example": "British"
-                    },
-                    "biography": {
-                        "description": "An updated biography of the author",
-                        "type": "string",
-                        "example": "Janet Smith is a celebrated author known for her historical fiction."
-                    },
-                    "image_url": {
-                        "description": "Updated URL to the author's profile image",
-                        "type": "string",
-                        "format": "url",
-                        "example": "https://example.com/images/janet_smith_new.jpg"
                     }
                 },
                 "type": "object"
@@ -888,6 +939,42 @@
                             "example": 1
                         },
                         "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateAuthorRequest": {
+                "title": "Update Author Request",
+                "description": "Request body for updating an existing author. All fields are optional, providing only the ones to be updated.",
+                "properties": {
+                    "first_name": {
+                        "description": "The updated first name of the author",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Janet"
+                    },
+                    "last_name": {
+                        "description": "The updated last name of the author",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Smith"
+                    },
+                    "nationality": {
+                        "description": "The updated nationality of the author",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "British"
+                    },
+                    "biography": {
+                        "description": "An updated biography of the author",
+                        "type": "string",
+                        "example": "Janet Smith is a celebrated author known for her historical fiction."
+                    },
+                    "image_url": {
+                        "description": "Updated URL to the author's profile image",
+                        "type": "string",
+                        "format": "url",
+                        "example": "https://example.com/images/janet_smith_new.jpg"
                     }
                 },
                 "type": "object"
