@@ -760,6 +760,819 @@
                     }
                 ]
             }
+        },
+        "/api/v1/comments": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Get a paginated list of all comments",
+                "operationId": "commentIndex",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items to return per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Comment"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Store a new comment ",
+                "description": "This endpoint allows creating a comment.",
+                "operationId": "commentStore",
+                "requestBody": {
+                    "description": "Comment data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreCommentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Comment created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Comment"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/posts/{post_slug}/comments": {
+            "get": {
+                "tags": [
+                    "Comments",
+                    "Posts"
+                ],
+                "summary": "Get comments for a specific post",
+                "operationId": "indexCommentsByPost",
+                "parameters": [
+                    {
+                        "name": "post_slug",
+                        "in": "path",
+                        "description": "The slug of the post to retrieve comments for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "my-first-post"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items to return per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Comment"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Comments",
+                    "Posts"
+                ],
+                "summary": "Add a new comment to a specific post",
+                "operationId": "storeCommentByPost",
+                "parameters": [
+                    {
+                        "name": "post_slug",
+                        "in": "path",
+                        "description": "The slug of the post to comment on.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "my-first-post"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Comment data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreCommentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Comment created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Comment"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden (e.g., user not following the post's author, or other access restrictions)."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    },
+                    "409": {
+                        "description": "Conflict (e.g., User not following post author - UserNotFollowingException)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You must follow the author to comment on this post."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reviews/{review_slug}/comments": {
+            "get": {
+                "tags": [
+                    "Comments",
+                    "Reviews"
+                ],
+                "summary": "Get comments for a specific review",
+                "operationId": "indexCommentsByReview",
+                "parameters": [
+                    {
+                        "name": "review_slug",
+                        "in": "path",
+                        "description": "The slug of the review to retrieve comments for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "awesome-book-review"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items to return per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Comment"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Comments",
+                    "Reviews"
+                ],
+                "summary": "Add a new comment to a specific review",
+                "operationId": "storeCommentByReview",
+                "parameters": [
+                    {
+                        "name": "review_slug",
+                        "in": "path",
+                        "description": "The slug of the review to comment on.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "great-read-review"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Comment data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreCommentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Comment created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Comment"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden (e.g., user not following the review's author, or other access restrictions)."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    },
+                    "409": {
+                        "description": "Conflict (e.g., User not following review author - UserNotFollowingException)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You must follow the author to comment on this review."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/comments/{comment_slug}": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Get a single comment by its slug",
+                "operationId": "commentShow",
+                "parameters": [
+                    {
+                        "name": "comment_slug",
+                        "in": "path",
+                        "description": "The slug of the comment to retrieve.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "my-great-comment-slug"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Comment"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Update an existing comment",
+                "operationId": "commentUpdate",
+                "parameters": [
+                    {
+                        "name": "comment_slug",
+                        "in": "path",
+                        "description": "The slug of the comment to update.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "my-great-comment-slug"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Updated comment data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCommentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Comment updated successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Comment"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden (e.g., user is not the owner of the comment)."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Delete a comment by its slug",
+                "operationId": "commentDestroy",
+                "parameters": [
+                    {
+                        "name": "comment_slug",
+                        "in": "path",
+                        "description": "The slug of the comment to delete.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "my-great-comment-to-delete"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Comment deleted successfully (No Content)"
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden (e.g., user is not the owner of the comment)."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/genres": {
+            "get": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Get a paginated list of all genres",
+                "operationId": "genreIndex",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items to return per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Genre"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Create a new genre",
+                "operationId": "genreStore",
+                "requestBody": {
+                    "description": "Genre data to store",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreGenreRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Genre created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Genre"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/genres/{genre_slug}": {
+            "get": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Get a single genre by its slug",
+                "operationId": "genreShow",
+                "parameters": [
+                    {
+                        "name": "genre_slug",
+                        "in": "path",
+                        "description": "The slug of the genre to retrieve.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "fantasy"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Genre"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Update an existing genre",
+                "operationId": "genreUpdate",
+                "parameters": [
+                    {
+                        "name": "genre_slug",
+                        "in": "path",
+                        "description": "The slug of the genre to update.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "fantasy"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Updated genre data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateGenreRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Genre updated successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Genre"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Delete a genre by its slug",
+                "operationId": "genreDestroy",
+                "parameters": [
+                    {
+                        "name": "genre_slug",
+                        "in": "path",
+                        "description": "The slug of the genre to delete.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "fantasy"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Genre deleted successfully (No Content)"
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -943,6 +1756,39 @@
                 },
                 "type": "object"
             },
+            "StoreCommentRequest": {
+                "title": "Store Comment Request",
+                "description": "Request body for creating a new comment on a book or review.",
+                "required": [
+                    "body"
+                ],
+                "properties": {
+                    "body": {
+                        "description": "The content of the comment.",
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 5,
+                        "example": "This is my insightful comment about the book!"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreGenreRequest": {
+                "title": "Store Genre Request",
+                "description": "Request body for creating a new genre.",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "The name of the new genre.",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Science Fiction"
+                    }
+                },
+                "type": "object"
+            },
             "UpdateAuthorRequest": {
                 "title": "Update Author Request",
                 "description": "Request body for updating an existing author. All fields are optional, providing only the ones to be updated.",
@@ -1085,6 +1931,35 @@
                         "type": "integer",
                         "format": "int64",
                         "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateCommentRequest": {
+                "title": "Update Comment Request",
+                "description": "Request body for updating an existing comment. All fields are optional.",
+                "properties": {
+                    "body": {
+                        "description": "The updated content of the comment.",
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 5,
+                        "example": "This is my updated and improved comment!",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateGenreRequest": {
+                "title": "Update Genre Request",
+                "description": "Request body for updating an existing genre.",
+                "properties": {
+                    "name": {
+                        "description": "The new name for the genre.",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "High Fantasy",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -1255,6 +2130,116 @@
                 "xml": {
                     "name": "Book"
                 }
+            },
+            "Comment": {
+                "title": "Comment",
+                "description": "Comment model representing user feedback on commentable resources like books or posts.",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the comment",
+                        "type": "integer",
+                        "format": "int64",
+                        "readOnly": true,
+                        "example": 1
+                    },
+                    "user_id": {
+                        "description": "The ID of the user who made the comment",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 10
+                    },
+                    "commentable_id": {
+                        "description": "The ID of the resource (e.g., book_id, post_id) the comment belongs to",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 101
+                    },
+                    "commentable_type": {
+                        "description": "The type of the resource the comment belongs to (e.g., 'App\\\\Models\\\\API\\\\V1\\\\Book', 'App\\\\Models\\\\API\\\\V1\\\\Post')",
+                        "type": "string",
+                        "example": "App\\\\Models\\\\API\\\\V1\\\\Book"
+                    },
+                    "body": {
+                        "description": "The content of the comment",
+                        "type": "string",
+                        "example": "This is a great book! I really enjoyed it."
+                    },
+                    "slug": {
+                        "description": "Unique URL-friendly slug for the comment (generated from body)",
+                        "type": "string",
+                        "maxLength": 255,
+                        "readOnly": true,
+                        "example": "this-is-a-great-book"
+                    },
+                    "related_to": {
+                        "description": "The type of the resource the comment is related to (e.g., 'book', 'post')",
+                        "type": "string",
+                        "readOnly": true,
+                        "example": "book"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the comment record was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2023-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the comment record was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2023-01-01T12:15:00Z"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Comment"
+                }
+            },
+            "Genre": {
+                "title": "Genre",
+                "description": "Genre model representing different categories for books.",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the genre",
+                        "type": "integer",
+                        "format": "int64",
+                        "readOnly": true,
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "The name of the genre",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Fantasy"
+                    },
+                    "slug": {
+                        "description": "Unique URL-friendly slug for the genre (generated from name)",
+                        "type": "string",
+                        "maxLength": 255,
+                        "readOnly": true,
+                        "example": "fantasy"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the genre record was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2024-05-30T10:00:00.000000Z"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the genre record was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2024-05-30T10:00:00.000000Z"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Genre"
+                }
             }
         },
         "securitySchemes": {
@@ -1274,6 +2259,22 @@
         {
             "name": "Books",
             "description": "API Endpoints for Books"
+        },
+        {
+            "name": "Comments",
+            "description": "Comments"
+        },
+        {
+            "name": "Posts",
+            "description": "Posts"
+        },
+        {
+            "name": "Reviews",
+            "description": "Reviews"
+        },
+        {
+            "name": "Genres",
+            "description": "Genres"
         }
     ]
 }
