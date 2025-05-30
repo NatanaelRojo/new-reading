@@ -1573,6 +1573,256 @@
                     }
                 ]
             }
+        },
+        "/api/v1/tags": {
+            "get": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Get a paginated list of all tags",
+                "operationId": "tagIndex",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items to return per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Tag"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Create a new tag",
+                "operationId": "tagStore",
+                "requestBody": {
+                    "description": "Tag data to store",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreTagRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tag created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tag"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/tags/{tag_slug}": {
+            "get": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Get a single tag by its slug",
+                "operationId": "tagShow",
+                "parameters": [
+                    {
+                        "name": "tag_slug",
+                        "in": "path",
+                        "description": "The slug of the tag to retrieve.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "fiction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tag"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Update an existing tag",
+                "operationId": "tagUpdate",
+                "parameters": [
+                    {
+                        "name": "tag_slug",
+                        "in": "path",
+                        "description": "The slug of the tag to update.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "fiction"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Updated tag data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTagRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tag updated successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tag"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Delete a tag by its slug",
+                "operationId": "tagDestroy",
+                "parameters": [
+                    {
+                        "name": "tag_slug",
+                        "in": "path",
+                        "description": "The slug of the tag to delete.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "fiction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Tag deleted successfully (No Content)"
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Resource not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -1789,6 +2039,22 @@
                 },
                 "type": "object"
             },
+            "StoreTagRequest": {
+                "title": "Store Tag Request",
+                "description": "Request body for creating a new tag.",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "The name of the new tag.",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Fiction"
+                    }
+                },
+                "type": "object"
+            },
             "UpdateAuthorRequest": {
                 "title": "Update Author Request",
                 "description": "Request body for updating an existing author. All fields are optional, providing only the ones to be updated.",
@@ -1959,6 +2225,20 @@
                         "type": "string",
                         "maxLength": 255,
                         "example": "High Fantasy",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateTagRequest": {
+                "title": "Update Tag Request",
+                "description": "Request body for updating an existing tag. All fields are optional.",
+                "properties": {
+                    "name": {
+                        "description": "The new name for the tag.",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Non-Fiction",
                         "nullable": true
                     }
                 },
@@ -2240,6 +2520,50 @@
                 "xml": {
                     "name": "Genre"
                 }
+            },
+            "Tag": {
+                "title": "Tag",
+                "description": "Tag model representing keywords or categories for resources.",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the tag",
+                        "type": "integer",
+                        "format": "int64",
+                        "readOnly": true,
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "The name of the tag",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Programming"
+                    },
+                    "slug": {
+                        "description": "Unique URL-friendly slug for the tag (generated from name)",
+                        "type": "string",
+                        "maxLength": 255,
+                        "readOnly": true,
+                        "example": "programming"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the tag record was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2024-05-30T10:00:00.000000Z"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the tag record was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2024-05-30T10:00:00.000000Z"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Tag"
+                }
             }
         },
         "securitySchemes": {
@@ -2275,6 +2599,10 @@
         {
             "name": "Genres",
             "description": "Genres"
+        },
+        {
+            "name": "Tags",
+            "description": "Tags"
         }
     ]
 }
