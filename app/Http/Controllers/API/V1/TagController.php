@@ -22,6 +22,43 @@ class TagController
     }
 
     /**
+     * @OA\Get(
+     * path="/api/v1/tags",
+     * summary="Get a paginated list of all tags",
+     * operationId="tagIndex",
+     * tags={"Tags"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="per_page",
+     * in="query",
+     * description="Number of items to return per page.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, maximum=50, example=15)
+     * ),
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="The page number to retrieve.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, example=1)
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(
+     * type="array",
+     * @OA\Items(ref="#/components/schemas/Tag")
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * )
+     * )
      * Display a listing of the resource.
      */
     public function index(PaginateRequest $request): AnonymousResourceCollection
@@ -34,6 +71,35 @@ class TagController
     }
 
     /**
+     * @OA\Post(
+     * path="/api/v1/tags",
+     * summary="Create a new tag",
+     * operationId="tagStore",
+     * tags={"Tags"},
+     * security={{"bearerAuth": {}}},
+     * @OA\RequestBody(
+     * required=true,
+     * description="Tag data to store",
+     * @OA\JsonContent(ref="#/components/schemas/StoreTagRequest")
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Tag created successfully.",
+     * @OA\JsonContent(ref="#/components/schemas/Tag")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error."
+     * )
+     * )
      * Store a newly created resource in storage.
      */
     public function store(StoreTagRequest $request): JsonResponse
@@ -46,6 +112,37 @@ class TagController
     }
 
     /**
+     * @OA\Get(
+     * path="/api/v1/tags/{tag_slug}",
+     * summary="Get a single tag by its slug",
+     * operationId="tagShow",
+     * tags={"Tags"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="tag_slug",
+     * in="path",
+     * description="The slug of the tag to retrieve.",
+     * required=true,
+     * @OA\Schema(type="string", example="fiction")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(ref="#/components/schemas/Tag")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Resource not found."
+     * )
+     * )
      * Display the specified resource.
      */
     public function show(Tag $tag): JsonResponse
@@ -54,6 +151,46 @@ class TagController
     }
 
     /**
+     * @OA\Put(
+     * path="/api/v1/tags/{tag_slug}",
+     * summary="Update an existing tag",
+     * operationId="tagUpdate",
+     * tags={"Tags"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="tag_slug",
+     * in="path",
+     * description="The slug of the tag to update.",
+     * required=true,
+     * @OA\Schema(type="string", example="fiction")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="Updated tag data",
+     * @OA\JsonContent(ref="#/components/schemas/UpdateTagRequest")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Tag updated successfully.",
+     * @OA\JsonContent(ref="#/components/schemas/Tag")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Resource not found."
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error."
+     * )
+     * )
      * Update the specified resource in storage.
      */
     public function update(UpdateTagRequest $request, Tag $tag): JsonResponse
@@ -69,6 +206,36 @@ class TagController
     }
 
     /**
+     * @OA\Delete(
+     * path="/api/v1/tags/{tag_slug}",
+     * summary="Delete a tag by its slug",
+     * operationId="tagDestroy",
+     * tags={"Tags"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="tag_slug",
+     * in="path",
+     * description="The slug of the tag to delete.",
+     * required=true,
+     * @OA\Schema(type="string", example="fiction")
+     * ),
+     * @OA\Response(
+     * response=204,
+     * description="Tag deleted successfully (No Content)",
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Resource not found."
+     * )
+     * )
      * Remove the specified resource from storage.
      */
     public function destroy(Tag $tag): JsonResponse
