@@ -10,11 +10,82 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
+/**
+ * @OA\Schema(
+ * schema="Post",
+ * title="Post",
+ * description="Post model representing a user's reading update or comment on a book.",
+ * @OA\Xml(
+ * name="Post"
+ * )
+ * )
+ */
 class Post extends Model
 {
     use HasSlug;
     use HasFactory;
 
+    /**
+     * @OA\Property(
+     * property="id",
+     * type="integer",
+     * format="int64",
+     * description="Unique identifier for the post",
+     * readOnly=true,
+     * example=1
+     * )
+     * @OA\Property(
+     * property="book_id",
+     * type="integer",
+     * format="int64",
+     * description="The ID of the book this post is related to",
+     * example=101
+     * )
+     * @OA\Property(
+     * property="user_id",
+     * type="integer",
+     * format="int64",
+     * description="The ID of the user who created the post",
+     * example=10
+     * )
+     * @OA\Property(
+     * property="body",
+     * type="string",
+     * description="The content of the post",
+     * example="Just finished chapter 5 of 'Dune' and it's getting intense!"
+     * )
+     * @OA\Property(
+     * property="progress",
+     * type="integer",
+     * description="The reading progress associated with the post (e.g., page number, percentage)",
+     * nullable=true,
+     * example=120
+     * )
+     * @OA\Property(
+     * property="slug",
+     * type="string",
+     * description="Unique URL-friendly slug for the post (generated from body)",
+     * maxLength=255,
+     * readOnly=true,
+     * example="just-finished-chapter-5-of-dune"
+     * )
+     * @OA\Property(
+     * property="created_at",
+     * type="string",
+     * format="date-time",
+     * description="Timestamp when the post record was created",
+     * readOnly=true,
+     * example="2024-05-30T10:00:00.000000Z"
+     * )
+     * @OA\Property(
+     * property="updated_at",
+     * type="string",
+     * format="date-time",
+     * description="Timestamp when the post record was last updated",
+     * readOnly=true,
+     * example="2024-05-30T10:00:00.000000Z"
+     * )
+     */
     protected $fillable = [
         'book_id',
         'user_id',

@@ -29,6 +29,43 @@ class PostController
     }
 
     /**
+     * @OA\Get(
+     * path="/api/v1/posts",
+     * summary="Get a paginated list of all posts",
+     * operationId="postIndex",
+     * tags={"Posts"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="per_page",
+     * in="query",
+     * description="Number of items to return per page.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, maximum=50, example=15)
+     * ),
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="The page number to retrieve.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, example=1)
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(
+     * type="array",
+     * @OA\Items(ref="#/components/schemas/Post")
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * )
+     * )
      * Display a listing of the resource.
      */
     public function index(PaginateRequest $request): AnonymousResourceCollection
@@ -41,6 +78,54 @@ class PostController
     }
 
     /**
+     * @OA\Get(
+     * path="/api/v1/books/{book_slug}/posts",
+     * summary="Get a paginated list of posts for a specific book",
+     * operationId="postIndexByBook",
+     * tags={"Books", "Posts"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="book_slug",
+     * in="path",
+     * description="The slug of the book to retrieve posts for.",
+     * required=true,
+     * @OA\Schema(type="string", example="the-hobbit")
+     * ),
+     * @OA\Parameter(
+     * name="per_page",
+     * in="query",
+     * description="Number of items to return per page.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, maximum=50, example=15)
+     * ),
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="The page number to retrieve.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, example=1)
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(
+     * type="array",
+     * @OA\Items(ref="#/components/schemas/Post")
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Book not found."
+     * )
+     * )
      * This PHP function returns a JSON response containing a collection of posts related to a specific
      * book.
      *
@@ -61,6 +146,54 @@ class PostController
     }
 
     /**
+     * @OA\Get(
+     * path="/api/v1/users/{user_slug}/posts",
+     * summary="Get a paginated list of posts by a specific user",
+     * operationId="postIndexByUser",
+     * tags={"Users", "Posts"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="user_slug",
+     * in="path",
+     * description="The slug of the user to retrieve posts for.",
+     * required=true,
+     * @OA\Schema(type="string", example="johndoe")
+     * ),
+     * @OA\Parameter(
+     * name="per_page",
+     * in="query",
+     * description="Number of items to return per page.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, maximum=50, example=15)
+     * ),
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="The page number to retrieve.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, example=1)
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(
+     * type="array",
+     * @OA\Items(ref="#/components/schemas/Post")
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="User not found."
+     * )
+     * )
      * This PHP function retrieves and paginates posts belonging to a specific user and returns them as
      * a collection of Post resources.
      *
@@ -82,6 +215,35 @@ class PostController
     }
 
     /**
+     * @OA\Post(
+     * path="/api/v1/posts",
+     * summary="Create a new post",
+     * operationId="postStore",
+     * tags={"Posts"},
+     * security={{"bearerAuth": {}}},
+     * @OA\RequestBody(
+     * required=true,
+     * description="Post data to store. Provide 'book_id' if not creating via a book-specific route.",
+     * @OA\JsonContent(ref="#/components/schemas/StorePostRequest")
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Post created successfully.",
+     * @OA\JsonContent(ref="#/components/schemas/Post")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error."
+     * )
+     * )
      * Store a newly created resource in storage.
      */
     public function store(StorePostRequest $request): JsonResponse
@@ -98,6 +260,47 @@ class PostController
     }
 
     /**
+     * @OA\Post(
+     * path="/api/v1/books/{book_slug}/posts",
+     * summary="Create a new post for a specific book",
+     * description="Creates a new post associated with the given book. The 'book_id' in the request body is optional for this endpoint.",
+     * operationId="postStoreByBook",
+     * tags={"Books", "Posts"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="book_slug",
+     * in="path",
+     * description="The slug of the book to create the post for.",
+     * required=true,
+     * @OA\Schema(type="string", example="the-hobbit")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="Post data to store.",
+     * @OA\JsonContent(ref="#/components/schemas/StorePostRequest")
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Post created successfully.",
+     * @OA\JsonContent(ref="#/components/schemas/Post")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Book not found."
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error."
+     * )
+     * )
      * Store a newly created resource in storage.
      * @param \App\Http\Requests\API\V1\Post\StorePostRequest $request
      * @param \App\Models\API\V1\Book $book
@@ -117,6 +320,47 @@ class PostController
     }
 
     /**
+     * @OA\Post(
+     * path="/api/v1/users/{user_slug}/posts",
+     * summary="Create a new post for a specific user",
+     * description="Creates a new post associated with the given user.",
+     * operationId="postStoreByUser",
+     * tags={"Users", "Posts"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="user_slug",
+     * in="path",
+     * description="The slug of the user to create the post for.",
+     * required=true,
+     * @OA\Schema(type="string", example="johndoe")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="Post data to store.",
+     * @OA\JsonContent(ref="#/components/schemas/StorePostRequest")
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Post created successfully.",
+     * @OA\JsonContent(ref="#/components/schemas/Post")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="User not found."
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error."
+     * )
+     * )
      * Store a newly created resource in storage.
      * @param \App\Http\Requests\API\V1\Post\StorePostRequest $request
      * @param \App\Models\User $user
@@ -136,6 +380,37 @@ class PostController
     }
 
     /**
+     * @OA\Get(
+     * path="/api/v1/posts/{post_slug}",
+     * summary="Get a single post by its slug",
+     * operationId="postShow",
+     * tags={"Posts"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="post_slug",
+     * in="path",
+     * description="The slug of the post to retrieve.",
+     * required=true,
+     * @OA\Schema(type="string", example="my-reading-update")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(ref="#/components/schemas/Post")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Post not found."
+     * )
+     * )
      * Display the specified resource.
      */
     public function show(Post $post): JsonResponse
@@ -148,6 +423,46 @@ class PostController
     }
 
     /**
+     * @OA\Put(
+     * path="/api/v1/posts/{post_slug}",
+     * summary="Update an existing post",
+     * operationId="postUpdate",
+     * tags={"Posts"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="post_slug",
+     * in="path",
+     * description="The slug of the post to update.",
+     * required=true,
+     * @OA\Schema(type="string", example="my-reading-update")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="Updated post data.",
+     * @OA\JsonContent(ref="#/components/schemas/UpdatePostRequest")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Post updated successfully.",
+     * @OA\JsonContent(ref="#/components/schemas/Post")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Post not found."
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error."
+     * )
+     * )
      * Update the specified resource in storage.
      */
     public function update(UpdatePostRequest $request, Post $post): JsonResponse
@@ -164,6 +479,36 @@ class PostController
     }
 
     /**
+     * @OA\Delete(
+     * path="/api/v1/posts/{post_slug}",
+     * summary="Delete a post by its slug",
+     * operationId="postDestroy",
+     * tags={"Posts"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="post_slug",
+     * in="path",
+     * description="The slug of the post to delete.",
+     * required=true,
+     * @OA\Schema(type="string", example="my-reading-update")
+     * ),
+     * @OA\Response(
+     * response=204,
+     * description="Post deleted successfully (No Content)",
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Post not found."
+     * )
+     * )
      * Remove the specified resource from storage.
      */
     public function destroy(Post $post): JsonResponse
