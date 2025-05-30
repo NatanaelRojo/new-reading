@@ -28,7 +28,43 @@ class CommentController
     }
 
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     * path="/api/v1/comments",
+     * summary="Get a paginated list of all comments",
+     * operationId="commentIndex",
+     * tags={"Comments"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="per_page",
+     * in="query",
+     * description="Number of items to return per page.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, maximum=50, example=15)
+     * ),
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="The page number to retrieve.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, example=1)
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(
+     * type="array",
+     * @OA\Items(ref="#/components/schemas/Comment")
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * )
+     * )
      */
     public function index(PaginateRequest $request): AnonymousResourceCollection
     {
@@ -40,7 +76,36 @@ class CommentController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     * path="/api/v1/comments",
+     * summary="Store a new comment ",
+     * description="This endpoint allows creating a comment.",
+     * operationId="commentStore",
+     * tags={"Comments"},
+     * security={{"bearerAuth": {}}},
+     * @OA\RequestBody(
+     * required=true,
+     * description="Comment data",
+     * @OA\JsonContent(ref="#/components/schemas/StoreCommentRequest")
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Comment created successfully.",
+     * @OA\JsonContent(ref="#/components/schemas/Comment")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error."
+     * )
+     * )
      */
     public function store(StoreCommentRequest $request): JsonResponse
     {
@@ -53,7 +118,55 @@ class CommentController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     * path="/api/v1/posts/{post_slug}/comments",
+     * summary="Add a new comment to a specific post",
+     * operationId="storeCommentByPost",
+     * tags={"Comments", "Posts"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="post_slug",
+     * in="path",
+     * description="The slug of the post to comment on.",
+     * required=true,
+     * @OA\Schema(type="string", example="my-first-post")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="Comment data",
+     * @OA\JsonContent(ref="#/components/schemas/StoreCommentRequest")
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Comment created successfully.",
+     * @OA\JsonContent(ref="#/components/schemas/Comment")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden (e.g., user not following the post's author, or other access restrictions)."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Resource not found."
+     * ),
+     * @OA\Response(
+     * response=409,
+     * description="Conflict (e.g., User not following post author - UserNotFollowingException)",
+     * @OA\JsonContent(
+     * type="object",
+     * @OA\Property(property="success", type="boolean", example=false),
+     * @OA\Property(property="message", type="string", example="You must follow the author to comment on this post.")
+     * )
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error."
+     * )
+     * )
      * @param \App\Http\Requests\API\V1\Comment\StoreCommentRequest $request
      * @param \App\Models\API\V1\Post $post
      * @return JsonResponse|mixed
@@ -76,7 +189,55 @@ class CommentController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     * path="/api/v1/reviews/{review_slug}/comments",
+     * summary="Add a new comment to a specific review",
+     * operationId="storeCommentByReview",
+     * tags={"Comments", "Reviews"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="review_slug",
+     * in="path",
+     * description="The slug of the review to comment on.",
+     * required=true,
+     * @OA\Schema(type="string", example="great-read-review")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="Comment data",
+     * @OA\JsonContent(ref="#/components/schemas/StoreCommentRequest")
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Comment created successfully.",
+     * @OA\JsonContent(ref="#/components/schemas/Comment")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden (e.g., user not following the review's author, or other access restrictions)."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Resource not found."
+     * ),
+     * @OA\Response(
+     * response=409,
+     * description="Conflict (e.g., User not following review author - UserNotFollowingException)",
+     * @OA\JsonContent(
+     * type="object",
+     * @OA\Property(property="success", type="boolean", example=false),
+     * @OA\Property(property="message", type="string", example="You must follow the author to comment on this review.")
+     * )
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error."
+     * )
+     * )
      * @param \App\Http\Requests\API\V1\Comment\StoreCommentRequest $request
      * @param \App\Models\API\V1\Review $review
      * @return JsonResponse|mixed
@@ -99,7 +260,54 @@ class CommentController
     }
 
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     * path="/api/v1/posts/{post_slug}/comments",
+     * summary="Get comments for a specific post",
+     * operationId="indexCommentsByPost",
+     * tags={"Comments", "Posts"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="post_slug",
+     * in="path",
+     * description="The slug of the post to retrieve comments for.",
+     * required=true,
+     * @OA\Schema(type="string", example="my-first-post")
+     * ),
+     * @OA\Parameter(
+     * name="per_page",
+     * in="query",
+     * description="Number of items to return per page.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, maximum=50, example=15)
+     * ),
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="The page number to retrieve.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, example=1)
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(
+     * type="array",
+     * @OA\Items(ref="#/components/schemas/Comment")
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Resource not found."
+     * )
+     * )
      * @param \App\Models\API\V1\Post $post
      * @return JsonResponse|mixed
      */
@@ -113,7 +321,54 @@ class CommentController
     }
 
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     * path="/api/v1/reviews/{review_slug}/comments",
+     * summary="Get comments for a specific review",
+     * operationId="indexCommentsByReview",
+     * tags={"Comments", "Reviews"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="review_slug",
+     * in="path",
+     * description="The slug of the review to retrieve comments for.",
+     * required=true,
+     * @OA\Schema(type="string", example="awesome-book-review")
+     * ),
+     * @OA\Parameter(
+     * name="per_page",
+     * in="query",
+     * description="Number of items to return per page.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, maximum=50, example=15)
+     * ),
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="The page number to retrieve.",
+     * required=false,
+     * @OA\Schema(type="integer", format="int32", minimum=1, example=1)
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(
+     * type="array",
+     * @OA\Items(ref="#/components/schemas/Comment")
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Resource not found."
+     * )
+     * )
      * @param \App\Models\API\V1\Review $review
      * @return JsonResponse|mixed
      */
@@ -127,7 +382,37 @@ class CommentController
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     * path="/api/v1/comments/{comment_slug}",
+     * summary="Get a single comment by its slug",
+     * operationId="commentShow",
+     * tags={"Comments"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="comment_slug",
+     * in="path",
+     * description="The slug of the comment to retrieve.",
+     * required=true,
+     * @OA\Schema(type="string", example="my-great-comment-slug")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(ref="#/components/schemas/Comment")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Resource not found."
+     * )
+     * )
      */
     public function show(Comment $comment): JsonResponse
     {
@@ -136,7 +421,46 @@ class CommentController
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     * path="/api/v1/comments/{comment_slug}",
+     * summary="Update an existing comment",
+     * operationId="commentUpdate",
+     * tags={"Comments"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="comment_slug",
+     * in="path",
+     * description="The slug of the comment to update.",
+     * required=true,
+     * @OA\Schema(type="string", example="my-great-comment-slug")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="Updated comment data",
+     * @OA\JsonContent(ref="#/components/schemas/UpdateCommentRequest")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Comment updated successfully.",
+     * @OA\JsonContent(ref="#/components/schemas/Comment")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden (e.g., user is not the owner of the comment)."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Resource not found."
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error."
+     * )
+     * )
      */
     public function update(UpdateCommentRequest $request, Comment $comment): JsonResponse
     {
@@ -149,7 +473,36 @@ class CommentController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     * path="/api/v1/comments/{comment_slug}",
+     * summary="Delete a comment by its slug",
+     * operationId="commentDestroy",
+     * tags={"Comments"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="comment_slug",
+     * in="path",
+     * description="The slug of the comment to delete.",
+     * required=true,
+     * @OA\Schema(type="string", example="my-great-comment-to-delete")
+     * ),
+     * @OA\Response(
+     * response=204,
+     * description="Comment deleted successfully (No Content)",
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated."
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden (e.g., user is not the owner of the comment)."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Resource not found."
+     * )
+     * )
      */
     public function destroy(Comment $comment): JsonResponse
     {
