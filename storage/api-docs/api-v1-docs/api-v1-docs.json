@@ -1574,6 +1574,1094 @@
                 ]
             }
         },
+        "/api/v1/posts": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Get a paginated list of all posts",
+                "operationId": "postIndex",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items to return per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Post"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Create a new post",
+                "operationId": "postStore",
+                "requestBody": {
+                    "description": "Post data to store. Provide 'book_id' if not creating via a book-specific route.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StorePostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Post created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Post"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/books/{book_slug}/posts": {
+            "get": {
+                "tags": [
+                    "Books",
+                    "Posts"
+                ],
+                "summary": "Get a paginated list of posts for a specific book",
+                "operationId": "postIndexByBook",
+                "parameters": [
+                    {
+                        "name": "book_slug",
+                        "in": "path",
+                        "description": "The slug of the book to retrieve posts for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "the-hobbit"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items to return per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Post"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Book not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Books",
+                    "Posts"
+                ],
+                "summary": "Create a new post for a specific book",
+                "description": "Creates a new post associated with the given book. The 'book_id' in the request body is optional for this endpoint.",
+                "operationId": "postStoreByBook",
+                "parameters": [
+                    {
+                        "name": "book_slug",
+                        "in": "path",
+                        "description": "The slug of the book to create the post for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "the-hobbit"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Post data to store.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StorePostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Post created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Post"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Book not found."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/{user_slug}/posts": {
+            "get": {
+                "tags": [
+                    "Users",
+                    "Posts"
+                ],
+                "summary": "Get a paginated list of posts by a specific user",
+                "operationId": "postIndexByUser",
+                "parameters": [
+                    {
+                        "name": "user_slug",
+                        "in": "path",
+                        "description": "The slug of the user to retrieve posts for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "johndoe"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items to return per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Post"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "User not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Users",
+                    "Posts"
+                ],
+                "summary": "Create a new post for a specific user",
+                "description": "Creates a new post associated with the given user.",
+                "operationId": "postStoreByUser",
+                "parameters": [
+                    {
+                        "name": "user_slug",
+                        "in": "path",
+                        "description": "The slug of the user to create the post for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "johndoe"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Post data to store.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StorePostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Post created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Post"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "User not found."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/posts/{post_slug}": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Get a single post by its slug",
+                "operationId": "postShow",
+                "parameters": [
+                    {
+                        "name": "post_slug",
+                        "in": "path",
+                        "description": "The slug of the post to retrieve.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "my-reading-update"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Post"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Post not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Update an existing post",
+                "operationId": "postUpdate",
+                "parameters": [
+                    {
+                        "name": "post_slug",
+                        "in": "path",
+                        "description": "The slug of the post to update.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "my-reading-update"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Updated post data.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdatePostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Post updated successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Post"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Post not found."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Delete a post by its slug",
+                "operationId": "postDestroy",
+                "parameters": [
+                    {
+                        "name": "post_slug",
+                        "in": "path",
+                        "description": "The slug of the post to delete.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "my-reading-update"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Post deleted successfully (No Content)"
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Post not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reviews": {
+            "get": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Get a paginated list of all reviews",
+                "operationId": "reviewIndex",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items to return per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Review"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Create a new review",
+                "operationId": "reviewStore",
+                "requestBody": {
+                    "description": "Review data to store. Provide 'book_id' if not creating via a book-specific route.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreReviewRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Review created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Review"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/{user_slug}/reviews": {
+            "get": {
+                "tags": [
+                    "Users",
+                    "Reviews"
+                ],
+                "summary": "Get a paginated list of reviews by a specific user",
+                "operationId": "reviewIndexByUser",
+                "parameters": [
+                    {
+                        "name": "user_slug",
+                        "in": "path",
+                        "description": "The slug of the user to retrieve reviews for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "johndoe"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items to return per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Review"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "User not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/books/{book_slug}/reviews": {
+            "get": {
+                "tags": [
+                    "Books",
+                    "Reviews"
+                ],
+                "summary": "Get a paginated list of reviews for a specific book",
+                "operationId": "reviewIndexByBook",
+                "parameters": [
+                    {
+                        "name": "book_slug",
+                        "in": "path",
+                        "description": "The slug of the book to retrieve reviews for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "the-hobbit"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items to return per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Review"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Book not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Books",
+                    "Reviews"
+                ],
+                "summary": "Create a new review for a specific book",
+                "description": "Creates a new review associated with the given book. The 'book_id' in the request body is optional for this endpoint.",
+                "operationId": "reviewStoreByBook",
+                "parameters": [
+                    {
+                        "name": "book_slug",
+                        "in": "path",
+                        "description": "The slug of the book to create the review for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "the-hobbit"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Review data to store.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreReviewRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Review created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Review"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Book not found."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reviews/{review}": {
+            "get": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Get a single review by ID",
+                "operationId": "reviewShow",
+                "parameters": [
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "The ID of the review to retrieve.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Review"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Review not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Update an existing review",
+                "operationId": "reviewUpdate",
+                "parameters": [
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "The ID of the review to update.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Updated review data. All fields are optional.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateReviewRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Review updated successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Review"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Review not found."
+                    },
+                    "422": {
+                        "description": "Validation error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Delete a review by ID",
+                "operationId": "reviewDestroy",
+                "parameters": [
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "The ID of the review to delete.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Review deleted successfully (No Content)"
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Review not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reviews/{review}/like": {
+            "post": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Like a review",
+                "operationId": "reviewLike",
+                "parameters": [
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "The ID of the review to like.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review liked successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "example": "Review liked"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Review not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reviews/{review}/dislike": {
+            "post": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Dislike a review",
+                "operationId": "reviewDislike",
+                "parameters": [
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "The ID of the review to dislike.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review disliked successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "example": "Review disliked"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Review not found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/tags": {
             "get": {
                 "tags": [
@@ -2039,6 +3127,67 @@
                 },
                 "type": "object"
             },
+            "StorePostRequest": {
+                "title": "Store Post Request",
+                "description": "Request body for creating a new post.\n * Either 'book_id' must be provided in the request body, or the post must be created\n * in the context of a book route (e.g., /api/v1/books/{book_slug}/posts).",
+                "required": [
+                    "body",
+                    "progress"
+                ],
+                "properties": {
+                    "body": {
+                        "description": "The content of the post.",
+                        "type": "string",
+                        "minLength": 5,
+                        "example": "This book is incredibly captivating. Highly recommend it!"
+                    },
+                    "progress": {
+                        "description": "The reading progress associated with the post (e.g., page number, percentage).",
+                        "type": "integer",
+                        "maximum": 100,
+                        "minimum": 1,
+                        "example": 150
+                    },
+                    "book_id": {
+                        "description": "The ID of the book this post is related to.\n * This field is required if the post is not created via a book-specific endpoint (e.g., /posts).\n * It is optional if the post is created via a book-specific endpoint (e.g., /books/{book_slug}/posts),\n * as the book ID will be inferred from the route.",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 101,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreReviewRequest": {
+                "title": "Store Review Request",
+                "description": "Request body for creating a new book review.\n * Either 'book_id' must be provided in the request body, or the review must be created\n * in the context of a book route (e.g., /api/v1/books/{book_slug}/reviews).",
+                "required": [
+                    "rating",
+                    "comment"
+                ],
+                "properties": {
+                    "rating": {
+                        "description": "The rating given to the book, from 1 to 5.",
+                        "type": "integer",
+                        "maximum": 5,
+                        "minimum": 1,
+                        "example": 5
+                    },
+                    "comment": {
+                        "description": "The text content of the review.",
+                        "type": "string",
+                        "example": "This book was a truly immersive experience, I couldn't put it down!"
+                    },
+                    "book_id": {
+                        "description": "The ID of the book this review is for.\n * This field is required if the review is not created via a book-specific endpoint (e.g., /reviews).\n * It is optional if the review is created via a book-specific endpoint (e.g., /books/{book_slug}/reviews),\n * as the book ID will be inferred from the route.",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 101,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreTagRequest": {
                 "title": "Store Tag Request",
                 "description": "Request body for creating a new tag.",
@@ -2225,6 +3374,63 @@
                         "type": "string",
                         "maxLength": 255,
                         "example": "High Fantasy",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePostRequest": {
+                "title": "Update Post Request",
+                "description": "Request body for updating an existing post. All fields are optional.\n * Either 'book_id' can be provided in the request body, or the post update\n * can occur in the context of a book route (e.g., /api/v1/books/{book_slug}/posts/{post_slug}).",
+                "properties": {
+                    "body": {
+                        "description": "The updated content of the post.",
+                        "type": "string",
+                        "maxLength": 1000,
+                        "minLength": 5,
+                        "example": "Just finished chapter 7, the plot twist was unexpected!",
+                        "nullable": true
+                    },
+                    "progress": {
+                        "description": "The updated reading progress associated with the post (e.g., page number, percentage).",
+                        "type": "integer",
+                        "minimum": 1,
+                        "example": 180,
+                        "nullable": true
+                    },
+                    "book_id": {
+                        "description": "The ID of the book this post is related to.\n * This field is optional. If provided, it must be an existing book ID.\n * If the update is via a book-specific endpoint (e.g., /books/{book_slug}/posts/{post_slug}),\n * the book ID will be inferred from the route.",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 101,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateReviewRequest": {
+                "title": "Update Review Request",
+                "description": "Request body for updating an existing book review. All fields are optional.",
+                "properties": {
+                    "rating": {
+                        "description": "The updated rating for the book, from 1 to 5.",
+                        "type": "integer",
+                        "maximum": 5,
+                        "minimum": 1,
+                        "example": 4,
+                        "nullable": true
+                    },
+                    "comment": {
+                        "description": "The updated text content of the review.",
+                        "type": "string",
+                        "example": "Still a great book, but the ending felt a little rushed.",
+                        "nullable": true
+                    },
+                    "book_id": {
+                        "description": "The ID of the book this review is for. This field is optional and typically not changed during an update. If provided, it must be an existing book ID.",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 101,
                         "nullable": true
                     }
                 },
@@ -2521,6 +3727,134 @@
                     "name": "Genre"
                 }
             },
+            "Post": {
+                "title": "Post",
+                "description": "Post model representing a user's reading update or comment on a book.",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the post",
+                        "type": "integer",
+                        "format": "int64",
+                        "readOnly": true,
+                        "example": 1
+                    },
+                    "book_id": {
+                        "description": "The ID of the book this post is related to",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 101
+                    },
+                    "user_id": {
+                        "description": "The ID of the user who created the post",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 10
+                    },
+                    "body": {
+                        "description": "The content of the post",
+                        "type": "string",
+                        "example": "Just finished chapter 5 of 'Dune' and it's getting intense!"
+                    },
+                    "progress": {
+                        "description": "The reading progress associated with the post (e.g., page number, percentage)",
+                        "type": "integer",
+                        "example": 120,
+                        "nullable": true
+                    },
+                    "slug": {
+                        "description": "Unique URL-friendly slug for the post (generated from body)",
+                        "type": "string",
+                        "maxLength": 255,
+                        "readOnly": true,
+                        "example": "just-finished-chapter-5-of-dune"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the post record was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2024-05-30T10:00:00.000000Z"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the post record was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2024-05-30T10:00:00.000000Z"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Post"
+                }
+            },
+            "Review": {
+                "title": "Review",
+                "description": "Review model representing a user's review of a book.",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the review",
+                        "type": "integer",
+                        "format": "int64",
+                        "readOnly": true,
+                        "example": 1
+                    },
+                    "user_id": {
+                        "description": "The ID of the user who wrote the review",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 10
+                    },
+                    "book_id": {
+                        "description": "The ID of the book this review is for",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 101
+                    },
+                    "comment": {
+                        "description": "The text content of the review",
+                        "type": "string",
+                        "example": "An absolutely captivating read from start to finish!"
+                    },
+                    "rating": {
+                        "description": "The rating given to the book (e.g., out of 5)",
+                        "type": "integer",
+                        "maximum": 5,
+                        "minimum": 1,
+                        "example": 5
+                    },
+                    "like_count": {
+                        "description": "The number of likes the review has received",
+                        "type": "integer",
+                        "readOnly": true,
+                        "example": 25
+                    },
+                    "dislike_count": {
+                        "description": "The number of dislikes the review has received",
+                        "type": "integer",
+                        "readOnly": true,
+                        "example": 3
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the review record was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2024-05-30T10:00:00.000000Z"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the review record was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "example": "2024-05-30T10:00:00.000000Z"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Review"
+                }
+            },
             "Tag": {
                 "title": "Tag",
                 "description": "Tag model representing keywords or categories for resources.",
@@ -2599,6 +3933,10 @@
         {
             "name": "Genres",
             "description": "Genres"
+        },
+        {
+            "name": "Users",
+            "description": "Users"
         },
         {
             "name": "Tags",
