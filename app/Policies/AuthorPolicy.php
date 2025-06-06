@@ -20,7 +20,7 @@ class AuthorPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Author $model): bool
+    public function view(User $user): bool
     {
         return $user->hasPermissionTo(AuthorPermissions::VIEW_ONE_AUTHOR->getValue());
     }
@@ -38,7 +38,8 @@ class AuthorPolicy
      */
     public function update(User $user, Author $model): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::EDIT_AUTHORS);
+        return $user->hasPermissionTo(AuthorPermissions::EDIT_AUTHORS)
+            && $user->id === $model->user_id;
     }
 
     /**
