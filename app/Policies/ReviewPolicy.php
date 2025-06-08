@@ -38,7 +38,8 @@ class ReviewPolicy
      */
     public function update(User $user, Review $review): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::EDIT_REVIEWS);
+        return $user->hasPermissionTo(ReviewPermissions::EDIT_REVIEWS)
+            && $user->id === $review->user_id;
     }
 
     /**
