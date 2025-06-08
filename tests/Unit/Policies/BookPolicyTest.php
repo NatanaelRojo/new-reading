@@ -36,7 +36,7 @@ class BookPolicyTest extends TestCase
     {
         $user = $this->createMock(User::class);
         $user->method('hasPermissionTo')->willReturn(true);
-        $this->assertTrue($this->policy->view($user));
+        $this->assertTrue($this->policy->view($user, new Book()));
     }
 
     /**
