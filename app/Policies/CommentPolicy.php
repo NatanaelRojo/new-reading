@@ -38,7 +38,8 @@ class CommentPolicy
      */
     public function update(User $user, Comment $comment): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::EDIT_COMMENTS->getValue());
+        return $user->hasPermissionTo(CommentPermissions::EDIT_COMMENTS->getValue())
+            && $user->id === $comment->user_id;
     }
 
     /**
