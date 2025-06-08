@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Author;
 use App\Models\API\V1\Book;
 use App\Models\API\V1\Comment;
@@ -19,6 +20,7 @@ use App\Policies\ReviewPolicy;
 use App\Policies\TagPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -43,7 +45,13 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::before(function (User $user, string $ability): ?bool {
+            if ($user->hasRole(AppRoles::ADMIN)) {
+                return true;
+            }
+
+            return null;
+        });
     }
 
     /**
