@@ -2,19 +2,25 @@
 
 namespace Tests\Unit\Policies;
 
+use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Author;
 use App\Models\User;
 use App\Policies\AuthorPolicy;
 use PHPUnit\Framework\TestCase;
+use Tests\TestCase as TestsTestCase;
 
-class AuthorPolicyTest extends TestCase
+class AuthorPolicyTest extends TestsTestCase
 {
     protected AuthorPolicy $policy;
+    protected User $mockUser;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->policy = new AuthorPolicy();
+        $this->mockUser = $this->createMock(User::class);
+        $this->mockUser->method('hasAnyRole')->willReturn(true);
+        $this->mockUser->method('hasRole')->willReturn(true);
     }
 
     /**
@@ -23,10 +29,7 @@ class AuthorPolicyTest extends TestCase
      */
     public function test_viewAny(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
-
-        $this->assertTrue($this->policy->viewAny($user));
+        $this->assertTrue($this->policy->viewAny($this->mockUser));
     }
 
     /**
@@ -35,10 +38,7 @@ class AuthorPolicyTest extends TestCase
      */
     public function test_view(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
-
-        $this->assertTrue($this->policy->view($user));
+        $this->assertTrue($this->policy->view($this->mockUser));
     }
 
     /**
@@ -47,10 +47,7 @@ class AuthorPolicyTest extends TestCase
      */
     public function test_create(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
-
-        $this->assertTrue($this->policy->create($user));
+        $this->assertTrue($this->policy->create($this->mockUser));
     }
 
     /**
@@ -59,12 +56,11 @@ class AuthorPolicyTest extends TestCase
      */
     public function test_update(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
         $author = $this->createMock(Author::class);
-        $author->user_id = $user->id;
+        $author->user_id = $this->mockUser->id;
 
-        $this->assertTrue($this->policy->update($user, $author));
+
+        $this->assertTrue($this->policy->update($this->mockUser, $author));
     }
 
     /**
@@ -73,11 +69,9 @@ class AuthorPolicyTest extends TestCase
      */
     public function test_delete(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
         $author = $this->createMock(Author::class);
 
-        $this->assertTrue($this->policy->delete($user, $author));
+        $this->assertTrue($this->policy->delete($this->mockUser, $author));
     }
 
     /**
@@ -86,11 +80,9 @@ class AuthorPolicyTest extends TestCase
      */
     public function test_restore(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
         $author = $this->createMock(Author::class);
 
-        $this->assertTrue($this->policy->restore($user, $author));
+        $this->assertTrue($this->policy->restore($this->mockUser, $author));
     }
 
     /**
@@ -99,11 +91,9 @@ class AuthorPolicyTest extends TestCase
      */
     public function test_forceDelete(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
         $author = $this->createMock(Author::class);
 
-        $this->assertTrue($this->policy->forceDelete($user, $author));
+        $this->assertTrue($this->policy->forceDelete($this->mockUser, $author));
     }
 
     /**
@@ -113,7 +103,7 @@ class AuthorPolicyTest extends TestCase
     public function test_no_permissions(): void
     {
         $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(false);
+        $user->method('hasAnyRole')->willReturn(false);
 
         $this->assertFalse($this->policy->viewAny($user));
         $this->assertFalse($this->policy->view($user));
