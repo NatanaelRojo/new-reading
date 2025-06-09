@@ -2,19 +2,18 @@
 
 namespace App\Policies;
 
-use App\Enums\Permissions\AuthorPermissions;
 use App\Models\API\V1\Author;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class AuthorPolicy
+class AuthorPolicy extends BasePolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::VIEW_ANY_AUTHORS);
+        return $this->hasCommonViewAnyRoles($user);
     }
 
     /**
@@ -22,7 +21,7 @@ class AuthorPolicy
      */
     public function view(User $user): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::VIEW_ONE_AUTHOR->getValue());
+        return $this->hasCommonViewRoles($user);
     }
 
     /**
@@ -30,16 +29,15 @@ class AuthorPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::CREATE_AUTHORS);
+        return $this->hasCommonCreateRoles($user);
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Author $model): bool
+    public function update(User $user, Author $author): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::EDIT_AUTHORS)
-            && $user->id === $model->user_id;
+        return $this->hasCommonUpdateRoles($user) && $this->isOwner($user, $author);
     }
 
     /**
@@ -47,7 +45,7 @@ class AuthorPolicy
      */
     public function delete(User $user, Author $model): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::DELETE_AUTHORS);
+        return $this->hasCommonDeleteRoles($user);
     }
 
     /**
@@ -55,7 +53,7 @@ class AuthorPolicy
      */
     public function restore(User $user, Author $model): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::RESTORE_AUTHORS);
+        return $this->hasCommonRestoreRoles($user);
     }
 
     /**
@@ -63,6 +61,6 @@ class AuthorPolicy
      */
     public function forceDelete(User $user, Author $model): bool
     {
-        return $user->hasPermissionTo(AuthorPermissions::FORCE_DELETE_AUTHORS);
+        return $this->hasCommonForceDeleteRoles($user);
     }
 }
