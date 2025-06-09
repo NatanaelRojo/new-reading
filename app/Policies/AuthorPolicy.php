@@ -37,7 +37,7 @@ class AuthorPolicy extends BasePolicy
      */
     public function update(User $user, Author $author): bool
     {
-        return $this->hasCommonUpdateRoles($user) && $this->isOwner($user, $author);
+        return $this->hasCommonUpdateRoles($user);
     }
 
     /**
