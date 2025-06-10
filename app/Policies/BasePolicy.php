@@ -46,8 +46,7 @@ abstract class BasePolicy
     protected function hasCommonCreateRoles(User $user): bool
     {
         return $user->hasAnyRole([
-            AppRoles::EDITOR, // Editors might create
-            AppRoles::AUTHOR, // Authors might create
+            AppRoles::ADMIN,
         ]);
     }
 
@@ -59,6 +58,7 @@ abstract class BasePolicy
     protected function hasCommonUpdateRoles(User $user): bool
     {
         return $user->hasAnyRole([
+            AppRoles::ADMIN,
             AppRoles::EDITOR,
             AppRoles::AUTHOR,
         ]);
@@ -72,7 +72,10 @@ abstract class BasePolicy
      */
     protected function hasCommonDeleteRoles(User $user): bool
     {
-        return $user->hasRole(AppRoles::ADMIN);
+        return $user->hasAnyRole([
+            AppRoles::ADMIN,
+            AppRoles::MODERATOR,
+        ]);
     }
 
     /**
@@ -83,7 +86,10 @@ abstract class BasePolicy
      */
     protected function hasCommonRestoreRoles(User $user): bool
     {
-        return $user->hasRole(AppRoles::ADMIN);
+        return $user->hasAnyRole([
+            AppRoles::ADMIN,
+            AppRoles::MODERATOR,
+        ]);
     }
 
     /**
@@ -94,7 +100,10 @@ abstract class BasePolicy
      */
     protected function hasCommonForceDeleteRoles(User $user): bool
     {
-        return $user->hasRole(AppRoles::ADMIN);
+        return $user->hasAnyRole([
+            AppRoles::ADMIN,
+            // AppRoles::MODERATOR,
+        ]);
     }
 
     /**
