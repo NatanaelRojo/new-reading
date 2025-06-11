@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\API\V1\Author;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -30,11 +32,26 @@ class UserFactory extends Factory
             'birth_date' => fake()->date(),
             'description' => fake()->text(),
             'name' => fake()->name(),
-            'email' => Str::uuid()->toString() . '@' . fake()->unique()->safeEmailDomain(),
+            'email' => Str::uuid()->toString() . '@example.com',
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
+    }
+
+    /**
+     * Configure the factory to create an associated Author for the User after creation.
+     *
+     * This method uses the afterCreating callback to automatically generate
+     * an Author model linked to the newly created User instance.
+     *
+     * @return static
+     */
+    public function hasAuthor(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            Author::factory()->for($user)->create();
+        });
     }
 
     /**
