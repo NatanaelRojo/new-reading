@@ -103,6 +103,7 @@ class Author extends Model
      * )
      */
     protected $fillable = [
+        'user_id',
         'first_name',
         'last_name',
         'full_name', // Though typically not directly fillable if it's an accessor
