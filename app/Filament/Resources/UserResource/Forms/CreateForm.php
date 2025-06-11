@@ -5,6 +5,7 @@ namespace App\Filament\Resources\UserResource\Forms;
 use App\Filament\Resources\Abstract\AbstractCreateForm;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -16,9 +17,26 @@ class CreateForm extends AbstractCreateForm
     public static function make(): array
     {
         return [
-            Tabs::make('Tabs')
-                ->tabs(static::getTabs())
-                    ->activeTab(1),
+            TextInput::make('first_name')
+                ->required(),
+            TextInput::make('last_name')
+                ->required(),
+                TextInput::make('email')
+                ->required()
+                ->email(),
+            TextInput::make('name')
+                ->required(),
+            TextInput::make('description')
+                ->required(),
+            TextInput::make('password')
+                ->required(),
+            DatePicker::make('birth_date')
+                ->required(),
+                Select::make('roles')
+    ->multiple()
+    ->relationship('roles', 'name')
+    ->preload(),
+    static::getAuthorSection(),
         ];
     }
 
@@ -28,6 +46,7 @@ class CreateForm extends AbstractCreateForm
             Tab::make('User Details')
                 ->schema(static::getFields()),
             Tab::make('Author details')
+            ->relationship('author')
                 ->schema(static::getAuthorFields()),
         ];
     }
@@ -57,18 +76,26 @@ class CreateForm extends AbstractCreateForm
         ];
     }
 
-    public static function getAuthorFields(): array
+    public static function getAuthorSection(): Section
+    {
+        return Section::make('Author Detail')
+            ->relationship('author')
+                ->schema(static::getAuthorFields())
+                ->collapsible();
+    }
+
+    private static function getAuthorFields(): array
     {
         return [
-            TextInput::make('author.first_name')
+            TextInput::make('first_name')
                 ->required(),
-            TextInput::make('author.last_name')
+            TextInput::make('last_name')
                 ->required(),
-            TextInput::make('author.nationality')
+            TextInput::make('nationality')
                 ->required(),
-            Textarea::make('author.biography')
+            Textarea::make('biography')
                 ->required(),
-                FileUpload::make('author.image')
+                FileUpload::make('image')
                 ->avatar()
                 ->imageEditor(),
         ];
