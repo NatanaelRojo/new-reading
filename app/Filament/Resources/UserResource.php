@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Forms\CreateForm;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers\AuthorRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\BooksRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\PostsRelationManager;
@@ -44,6 +45,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
+            AuthorRelationManager::class,
             BooksRelationManager::class,
             PermissionsRelationManager::class,
             PostsRelationManager::class,
