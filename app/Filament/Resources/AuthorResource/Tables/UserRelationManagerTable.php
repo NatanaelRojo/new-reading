@@ -39,7 +39,10 @@ class UserRelationManagerTable extends AbstractTable
         return [
             AssociateAction::make()
                 ->preloadRecordSelect()
-                ->hidden(fn (?Model $record): bool => $record?->user()?->count() == 1),
+                ->hidden(
+                    fn (RelationManager $livewire): bool =>
+                    $livewire->getOwnerRecord()->user()->count() === 1
+                ),
             CreateAction::make(),
         ];
     }
@@ -50,7 +53,10 @@ class UserRelationManagerTable extends AbstractTable
 
         return [
             DissociateAction::make()
-                ->hidden(fn (?User $record): bool => $record?->author()?->count() == 1),
+                ->visible(
+                    fn (?Model $record): bool =>
+                    $record->author()->count() === 1
+                ),
                                     ViewAction::make(),
             EditAction::make()
                 ->url(
