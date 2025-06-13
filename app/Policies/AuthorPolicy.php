@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Author;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -37,7 +38,7 @@ class AuthorPolicy extends BasePolicy
      */
     public function update(User $user, Author $author): bool
     {
-        return $this->hasCommonUpdateRoles($user);
+        return $user->hasRole(AppRoles::AUTHOR) && $this->isOwner($user, $author);
     }
 
     /**
