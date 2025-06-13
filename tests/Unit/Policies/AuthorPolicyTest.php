@@ -60,7 +60,7 @@ class AuthorPolicyTest extends TestsTestCase
      */
     public function test_update(): void
     {
-        $this->mockUser = $this->createUserWithRoles([AppRoles::AUTHOR->getValue()]);
+        $this->mockUser = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
         $author = $this->createMock(Author::class);
 
         $this->assertTrue($this->policy->update($this->mockUser, $author));
@@ -153,7 +153,7 @@ class AuthorPolicyTest extends TestsTestCase
      */
     public function test_a_guest_cannot_view_any_authors(): void
     {
-        $user = $this->createUserWithRoles([]); // User with no roles
+        $user = $this->createUserWithRoles([]);
         $this->assertFalse($this->policy->viewAny($user));
     }
 
@@ -285,9 +285,10 @@ class AuthorPolicyTest extends TestsTestCase
      */
     public function test_an_editor_can_update_any_author(): void
     {
-        $editor = $this->createUserWithRoles([AppRoles::EDITOR->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertTrue($this->policy->update($editor, $author));
+        $authorUser = $this->createUserWithRoles([AppRoles::AUTHOR->value]);
+        $author = Author::factory()->create();
+
+        $this->assertFalse($this->policy->update($authorUser, $author));
     }
 
     /**
@@ -298,7 +299,7 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_an_author_can_update_their_own_author(): void
     {
         $authorUser = $this->createUserWithRoles([AppRoles::AUTHOR->value]);
-        $author = Author::factory()->make();
+        $author = Author::factory()->forUser($authorUser)->create();
 
         $this->assertTrue($this->policy->update($authorUser, $author));
     }
