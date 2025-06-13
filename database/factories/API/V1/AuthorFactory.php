@@ -33,12 +33,16 @@ class AuthorFactory extends Factory
      * This method uses the afterCreating callback to create a new User instance
      * and updates the Author's user_id field with the created User's ID.
      *
+     * @param User $user The User instance to associate with the Author.
      * @return static
      */
-    public function forUser(): static
+    public function forUser(?User $user = null): static
     {
-        return $this->afterCreating(function (Author $author) {
-            $user = User::factory()->create();
+        return $this->afterCreating(function (Author $author) use ($user): void {
+            if (!$user) {
+                $user = User::factory()->create();
+            }
+
             $author->update(['user_id' => $user->id]);
         });
     }
