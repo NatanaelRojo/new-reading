@@ -116,6 +116,6 @@ abstract class BasePolicy
      */
     protected function isOwner(User $user, Model $model): bool
     {
-        return property_exists($model, 'user_id') && $user->id === $model->user_id;
+        return $user->id === $model->user_id;
     }
 }
