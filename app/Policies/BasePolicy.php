@@ -47,7 +47,6 @@ abstract class BasePolicy
     {
         return $user->hasAnyRole([
             AppRoles::ADMIN,
-            AppRoles::AUTHOR,
         ]);
     }
 

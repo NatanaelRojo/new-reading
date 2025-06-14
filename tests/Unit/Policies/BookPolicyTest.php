@@ -2,116 +2,434 @@
 
 namespace Tests\Unit\Policies;
 
+use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Book;
 use App\Models\User;
 use App\Policies\BookPolicy;
-use PHPUnit\Framework\TestCase;
+use App\Traits\Test\RolesAndUsers;
+use Tests\TestCase as TestsTestCase;
 
-class BookPolicyTest extends TestCase
+class BookPolicyTest extends TestsTestCase
 {
-    protected BookPolicy $policy;
+    use RolesAndUsers;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->policy = new BookPolicy();
     }
 
     /**
-     * Test that a user can view any books.
+     * Test that an administrator can view any books.
      * @return void
      */
-    public function test_viewAny(): void
+    public function test_viewAny_as_admin(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
-        $this->assertTrue($this->policy->viewAny($user));
+        $user = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
+        $this->assertTrue($user->can('viewAny', Book::class));
     }
 
     /**
-     * Test that a user can view a book.
+     * Test that an editor can view any books.
      * @return void
      */
-    public function test_view(): void
+    public function test_viewAny_as_editor(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
-        $this->assertTrue($this->policy->view($user, new Book()));
+        $user = $this->createUserWithRoles([AppRoles::EDITOR->getValue()]);
+        $this->assertTrue($user->can('viewAny', Book::class));
     }
 
     /**
-     * Test that a user can create a book.
+     * Test that an author can view any books.
      * @return void
      */
-    public function test_create(): void
+    public function test_viewAny_as_author(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
-        $this->assertTrue($this->policy->create($user));
-    }
-
-    /**     * Test that a user can update a book.
-     * @return void
-     */
-    public function test_update(): void
-    {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
-        $book = $this->createMock(Book::class);
-        $this->assertTrue($this->policy->update($user, $book));
+        $user = $this->createUserWithRoles([AppRoles::AUTHOR->getValue()]);
+        $this->assertTrue($user->can('viewAny', Book::class));
     }
 
     /**
-     * Test that a user can delete a book.
+     * Test that a moderator can view any books.
      * @return void
      */
-    public function test_delete(): void
+    public function test_viewAny_as_moderator(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
-        $book = $this->createMock(Book::class);
-        $this->assertTrue($this->policy->delete($user, $book));
+        $user = $this->createUserWithRoles([AppRoles::MODERATOR->getValue()]);
+        $this->assertTrue($user->can('viewAny', Book::class));
     }
 
     /**
-     * Test that a user can restore a book.
+     * Test that a regular user can view any books.
      * @return void
      */
-    public function test_restore(): void
+    public function test_viewAny_as_regular_user(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
-        $book = $this->createMock(Book::class);
-        $this->assertTrue($this->policy->restore($user, $book));
+        $user = $this->createUserWithRoles([AppRoles::USER->getValue()]);
+        $this->assertTrue($user->can('viewAny', Book::class));
     }
 
     /**
-     * Test that a user can permanently delete a book.
+     * Test that a guest cannot view any books.
      * @return void
      */
-    public function test_forceDelete(): void
+    public function test_viewAny_as_guest(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(true);
-        $book = $this->createMock(Book::class);
-        $this->assertTrue($this->policy->forceDelete($user, $book));
+        $user = $this->createUserWithRoles([]);
+        $this->assertFalse($user->can('viewAny', Book::class));
     }
 
     /**
-     * Test that a user cannot view any books without permission.
+     * Test that an administrator can view a specific book.
+     * @return void
+     */
+    public function test_view_as_admin(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertTrue($user->can('view', $book));
+    }
+
+    /**
+     * Test that an editor can view a specific book.
+     * @return void
+     */
+    public function test_view_as_editor(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::EDITOR->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertTrue($user->can('view', $book));
+    }
+
+    /**
+     * Test that an author can view a specific book.
+     * @return void
+     */
+    public function test_view_as_author(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::AUTHOR->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertTrue($user->can('view', $book));
+    }
+
+    /**
+     * Test that a moderator can view a specific book.
+     * @return void
+     */
+    public function test_view_as_moderator(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::MODERATOR->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertTrue($user->can('view', $book));
+    }
+
+    /**
+     * Test that a regular user can view a specific book.
+     * @return void
+     */
+    public function test_view_as_regular_user(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::USER->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertTrue($user->can('view', $book));
+    }
+
+    /**
+     * Test that a guest cannot view a specific book.
+     * @return void
+     */
+    public function test_view_as_guest(): void
+    {
+        $user = $this->createUserWithRoles([]);
+        $book = Book::factory()->make();
+        $this->assertFalse($user->can('view', $book));
+    }
+
+    /**
+     * Test that an administrator can create a book.
+     * @return void
+     */
+    public function test_create_as_admin(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
+        $this->assertTrue($user->can('create', Book::class));
+    }
+
+    /**
+     * Test that an editor cannot create a book.
+     * @return void
+     */
+    public function test_create_as_editor(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::EDITOR->getValue()]);
+        $this->assertFalse($user->can('create', Book::class));
+    }
+
+    /**
+     * Test that an author cannot create a book.
+     * @return void
+     */
+    public function test_create_as_author(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::AUTHOR->getValue()]);
+        $this->assertFalse($user->can('create', Book::class));
+    }
+
+    /**
+     * Test that a moderator cannot create a book.
+     * @return void
+     */
+    public function test_create_as_moderator(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::MODERATOR->getValue()]);
+        $this->assertFalse($user->can('create', Book::class));
+    }
+
+    /**
+     * Test that a regular user cannot create a book.
+     * @return void
+     */
+    public function test_create_as_regular_user(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::USER->getValue()]);
+        $this->assertFalse($user->can('create', Book::class));
+    }
+
+    /**
+     * Test that a guest cannot create a book.
+     * @return void
+     */
+    public function test_create_as_guest(): void
+    {
+        $user = $this->createUserWithRoles([]);
+        $this->assertFalse($user->can('create', Book::class));
+    }
+
+    /**
+     * Test that an administrator can update any book.
+     * @return void
+     */
+    public function test_update_as_admin(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertTrue($user->can('update', $book));
+    }
+
+    /**
+     * Test that an editor can update any book.
+     * @return void
+     */
+    public function test_update_as_editor(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::EDITOR->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertTrue($user->can('update', $book));
+    }
+
+    /**
+     * Test that an author can update their own book.
+     * @return void
+     */
+    public function test_update_author_own_book(): void
+    {
+        $authorUser = $this->createUserWithRoles([AppRoles::AUTHOR->getValue()]);
+        $book = Book::factory()->hasUsers(1)->make();
+        $book->user_id = $authorUser->id;
+        $this->assertTrue($authorUser->can('update', $book));
+    }
+
+    /**
+     * Test that an author cannot update another author's book.
+     * @return void
+     */
+    public function test_update_author_other_book(): void
+    {
+        $authorUser = $this->createUserWithRoles([AppRoles::AUTHOR->getValue()]);
+        $anotherUser = $this->createUserWithRoles([AppRoles::AUTHOR->getValue()]);
+        $book = Book::factory()->hasUsers(1)->make();
+        $book->user_id = $anotherUser->id;
+        $this->assertFalse($authorUser->can('update', $book));
+    }
+
+    /**
+     * Test that a moderator cannot update a book.
+     * @return void
+     */
+    public function test_update_as_moderator(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::MODERATOR->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertFalse($user->can('update', $book));
+    }
+
+    /**
+     * Test that a regular user cannot update a book.
+     * @return void
+     */
+    public function test_update_as_regular_user(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::USER->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertFalse($user->can('update', $book));
+    }
+
+    /**
+     * Test that a guest cannot update a book.
+     * @return void
+     */
+    public function test_update_as_guest(): void
+    {
+        $user = $this->createUserWithRoles([]);
+        $book = Book::factory()->make();
+        $this->assertFalse($user->can('update', $book));
+    }
+
+    /**
+     * Test that an administrator can delete any book.
+     * @return void
+     */
+    public function test_delete_as_admin(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertTrue($user->can('delete', $book));
+    }
+
+    /**
+     * Test that a moderator can delete any book.
+     * @return void
+     */
+    public function test_delete_as_moderator(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::MODERATOR->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertTrue($user->can('delete', $book));
+    }
+
+    /**
+     * Test that an editor cannot delete a book.
+     * @return void
+     */
+    public function test_delete_as_editor(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::EDITOR->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertFalse($user->can('delete', $book));
+    }
+
+    /**
+     * Test that an author cannot delete a book.
+     * @return void
+     */
+    public function test_delete_as_author(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::AUTHOR->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertFalse($user->can('delete', $book));
+    }
+
+    /**
+     * Test that a regular user cannot delete a book.
+     * @return void
+     */
+    public function test_delete_as_regular_user(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::USER->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertFalse($user->can('delete', $book));
+    }
+
+    /**
+     * Test that a guest cannot delete a book.
+     * @return void
+     */
+    public function test_delete_as_guest(): void
+    {
+        $user = $this->createUserWithRoles([]);
+        $book = Book::factory()->make();
+        $this->assertFalse($user->can('delete', $book));
+    }
+
+    /**
+     * Test that an administrator can restore any book.
+     * @return void
+     */
+    public function test_restore_as_admin(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertTrue($user->can('restore', $book));
+    }
+
+    /**
+     * Test that a moderator can restore any book.
+     * @return void
+     */
+    public function test_restore_as_moderator(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::MODERATOR->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertTrue($user->can('restore', $book));
+    }
+
+    /**
+     * Test that an editor cannot restore a book.
+     * @return void
+     */
+    public function test_restore_as_editor(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::EDITOR->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertFalse($user->can('restore', $book));
+    }
+
+    /**
+     * Test that an administrator can force delete any book.
+     * @return void
+     */
+    public function test_forceDelete_as_admin(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertTrue($user->can('forceDelete', $book));
+    }
+
+    /**
+     * Test that a moderator cannot force delete a book.
+     * @return void
+     */
+    public function test_forceDelete_as_moderator(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::MODERATOR->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertFalse($user->can('forceDelete', $book));
+    }
+
+    /**
+     * Test that an editor cannot force delete a book.
+     * @return void
+     */
+    public function test_forceDelete_as_editor(): void
+    {
+        $user = $this->createUserWithRoles([AppRoles::EDITOR->getValue()]);
+        $book = Book::factory()->make();
+        $this->assertFalse($user->can('forceDelete', $book));
+    }
+
+    /**
+     * Test that a user cannot perform actions without permissions.
      * @return void
      */
     public function test_no_permissions(): void
     {
-        $user = $this->createMock(User::class);
-        $user->method('hasPermissionTo')->willReturn(false);
+        $user = $this->createUserWithRoles([]);
 
-        $this->assertFalse($this->policy->viewAny($user));
-        $this->assertFalse($this->policy->view($user, new Book()));
-        $this->assertFalse($this->policy->create($user));
-        $this->assertFalse($this->policy->update($user, new Book()));
-        $this->assertFalse($this->policy->delete($user, new Book()));
-        $this->assertFalse($this->policy->restore($user, new Book()));
-        $this->assertFalse($this->policy->forceDelete($user, new Book()));
+        $this->assertFalse($user->can('viewAny', Book::class));
+        $this->assertFalse($user->can('view', Book::factory()->make()));
+        $this->assertFalse($user->can('create', Book::class));
+        $this->assertFalse($user->can('update', Book::factory()->make()));
+        $this->assertFalse($user->can('delete', Book::factory()->make()));
+        $this->assertFalse($user->can('restore', Book::factory()->make()));
+        $this->assertFalse($user->can('forceDelete', Book::factory()->make()));
     }
 }
