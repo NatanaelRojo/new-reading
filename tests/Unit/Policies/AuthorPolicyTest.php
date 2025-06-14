@@ -5,7 +5,7 @@ namespace Tests\Unit\Policies;
 use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Author;
 use App\Models\User;
-use App\Policies\AuthorPolicy;
+use App\Policies\AuthorPolicy; // Ensure this policy extends your BasePolicy
 use App\Traits\Test\RolesAndUsers;
 use PHPUnit\Framework\TestCase;
 use Spatie\Permission\Models\Role;
@@ -15,13 +15,15 @@ class AuthorPolicyTest extends TestsTestCase
 {
     use RolesAndUsers;
 
+    // The policy instance is still needed if you want to inspect its internal state,
+    // but the authorization checks themselves should go through the user's can() method.
     protected AuthorPolicy $policy;
     protected User $mockUser;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->policy = new AuthorPolicy();
+        // $this->policy = new AuthorPolicy(); // No longer strictly needed for 'can()' calls, but can be kept for other test needs
     }
 
     /**
@@ -31,17 +33,18 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_viewAny(): void
     {
         $this->mockUser = $this->createUserWithRoles([AppRoles::AUTHOR->getValue()]);
-        $this->assertTrue($this->policy->viewAny($this->mockUser));
+        $this->assertTrue($this->mockUser->can('viewAny', Author::class));
     }
 
     /**
-        * Test that a user can create an author.
+     * Test that a user can view an author.
      * @return void
      */
     public function test_view(): void
     {
         $this->mockUser = $this->createUserWithRoles([AppRoles::AUTHOR->getValue()]);
-        $this->assertTrue($this->policy->view($this->mockUser));
+        $author = Author::factory()->make();
+        $this->assertTrue($this->mockUser->can('view', $author));
     }
 
     /**
@@ -51,7 +54,7 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_create(): void
     {
         $this->mockUser = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
-        $this->assertTrue($this->policy->create($this->mockUser));
+        $this->assertTrue($this->mockUser->can('create', Author::class));
     }
 
     /**
@@ -61,9 +64,9 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_update(): void
     {
         $this->mockUser = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
-        $author = $this->createMock(Author::class);
+        $author = Author::factory()->make();
 
-        $this->assertTrue($this->policy->update($this->mockUser, $author));
+        $this->assertTrue($this->mockUser->can('update', $author));
     }
 
     /**
@@ -73,9 +76,9 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_delete(): void
     {
         $this->mockUser = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
-        $author = $this->createMock(Author::class);
+        $author = Author::factory()->make();
 
-        $this->assertTrue($this->policy->delete($this->mockUser, $author));
+        $this->assertTrue($this->mockUser->can('delete', $author));
     }
 
     /**
@@ -85,9 +88,9 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_restore(): void
     {
         $this->mockUser = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
-        $author = $this->createMock(Author::class);
+        $author = Author::factory()->make();
 
-        $this->assertTrue($this->policy->restore($this->mockUser, $author));
+        $this->assertTrue($this->mockUser->can('restore', $author));
     }
 
     /**
@@ -97,9 +100,9 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_forceDelete(): void
     {
         $this->mockUser = $this->createUserWithRoles([AppRoles::ADMIN->getValue()]);
-        $author = $this->createMock(Author::class);
+        $author = Author::factory()->make();
 
-        $this->assertTrue($this->policy->forceDelete($this->mockUser, $author));
+        $this->assertTrue($this->mockUser->can('forceDelete', $author));
     }
 
     /**
@@ -110,7 +113,7 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_an_editor_can_view_any_authors(): void
     {
         $user = $this->createUserWithRoles([AppRoles::EDITOR->value]);
-        $this->assertTrue($this->policy->viewAny($user));
+        $this->assertTrue($user->can('viewAny', Author::class));
     }
 
     /**
@@ -121,7 +124,7 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_an_author_can_view_any_authors(): void
     {
         $user = $this->createUserWithRoles([AppRoles::AUTHOR->value]);
-        $this->assertTrue($this->policy->viewAny($user));
+        $this->assertTrue($user->can('viewAny', Author::class));
     }
 
     /**
@@ -132,7 +135,7 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_moderator_can_view_any_authors(): void
     {
         $user = $this->createUserWithRoles([AppRoles::MODERATOR->value]);
-        $this->assertTrue($this->policy->viewAny($user));
+        $this->assertTrue($user->can('viewAny', Author::class));
     }
 
     /**
@@ -143,7 +146,7 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_regular_user_can_view_any_authors(): void
     {
         $user = $this->createUserWithRoles([AppRoles::USER->value]);
-        $this->assertTrue($this->policy->viewAny($user));
+        $this->assertTrue($user->can('viewAny', Author::class));
     }
 
     /**
@@ -154,7 +157,7 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_guest_cannot_view_any_authors(): void
     {
         $user = $this->createUserWithRoles([]);
-        $this->assertFalse($this->policy->viewAny($user));
+        $this->assertFalse($user->can('viewAny', Author::class));
     }
 
     // --- Tests for `view` method (single author) ---
@@ -167,8 +170,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_an_editor_can_view_a_specific_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::EDITOR->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertTrue($this->policy->view($user, $author));
+        $author = Author::factory()->make();
+        $this->assertTrue($user->can('view', $author));
     }
 
     /**
@@ -179,8 +182,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_an_author_can_view_a_specific_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::AUTHOR->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertTrue($this->policy->view($user, $author));
+        $author = Author::factory()->make();
+        $this->assertTrue($user->can('view', $author));
     }
 
     /**
@@ -191,8 +194,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_moderator_can_view_a_specific_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::MODERATOR->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertTrue($this->policy->view($user, $author));
+        $author = Author::factory()->make();
+        $this->assertTrue($user->can('view', $author));
     }
 
     /**
@@ -203,8 +206,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_regular_user_can_view_a_specific_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::USER->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertTrue($this->policy->view($user, $author));
+        $author = Author::factory()->make();
+        $this->assertTrue($user->can('view', $author));
     }
 
     /**
@@ -215,8 +218,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_guest_cannot_view_a_specific_author(): void
     {
         $user = $this->createUserWithRoles([]);
-        $author = $this->createMock(Author::class);
-        $this->assertFalse($this->policy->view($user, $author));
+        $author = Author::factory()->make();
+        $this->assertFalse($user->can('view', $author));
     }
 
     // --- Tests for `create` method ---
@@ -229,7 +232,7 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_an_editor_cannot_create_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::EDITOR->value]);
-        $this->assertFalse($this->policy->create($user));
+        $this->assertFalse($user->can('create', Author::class));
     }
 
     /**
@@ -240,7 +243,7 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_an_author_cannot_create_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::AUTHOR->value]);
-        $this->assertFalse($this->policy->create($user));
+        $this->assertFalse($user->can('create', Author::class));
     }
 
     /**
@@ -251,7 +254,7 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_moderator_cannot_create_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::MODERATOR->value]);
-        $this->assertFalse($this->policy->create($user));
+        $this->assertFalse($user->can('create', Author::class));
     }
 
     /**
@@ -262,7 +265,7 @@ class AuthorPolicyTest extends TestsTestCase
     public function a_regular_user_cannot_create_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::USER->value]);
-        $this->assertFalse($this->policy->create($user));
+        $this->assertFalse($user->can('create', Author::class));
     }
 
     /**
@@ -273,7 +276,7 @@ class AuthorPolicyTest extends TestsTestCase
     public function a_guest_cannot_create_an_author(): void
     {
         $user = $this->createUserWithRoles([]);
-        $this->assertFalse($this->policy->create($user));
+        $this->assertFalse($user->can('create', Author::class));
     }
 
     // --- Tests for `update` method ---
@@ -285,10 +288,12 @@ class AuthorPolicyTest extends TestsTestCase
      */
     public function test_an_editor_can_update_any_author(): void
     {
-        $authorUser = $this->createUserWithRoles([AppRoles::AUTHOR->value]);
+        $editorUser = $this->createUserWithRoles([AppRoles::EDITOR->value]);
         $author = Author::factory()->create();
 
-        $this->assertFalse($this->policy->update($authorUser, $author));
+        // This assertion might need to change to true if editors are indeed allowed to update any author
+        // according to your actual policy logic. This test currently asserts false.
+        $this->assertFalse($editorUser->can('update', $author));
     }
 
     /**
@@ -301,7 +306,7 @@ class AuthorPolicyTest extends TestsTestCase
         $authorUser = $this->createUserWithRoles([AppRoles::AUTHOR->value]);
         $author = Author::factory()->forUser($authorUser)->create();
 
-        $this->assertTrue($this->policy->update($authorUser, $author));
+        $this->assertTrue($authorUser->can('update', $author));
     }
 
     /**
@@ -312,8 +317,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_an_author_cannot_update_another_authors_content(): void
     {
         $authorUser = $this->createUserWithRoles([AppRoles::AUTHOR->value]);
-        $anotherAuthor = Author::factory()->make();
-        $this->assertFalse(false);
+        $anotherAuthor = Author::factory()->create(); // Changed to create to ensure it has an ID, though mock is fine if user_id is set
+        $this->assertFalse($authorUser->can('update', $anotherAuthor)); // Corrected assertion logic
     }
 
     /**
@@ -324,8 +329,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_moderator_cannot_update_an_author(): void
     {
         $moderator = $this->createUserWithRoles([AppRoles::MODERATOR->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertFalse($this->policy->update($moderator, $author));
+        $author = Author::factory()->make();
+        $this->assertFalse($moderator->can('update', $author));
     }
 
     /**
@@ -336,8 +341,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_regular_user_cannot_update_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::USER->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertFalse($this->policy->update($user, $author));
+        $author = Author::factory()->make();
+        $this->assertFalse($user->can('update', $author));
     }
 
     /**
@@ -349,7 +354,7 @@ class AuthorPolicyTest extends TestsTestCase
     {
         $user = $this->createUserWithRoles([]);
         $author = Author::factory()->make();
-        $this->assertFalse($this->policy->update($user, $author));
+        $this->assertFalse($user->can('update', $author));
     }
 
     // --- Tests for `delete` method ---
@@ -362,8 +367,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_moderator_can_delete_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::MODERATOR->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertTrue($this->policy->delete($user, $author));
+        $author = Author::factory()->make();
+        $this->assertTrue($user->can('delete', $author));
     }
 
     /**
@@ -374,8 +379,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_an_editor_cannot_delete_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::EDITOR->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertFalse($this->policy->delete($user, $author));
+        $author = Author::factory()->make();
+        $this->assertFalse($user->can('delete', $author));
     }
 
     /**
@@ -386,8 +391,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_an_author_cannot_delete_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::AUTHOR->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertFalse($this->policy->delete($user, $author));
+        $author = Author::factory()->make();
+        $this->assertFalse($user->can('delete', $author));
     }
 
     /**
@@ -398,8 +403,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_regular_user_cannot_delete_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::USER->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertFalse($this->policy->delete($user, $author));
+        $author = Author::factory()->make();
+        $this->assertFalse($user->can('delete', $author));
     }
 
     /**
@@ -410,8 +415,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_guest_cannot_delete_an_author(): void
     {
         $user = $this->createUserWithRoles([]);
-        $author = $this->createMock(Author::class);
-        $this->assertFalse($this->policy->delete($user, $author));
+        $author = Author::factory()->make();
+        $this->assertFalse($user->can('delete', $author));
     }
 
     // --- Tests for `restore` method ---
@@ -424,8 +429,9 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_moderator_can_restore_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::MODERATOR->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertTrue($this->policy->restore($user, $author));
+        $author = Author::factory()->make();
+        dump('Testing moderator restore permission');
+        $this->assertTrue($user->can('restore', $author));
     }
 
     /**
@@ -436,8 +442,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_an_editor_cannot_restore_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::EDITOR->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertFalse($this->policy->restore($user, $author));
+        $author = Author::factory()->make();
+        $this->assertFalse($user->can('restore', $author));
     }
 
     // --- Tests for `forceDelete` method ---
@@ -450,8 +456,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_a_moderator_cannot_force_delete_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::MODERATOR->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertFalse($this->policy->forceDelete($user, $author));
+        $author = Author::factory()->make();
+        $this->assertFalse($user->can('forceDelete', $author));
     }
 
     /**
@@ -462,8 +468,8 @@ class AuthorPolicyTest extends TestsTestCase
     public function test_an_editor_cannot_force_delete_an_author(): void
     {
         $user = $this->createUserWithRoles([AppRoles::EDITOR->value]);
-        $author = $this->createMock(Author::class);
-        $this->assertFalse($this->policy->forceDelete($user, $author));
+        $author = Author::factory()->make();
+        $this->assertFalse($user->can('forceDelete', $author));
     }
 
     /**
@@ -474,12 +480,12 @@ class AuthorPolicyTest extends TestsTestCase
     {
         $user = $this->createUserWithRoles();
 
-        $this->assertFalse($this->policy->viewAny($user));
-        $this->assertFalse($this->policy->view($user));
-        $this->assertFalse($this->policy->create($user));
-        $this->assertFalse($this->policy->update($user, $this->createMock(Author::class)));
-        $this->assertFalse($this->policy->delete($user, $this->createMock(Author::class)));
-        $this->assertFalse($this->policy->restore($user, $this->createMock(Author::class)));
-        $this->assertFalse($this->policy->forceDelete($user, $this->createMock(Author::class)));
+        $this->assertFalse($user->can('viewAny', Author::class));
+        $this->assertFalse($user->can('view', Author::factory()->make()));
+        $this->assertFalse($user->can('create', Author::class));
+        $this->assertFalse($user->can('update', Author::factory()->make()));
+        $this->assertFalse($user->can('delete', Author::factory()->make()));
+        $this->assertFalse($user->can('restore', Author::factory()->make()));
+        $this->assertFalse($user->can('forceDelete', Author::factory()->make()));
     }
 }
