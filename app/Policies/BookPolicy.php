@@ -3,18 +3,19 @@
 namespace App\Policies;
 
 use App\Enums\Permissions\BookPermissions;
+use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Book;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class BookPolicy
+class BookPolicy extends BasePolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo(BookPermissions::VIEW_ANY_BOOKS);
+        return $this->hasCommonViewAnyRoles($user);
     }
 
     /**
@@ -22,7 +23,7 @@ class BookPolicy
      */
     public function view(User $user, Book $book): bool
     {
-        return $user->hasPermissionTo(BookPermissions::VIEW_ONE_BOOK);
+        return $this->hasCommonViewRoles($user);
     }
 
     /**
@@ -30,7 +31,7 @@ class BookPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo(BookPermissions::CREATE_BOOKS);
+        return $this->hasCommonCreateRoles($user);
     }
 
     /**
@@ -38,7 +39,11 @@ class BookPolicy
      */
     public function update(User $user, Book $model): bool
     {
-        return $user->hasPermissionTo(BookPermissions::EDIT_BOOKS);
+        if ($user->hasRole(AppRoles::EDITOR)) {
+            return true;
+        }
+
+        return $user->hasRole(AppRoles::AUTHOR) && $user->id === $model->user_id;
     }
 
     /**
@@ -46,7 +51,7 @@ class BookPolicy
      */
     public function delete(User $user, Book $model): bool
     {
-        return $user->hasPermissionTo(BookPermissions::DELETE_BOOKS);
+        return $this->hasCommonDeleteRoles($user);
     }
 
     /**
@@ -54,7 +59,7 @@ class BookPolicy
      */
     public function restore(User $user, Book $model): bool
     {
-        return $user->hasPermissionTo(BookPermissions::RESTORE_BOOKS);
+        return $this->hasCommonRestoreRoles($user);
     }
 
     /**
@@ -62,6 +67,6 @@ class BookPolicy
      */
     public function forceDelete(User $user, Book $model): bool
     {
-        return $user->hasPermissionTo(BookPermissions::FORCE_DELETE_BOOKS);
+        return $this->hasCommonForceDeleteRoles($user);
     }
 }
