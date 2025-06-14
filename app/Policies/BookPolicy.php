@@ -31,7 +31,7 @@ class BookPolicy extends BasePolicy
      */
     public function create(User $user): bool
     {
-        return $this->hasCommonCreateRoles($user);
+        return $user->hasRole(AppRoles::AUTHOR);
     }
 
     /**
