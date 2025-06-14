@@ -165,13 +165,13 @@ class BookPolicyTest extends TestsTestCase
     }
 
     /**
-     * Test that an author cannot create a book.
+     * Test that an author can create a book.
      * @return void
      */
-    public function test_create_as_author(): void
+    public function test_an_author_can_create_a_book(): void
     {
         $user = $this->createUserWithRoles([AppRoles::AUTHOR->getValue()]);
-        $this->assertFalse($user->can('create', Book::class));
+        $this->assertTrue($user->can('create', Book::class));
     }
 
     /**
