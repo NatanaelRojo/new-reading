@@ -3,18 +3,19 @@
 namespace App\Policies;
 
 use App\Enums\Permissions\CommentPermissions;
+use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Comment;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class CommentPolicy
+class CommentPolicy extends BasePolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::VIEW_ANY_COMMENTS->getValue());
+        return $this->hasCommonViewAnyRoles($user);
     }
 
     /**
@@ -22,7 +23,7 @@ class CommentPolicy
      */
     public function view(User $user, Comment $comment): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::VIEW_ONE_COMMENT->getValue());
+        return $this->hasCommonViewRoles($user);
     }
 
     /**
@@ -30,7 +31,11 @@ class CommentPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::CREATE_COMMENTS->getValue());
+        return $user->hasAnyRole([
+            AppRoles::AUTHOR,
+            AppRoles::USER,
+            AppRoles::MODERATOR,
+        ]);
     }
 
     /**
@@ -38,8 +43,7 @@ class CommentPolicy
      */
     public function update(User $user, Comment $comment): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::EDIT_COMMENTS->getValue())
-            && $user->id === $comment->user_id;
+        return $this->isOwner($user, $comment);
     }
 
     /**
@@ -47,7 +51,11 @@ class CommentPolicy
      */
     public function delete(User $user, Comment $comment): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::DELETE_COMMENTS->getValue());
+        if ($user->hasRole(AppRoles::MODERATOR)) {
+            return true;
+        }
+
+        return $user->hasRole(AppRoles::USER) && $this->isOwner($user, $comment);
     }
 
     /**
@@ -55,7 +63,7 @@ class CommentPolicy
      */
     public function restore(User $user, Comment $comment): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::RESTORE_COMMENTS->getValue());
+        return $this->hasCommonRestoreRoles($user);
     }
 
     /**
@@ -63,6 +71,6 @@ class CommentPolicy
      */
     public function forceDelete(User $user, Comment $comment): bool
     {
-        return $user->hasPermissionTo(CommentPermissions::FORCE_DELETE_COMMENTS);
+        return $this->hasCommonForceDeleteRoles($user);
     }
 }
