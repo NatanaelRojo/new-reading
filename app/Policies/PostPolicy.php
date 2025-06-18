@@ -3,18 +3,19 @@
 namespace App\Policies;
 
 use App\Enums\Permissions\PostPermissions;
+use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Post;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class PostPolicy
+class PostPolicy extends BasePolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo(PostPermissions::VIEW_ANY_POSTS);
+        return $this->hasCommonViewAnyRoles($user);
     }
 
     /**
@@ -22,7 +23,7 @@ class PostPolicy
      */
     public function view(User $user, Post $post): bool
     {
-        return $user->hasPermissionTo(PostPermissions::VIEW_ONE_POST);
+        return $this->hasCommonViewRoles($user);
     }
 
     /**
@@ -30,7 +31,9 @@ class PostPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo(PostPermissions::CREATE_POSTS);
+        return $this->hasCommonCreateRoles($user, [
+            AppRoles::AUTHOR,
+        ]);
     }
 
     /**
@@ -38,7 +41,14 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
-        return $user->hasPermissionTo(PostPermissions::EDIT_POSTS);
+        if ($user->hasAnyRole([AppRoles::MODERATOR, AppRoles::EDITOR])) {
+            return true;
+        }
+
+        return $user->hasAnyRole([
+                AppRoles::AUTHOR,
+                AppRoles::USER
+            ]) && $this->isOwner($user, $post);
     }
 
     /**
@@ -46,7 +56,14 @@ class PostPolicy
      */
     public function delete(User $user, Post $post): bool
     {
-        return $user->hasPermissionTo(PostPermissions::DELETE_POSTS);
+        if ($user->hasRole(AppRoles::MODERATOR)) {
+            return true;
+        }
+
+        return $this->hasCommonDeleteRoles($user, [
+            AppRoles::AUTHOR,
+            AppRoles::USER,
+        ]) && $this->isOwner($user, $post);
     }
 
     /**
@@ -54,7 +71,7 @@ class PostPolicy
      */
     public function restore(User $user, Post $post): bool
     {
-        return $user->hasPermissionTo(PostPermissions::RESTORE_POSTS);
+        return $this->hasCommonRestoreRoles($user);
     }
 
     /**
@@ -62,6 +79,6 @@ class PostPolicy
      */
     public function forceDelete(User $user, Post $post): bool
     {
-        return $user->hasPermissionTo(PostPermissions::FORCE_DELETE_POSTS);
+        return $this->hasCommonForceDeleteRoles($user);
     }
 }
