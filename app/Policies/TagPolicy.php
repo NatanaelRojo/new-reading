@@ -3,18 +3,19 @@
 namespace App\Policies;
 
 use App\Enums\Permissions\TagPermissions;
+use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Tag;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class TagPolicy
+class TagPolicy extends BasePolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo(TagPermissions::VIEW_ANY_TAGS->getValue());
+        return $this->hasCommonViewAnyRoles($user);
     }
 
     /**
@@ -22,7 +23,7 @@ class TagPolicy
      */
     public function view(User $user, Tag $tag): bool
     {
-        return $user->hasPermissionTo(TagPermissions::VIEW_ONE_TAG->getValue());
+        return $this->hasCommonViewRoles($user);
     }
 
     /**
@@ -30,7 +31,9 @@ class TagPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo(TagPermissions::CREATE_TAGS->getValue());
+        return $this->hasCommonCreateRoles($user, [
+            AppRoles::EDITOR,
+        ]);
     }
 
     /**
@@ -38,7 +41,9 @@ class TagPolicy
      */
     public function update(User $user, Tag $tag): bool
     {
-        return $user->hasPermissionTo(TagPermissions::EDIT_TAGS);
+        return $this->hasCommonUpdateRoles($user, [
+            AppRoles::EDITOR,
+        ]);
     }
 
     /**
@@ -46,7 +51,7 @@ class TagPolicy
      */
     public function delete(User $user, Tag $tag): bool
     {
-        return $user->hasPermissionTo(TagPermissions::DELETE_TAGS->getValue());
+        return $this->hasCommonDeleteRoles($user);
     }
 
     /**
@@ -54,7 +59,7 @@ class TagPolicy
      */
     public function restore(User $user, Tag $tag): bool
     {
-        return $user->hasPermissionTo(TagPermissions::RESTORE_TAGS->getValue());
+        return $this->hasCommonRestoreRoles($user);
     }
 
     /**
@@ -62,6 +67,6 @@ class TagPolicy
      */
     public function forceDelete(User $user, Tag $tag): bool
     {
-        return $user->hasPermissionTo(TagPermissions::FORCE_DELETE_TAGS->getValue());
+        return $this->hasCommonForceDeleteRoles($user);
     }
 }
