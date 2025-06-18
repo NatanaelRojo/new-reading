@@ -3,18 +3,19 @@
 namespace App\Policies;
 
 use App\Enums\Permissions\GenrePermissions;
+use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Genre;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class GenrePolicy
+class GenrePolicy extends BasePolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo(GenrePermissions::VIEW_ANY_GENRES);
+        return $this->hasCommonViewAnyRoles($user);
     }
 
     /**
@@ -22,7 +23,7 @@ class GenrePolicy
      */
     public function view(User $user, Genre $genre): bool
     {
-        return $user->hasPermissionTo(GenrePermissions::VIEW_ONE_GENRE);
+        return $this->hasCommonViewRoles($user);
     }
 
     /**
@@ -30,7 +31,7 @@ class GenrePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo(GenrePermissions::CREATE_GENRES);
+        return $this->hasCommonCreateRoles($user);
     }
 
     /**
@@ -38,7 +39,10 @@ class GenrePolicy
      */
     public function update(User $user, Genre $genre): bool
     {
-        return $user->hasPermissionTo(GenrePermissions::EDIT_GENRES);
+        return $this->hasCommonUpdateRoles($user, [
+            AppRoles::ADMIN,
+            AppRoles::EDITOR,
+        ]);
     }
 
     /**
@@ -46,7 +50,7 @@ class GenrePolicy
      */
     public function delete(User $user, Genre $genre): bool
     {
-        return $user->hasPermissionTo(GenrePermissions::DELETE_GENRES);
+        return $this->hasCommonDeleteRoles($user);
     }
 
     /**
@@ -54,7 +58,7 @@ class GenrePolicy
      */
     public function restore(User $user, Genre $genre): bool
     {
-        return $user->hasPermissionTo(GenrePermissions::RESTORE_GENRES);
+        return $this->hasCommonRestoreRoles($user);
     }
 
     /**
@@ -62,6 +66,6 @@ class GenrePolicy
      */
     public function forceDelete(User $user, Genre $genre): bool
     {
-        return $user->hasPermissionTo(GenrePermissions::FORCE_DELETE_GENRES);
+        return $this->hasCommonForceDeleteRoles($user);
     }
 }
