@@ -36,4 +36,9 @@ return [
             AppRoles::ADMIN->value,
         ],
     ],
+    'panel_roles' => [
+        AppRoles::ADMIN,
+        AppRoles::EDITOR,
+        AppRoles::MODERATOR,
+    ],
 ];
