@@ -3,18 +3,19 @@
 namespace App\Policies;
 
 use App\Enums\Permissions\ReviewPermissions;
+use App\Enums\Roles\AppRoles;
 use App\Models\API\V1\Review;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class ReviewPolicy
+class ReviewPolicy extends BasePolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::VIEW_ANY_REVIEWS);
+        return $this->hasCommonViewAnyRoles($user);
     }
 
     /**
@@ -22,7 +23,7 @@ class ReviewPolicy
      */
     public function view(User $user, Review $review): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::VIEW_ONE_REVIEW);
+        return $this->hasCommonViewRoles($user);
     }
 
     /**
@@ -30,7 +31,10 @@ class ReviewPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::CREATE_REVIEWS);
+        return $this->hasCommonCreateRoles($user, [
+            AppRoles::AUTHOR,
+            AppRoles::USER,
+        ]);
     }
 
     /**
@@ -38,8 +42,11 @@ class ReviewPolicy
      */
     public function update(User $user, Review $review): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::EDIT_REVIEWS)
-            && $user->id === $review->user_id;
+        if ($user->hasRole(AppRoles::MODERATOR)) {
+            return true;
+        }
+
+        return $this->hasCommonUpdateRoles($user, [AppRoles::AUTHOR, AppRoles::USER]) && $this->isOwner($user, $review);
     }
 
     /**
@@ -47,7 +54,14 @@ class ReviewPolicy
      */
     public function delete(User $user, Review $review): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::DELETE_REVIEWS);
+        if ($user->hasRole(AppRoles::MODERATOR)) {
+            return true;
+        }
+
+        return $this->hasCommonDeleteRoles($user, [
+            AppRoles::AUTHOR,
+            AppRoles::USER,
+        ]) && $this->isOwner($user, $review);
     }
 
     /**
@@ -55,7 +69,7 @@ class ReviewPolicy
      */
     public function restore(User $user, Review $review): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::RESTORE_REVIEWS);
+        return $this->hasCommonRestoreRoles($user);
     }
 
     /**
@@ -63,6 +77,6 @@ class ReviewPolicy
      */
     public function forceDelete(User $user, Review $review): bool
     {
-        return $user->hasPermissionTo(ReviewPermissions::FORCE_DELETE_REVIEWS);
+        return $this->hasCommonForceDeleteRoles($user);
     }
 }
