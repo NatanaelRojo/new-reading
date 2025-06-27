@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Enums\Roles\AppRoles;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -28,5 +30,11 @@ class RoleSeeder extends Seeder
         }
 
         $this->command->info('All core roles have been processed successfully.');
+
+        $adminUser = User::factory()->create([
+                'name' => config('admin_user.name'),
+                'email' => config('admin_user.email'),
+                'password' => Hash::make(config('admin_user.password')),
+        ]);
     }
 }
