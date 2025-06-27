@@ -53,7 +53,11 @@ In this project, you can find a file named .env.example. This file is like a tem
 - DB_DATABASE: The name of the database
 - DB_USERNAME: The username of the database
 - DB_PASSWORD: The password of the database
-You just have to change the values of DB_DATABASE, DB_USERNAME, and DB_PASSWORD. Set them to your own values.
+- DEFAULT_ADMIN_NAME: The name of the default admin user
+- DEFAULT_ADMIN_EMAIL: The email of the default admin user
+- DEFAULT_ADMIN_PASSWORD: The password of the default admin user
+
+You just have to change the values of DB_DATABASE, DB_USERNAME, and DB_PASSWORD. Set them to your own values. You may wish to change the default credentials of the admin user. You can do that by changing DEFAULT_ADMIN_NAME, DEFAULT_ADMIN_EMAIL, and DEFAULT_ADMIN_PASSWORD to your own values.
 
 After setting up the environment variables, you need to run app migrations:
 
