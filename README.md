@@ -35,7 +35,7 @@ composer install
 cp .env.example .env
 ```
 
-- Now, create a app key that indentifies this project with a unique key. Prompt this:
+- Now, create a app key that identifies this project with a unique key. Prompt this:
 
 ```bash
 php artisan key:generate
@@ -43,7 +43,7 @@ php artisan key:generate
 
 - When the previous steps are ready, you can continue with the following step, which is set the environment variables. 
 
-#### Set Environment Variables
+#### Set Environment Variables And Migrate The Database
 
 In this project, you can find a file named .env.example. This file is like a template for seting up the API. Here's some important variables:
 
@@ -55,13 +55,19 @@ In this project, you can find a file named .env.example. This file is like a tem
 - DB_PASSWORD: The password of the database
 You just have to change the values of DB_DATABASE, DB_USERNAME, and DB_PASSWORD. Set them to your own values.
 
+After setting up the environment variables, you need to run app migrations:
+
+```bash
+php artisan migrate
+```
+
 With these steps you should have installed the project locally
 
 ## Features
 
 ### Admin panel
 
-This project has an admin panel section where you can manage all of the information related with the API. Before diving in that, we need to do somethings
+This project has an admin panel section where you can manage all of the information related with the API. Before diving into that, we need to do somethings
 
 #### Seed The API
 
@@ -87,3 +93,4 @@ Admin email: admin@admin.com
 Admin password: admin.123456
 
 After filling out the fields, press on the login button. You should see the admin panel interface
+
