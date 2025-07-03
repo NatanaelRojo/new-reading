@@ -98,3 +98,17 @@ Admin password: admin.123456
 
 After filling out the fields, press on the login button. You should see the admin panel interface
 
+### Documentation
+
+As a developer you will need a simple way of consulting how this API works. Here's where Swagger comes in handy. You can generate the whole documentation of each end-point with the following command:
+
+```bash
+php artisan l5-swagger:generate
+```
+
+After runing the previous command you should see the generated documentation by visiting this address on your browser:
+
+```bash
+http://localhost:8000/api/documentation
+```
+
