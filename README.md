@@ -2,6 +2,22 @@
 
 This project is an API that manages information about authors, books, comments, reviews, users, etc. This API was built with **[Laravel](https://laravel.com/)** (a PHP framework).
 
+## Table of Contents
+
+- [New Reading](#new-reading)
+  - [Table of Contents](#table-of-contents)
+  - [Local Installation](#local-installation)
+    - [Requirements](#requirements)
+    - [Installation Steps](#installation-steps)
+      - [Set Environment Variables And Migrate The Database](#set-environment-variables-and-migrate-the-database)
+  - [Features](#features)
+    - [Admin panel](#admin-panel)
+      - [Seed The API](#seed-the-api)
+      - [Access To The Admin Panel](#access-to-the-admin-panel)
+    - [Documentation](#documentation)
+    - [Admin Panel Sidebar](#admin-panel-sidebar)
+    - [Roles And Permissions](#roles-and-permissions)
+
 ## Local Installation
 
 ### Requirements
@@ -98,3 +114,49 @@ Admin password: admin.123456
 
 After filling out the fields, press on the login button. You should see the admin panel interface
 
+### Documentation
+
+As a developer you will need a simple way of consulting how this API works. Here's where Swagger comes in handy. You can generate the whole documentation of each end-point with the following command:
+
+```bash
+php artisan l5-swagger:generate
+```
+
+After runing the previous command you should see the generated documentation by visiting this address on your browser:
+
+```bash
+http://localhost:8000/api/documentation
+```
+
+### Admin Panel Sidebar
+
+Once in the admin panel, you should see a sidebar where you will be able to create, edit, and view the information stored in the database. These are the sections that you should see:
+
+- Authors
+- Books
+- Comments
+- Genres
+- Posts
+- Reviews
+- Tags
+- Users
+- Roles
+- Permissions
+
+### Roles And Permissions
+
+This project hasdifferents roles and permissions. Depending on the role that user has, it has differents permissions. In this project these are the roles:
+
+- Admin
+- Author
+- Editor
+- Moderator
+- User
+
+To access to the admin panel you need to have some of these:
+
+- Admin
+- Editor
+- Moderator
+
+Sometimes you may wish to change a user's role. You can do that in the user section of the admin panel.
