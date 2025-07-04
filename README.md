@@ -2,6 +2,22 @@
 
 This project is an API that manages information about authors, books, comments, reviews, users, etc. This API was built with **[Laravel](https://laravel.com/)** (a PHP framework).
 
+## Table of Contents
+
+- [New Reading](#new-reading)
+  - [Table of Contents](#table-of-contents)
+  - [Local Installation](#local-installation)
+    - [Requirements](#requirements)
+    - [Installation Steps](#installation-steps)
+      - [Set Environment Variables And Migrate The Database](#set-environment-variables-and-migrate-the-database)
+  - [Features](#features)
+    - [Admin panel](#admin-panel)
+      - [Seed The API](#seed-the-api)
+      - [Access To The Admin Panel](#access-to-the-admin-panel)
+    - [Documentation](#documentation)
+    - [Admin Panel Sidebar](#admin-panel-sidebar)
+    - [Roles And Permissions](#roles-and-permissions)
+
 ## Local Installation
 
 ### Requirements
