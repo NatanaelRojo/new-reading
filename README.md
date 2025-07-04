@@ -112,3 +112,35 @@ After runing the previous command you should see the generated documentation by 
 http://localhost:8000/api/documentation
 ```
 
+### Admin Panel Sidebar
+
+Once in the admin panel, you should see a sidebar where you will be able to create, edit, and view the information stored in the database. These are the sections that you should see:
+
+- Authors
+- Books
+- Comments
+- Genres
+- Posts
+- Reviews
+- Tags
+- Users
+- Roles
+- Permissions
+
+### Roles And Permissions
+
+This project hasdifferents roles and permissions. Depending on the role that user has, it has differents permissions. In this project these are the roles:
+
+- Admin
+- Author
+- Editor
+- Moderator
+- User
+
+To access to the admin panel you need to have some of these:
+
+- Admin
+- Editor
+- Moderator
+
+Sometimes you may wish to change a user's role. You can do that in the user section of the admin panel.
