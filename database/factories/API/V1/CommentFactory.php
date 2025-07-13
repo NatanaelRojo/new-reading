@@ -23,18 +23,23 @@ class CommentFactory extends Factory
         $commentable = $this->getRandomCommentable();
 
         return [
-            'user_id' => User::factory(),
+            'user_id' => User::inRandomOrder()->first()->id,
             'commentable_id' => $commentable->id,
             'commentable_type' => $commentable::class,
             'body' => fake()->sentence(10),
         ];
     }
 
+    /**
+     * Get a random commentable model.
+     *
+     * @return \App\Models\API\V1\Book|\App\Models\API\V1\Post
+     */
     private function getRandomCommentable(): Book|Post
     {
         return fake()->randomElement([
-            Book::factory()->create(),
-            Post::factory()->create(),
+            Book::inRandomOrder()->first(),
+            Post::inRandomOrder()->first(),
         ]);
     }
 }
