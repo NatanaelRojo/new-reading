@@ -21,8 +21,8 @@ class ReviewFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
-            'book_id' => Book::factory(),
+            'user_id' => User::inRandomOrder()->first()->id,
+            'book_id' => Book::inRandomOrder()->first(),
             'comment' => fake()->text(),
             'rating' => fake()->numberBetween(1, 5),
         ];
@@ -37,9 +37,9 @@ class ReviewFactory extends Factory
     {
         return $this->afterCreating(function (Review $review) {
             Like::factory()
-                ->count(rand(1, 5))
-                ->forLikeable($review)
-                ->create();
+                    ->count(rand(1, 5))
+                    ->forLikeable($review)
+                    ->create();
             $review->updateLikeCounters();
         });
     }
