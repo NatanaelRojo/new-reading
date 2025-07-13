@@ -19,6 +19,7 @@ class AuthorFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => User::inRandomOrder()->first()->id,
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
             'nationality' => fake()->country(),
