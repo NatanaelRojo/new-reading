@@ -1,162 +1,274 @@
-# New Reading
+# New Reading API
 
-This project is an API that manages information about authors, books, comments, reviews, users, etc. This API was built with **[Laravel](https://laravel.com/)** (a PHP framework).
+This project provides a comprehensive API for managing various entities such as authors, books, comments, reviews, users, and more. It is built using **[Laravel](https://laravel.com/)**, a robust PHP framework.
 
 ## Table of Contents
 
-- [New Reading](#new-reading)
+- [New Reading API](#new-reading-api)
   - [Table of Contents](#table-of-contents)
+  - [Features](#features)
   - [Local Installation](#local-installation)
     - [Requirements](#requirements)
     - [Installation Steps](#installation-steps)
-      - [Set Environment Variables And Migrate The Database](#set-environment-variables-and-migrate-the-database)
-  - [Features](#features)
-    - [Admin panel](#admin-panel)
-      - [Seed The API](#seed-the-api)
-      - [Access To The Admin Panel](#access-to-the-admin-panel)
-    - [Documentation](#documentation)
-    - [Admin Panel Sidebar](#admin-panel-sidebar)
-    - [Roles And Permissions](#roles-and-permissions)
+  - [Running the Development Server](#running-the-development-server)
+  - [Getting Started with the Admin Panel](#getting-started-with-the-admin-panel)
+  - [API Documentation (Swagger/OpenAPI)](#api-documentation-swaggeropenapi)
+  - [Roles and Permissions](#roles-and-permissions)
+  - [API Endpoints \& Usage Examples](#api-endpoints--usage-examples)
+    - [1. Authentication](#1-authentication)
+    - [2. Authenticated Requests](#2-authenticated-requests)
+    - [3. Standard RESTful Resources](#3-standard-restful-resources)
+    - [4. Nested \& Specific Routes](#4-nested--specific-routes)
+
+## Features
+
+* **RESTful API:** Provides endpoints for Authors, Books, Comments, Reviews, Users, Tags, and Genres.
+* **Integrated Admin Panel:** A powerful interface for managing all API data.
+* **Role-Based Access Control (RBAC):** Granular permissions based on user roles.
+* **Swagger/OpenAPI Documentation:** Easily generate and view API documentation.
+* **API Endpoints & Usage Examples:** Detailed guide on how to interact with the API.
 
 ## Local Installation
 
 ### Requirements
 
-To install locally this project on you machine, you need:
+To install and run this project locally, ensure you have the following installed on your machine:
 
-- Composer 2.7 (or above)
-- git 2.34 (or above)
-- Laravel 11.x (or above)
-- PHP 8.3 (or above)
-- A database manager e.g PostgreSQL
+* **Composer:** 2.7 or higher
+* **Git:** 2.34 or higher
+* **PHP:** 8.3 or higher
+* **Laravel:** 11.x or higher
+* **Database Manager:** e.g., PostgreSQL
 
 ### Installation Steps
 
-- Clone the repo with this command:
+1.  **Clone the repository:**
+
+    ```bash
+    git clone <repo_url>
+    cd <project_folder_name> # Navigate into the cloned directory
+    ```
+
+2.  **Install PHP dependencies:**
+
+    ```bash
+    composer install
+    ```
+
+3.  **Create and configure your environment file:**
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    Open the newly created `.env` file. You **must** configure your database connection variables (e.g., `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).
+
+    *Important:* This project utilizes environment variables for default admin user credentials during database seeding. You can optionally customize `DEFAULT_ADMIN_NAME`, `DEFAULT_ADMIN_EMAIL`, and `DEFAULT_ADMIN_PASSWORD` in your `.env` file.
+
+4.  **Generate application key:**
+
+    ```bash
+    php artisan key:generate
+    ```
+
+5.  **Run database migrations:**
+
+    ```bash
+    php artisan migrate
+    ```
+
+    At this point, the project should be installed locally and your database schema set up.
+
+## Running the Development Server
+
+To test the API and access the admin panel, you need to run the Laravel development server:
 
 ```bash
-git clone <repo_url>
+php artisan serve
 ```
 
-- Move to the folder that was created in the previous step
-- Once there, you can install PHP dependencies with the following command:
+By default, the server will start on `http://localhost:8000`. You can now access the application in your browser and start making requests to the API.
 
-```bash
-composer install
-```
+## Getting Started with the Admin Panel
 
-- In this moment we need to create something named .env file. The app uses this file for some base configurations. Enter this in your command line:
+To quickly populate your database with sample data and create a default admin user for the panel:
 
-```bash
-cp .env.example .env
-```
+1.  **Seed the database:**
 
-- Now, create a app key that identifies this project with a unique key. Prompt this:
+    ```bash
+    php artisan db:seed
+    ```
+    This command will populate your database with random data and create a default admin user based on the credentials configured in your `.env` file and `config/admin_user.php`.
 
-```bash
-php artisan key:generate
-```
+2.  **Access the Admin Panel:**
+    Open your web browser and navigate to the admin login page:
 
-- When the previous steps are ready, you can continue with the following step, which is set the environment variables. 
+    ```
+    http://localhost:8000/ad/login
+    ```
+    Log in using the default admin credentials. For example, if you kept the defaults, it might be `admin@example.com` and `password` (as defined in `config/admin_user.php`).
 
-#### Set Environment Variables And Migrate The Database
+    Once logged in, you will see a sidebar providing access to various data management sections:
+    * Authors
+    * Books
+    * Comments
+    * Genres
+    * Posts
+    * Reviews
+    * Tags
+    * Users
+    * Roles
+    * Permissions
 
-In this project, you can find a file named .env.example. This file is like a template for seting up the API. Here's some important variables:
+## API Documentation (Swagger/OpenAPI)
 
-- DB_CONNECTION: The database connection that you will use e.g pgsql for PostgreSQL
-- DB_HOST: The host of the database
-- DB_PORT: The port of the database. By default is 5432 for PostgreSQL
-- DB_DATABASE: The name of the database
-- DB_USERNAME: The username of the database
-- DB_PASSWORD: The password of the database
-- DEFAULT_ADMIN_NAME: The name of the default admin user
-- DEFAULT_ADMIN_EMAIL: The email of the default admin user
-- DEFAULT_ADMIN_PASSWORD: The password of the default admin user
+To generate and view the comprehensive API documentation:
 
-You just have to change the values of DB_DATABASE, DB_USERNAME, and DB_PASSWORD. Set them to your own values. You may wish to change the default credentials of the admin user. You can do that by changing DEFAULT_ADMIN_NAME, DEFAULT_ADMIN_EMAIL, and DEFAULT_ADMIN_PASSWORD to your own values.
+1.  **Generate documentation files:**
 
-After setting up the environment variables, you need to run app migrations:
+    ```bash
+    php artisan l5-swagger:generate
+    ```
 
-```bash
-php artisan migrate
-```
+2.  **View documentation in your browser:**
 
-With these steps you should have installed the project locally
+    ```
+    http://localhost:8000/api/documentation
+    ```
 
-## Features
+## Roles and Permissions
 
-### Admin panel
+This project implements a robust Role-Based Access Control (RBAC) system. User permissions are dynamically determined by their assigned roles. The predefined roles in this project include:
 
-This project has an admin panel section where you can manage all of the information related with the API. Before diving into that, we need to do somethings
+* **Admin:** Possesses full access and comprehensive management capabilities across the entire system.
+* **Editor:** Primarily focused on content management, such as updating posts, tags, and genres.
+* **Moderator:** Responsible for moderating user-generated content (e.g., reviews, comments) and managing users.
+* **Author:** Can create and manage their own content, specifically posts.
+* **User:** A general user, typically limited to viewing content and creating/managing their own reviews and comments.
 
-#### Seed The API
+**Admin Panel Access:** To log into the admin panel, a user must be assigned one of the following roles: Admin, Editor, or Moderator.
 
-You may wish to access to the admin panel, but not have to create data from scratch. For these cases, seeders were created. To seed the database, enter this in the command line:
+User roles can be conveniently managed via the "Users" section within the admin panel itself.
 
-```bash
-php artisan db:seed
-```
+## API Endpoints & Usage Examples
 
-This command will populate the database with some random data, and when you access to the admin panel, you'll see the outcomes
+This API offers a set of RESTful endpoints to manage your data. You can interact with these endpoints using any HTTP client like Postman, Insomnia, or even `curl`.
 
-#### Access To The Admin Panel
+**Base URL:** `http://localhost:8000/api` (assuming your Laravel app is running on port 8000)
 
-When you ran seeders in the previous section, a default admin user was created. So you now login with those credentials. Open your browser and enter this address on the search bar:
+### 1. Authentication
 
-```bash
-http://localhost:8000/ad/login
-```
+The API uses Laravel Sanctum for API token authentication.
 
-Fill out the fields with the default credentials:
+* **Register a new user:**
+    * **Endpoint:** `POST /register`
+    * **Body (JSON):**
+        ```json
+        {
+            "name": "John Doe",
+            "email": "john.doe@example.com",
+            "password": "your_strong_password",
+            "password_confirmation": "your_strong_password"
+        }
+        ```
 
-Admin email: admin@admin.com
-Admin password: admin.123456
+* **Log in and get an API token:**
+    * **Endpoint:** `POST /login`
+    * **Body (JSON):**
+        ```json
+        {
+            "email": "john.doe@example.com",
+            "password": "your_strong_password"
+        }
+        ```
+    * **Response:** Will include an `access_token` that you'll use for authenticated requests.
 
-After filling out the fields, press on the login button. You should see the admin panel interface
+* **Log out (requires authentication):**
+    * **Endpoint:** `POST /logout`
+    * **Headers:** `Authorization: Bearer <your_access_token>`
 
-### Documentation
+### 2. Authenticated Requests
 
-As a developer you will need a simple way of consulting how this API works. Here's where Swagger comes in handy. You can generate the whole documentation of each end-point with the following command:
+For most API resources (authors, books, comments, etc.), you need to be authenticated. After logging in, you'll receive an `access_token`. Include this token in the `Authorization` header of all subsequent protected requests:
 
-```bash
-php artisan l5-swagger:generate
-```
+* **Header:** `Authorization: Bearer <your_access_token>`
 
-After runing the previous command you should see the generated documentation by visiting this address on your browser:
+### 3. Standard RESTful Resources
 
-```bash
-http://localhost:8000/api/documentation
-```
+The API provides standard CRUD (Create, Read, Update, Delete) operations for the following resources: `authors`, `books`, `comments`, `genres`, `posts`, `users`, `tags`, and `reviews`.
 
-### Admin Panel Sidebar
+**Example: Managing Authors**
 
-Once in the admin panel, you should see a sidebar where you will be able to create, edit, and view the information stored in the database. These are the sections that you should see:
+* **Get all authors:**
+    * **Endpoint:** `GET /authors`
+    * **Headers:** `Authorization: Bearer <token>`
 
-- Authors
-- Books
-- Comments
-- Genres
-- Posts
-- Reviews
-- Tags
-- Users
-- Roles
-- Permissions
+* **Get a single author:**
+    * **Endpoint:** `GET /authors/{author_id}`
+    * **Headers:** `Authorization: Bearer <token>`
 
-### Roles And Permissions
+* **Create a new author:**
+    * **Endpoint:** `POST /authors`
+    * **Headers:**
+        * `Authorization: Bearer <token>`
+        * `Content-Type: application/json`
+    * **Body (JSON):**
+        ```json
+        {
+            "name": "Jane Austen"
+        }
+        ```
 
-This project hasdifferents roles and permissions. Depending on the role that user has, it has differents permissions. In this project these are the roles:
+* **Update an author:**
+    * **Endpoint:** `PUT /authors/{author_id}`
+    * **Headers:**
+        * `Authorization: Bearer <token>`
+        * `Content-Type: application/json`
+    * **Body (JSON):**
+        ```json
+        {
+            "name": "Jane Austen Updated"
+        }
+        ```
 
-- Admin
-- Author
-- Editor
-- Moderator
-- User
+* **Delete an author:**
+    * **Endpoint:** `DELETE /authors/{author_id}`
+    * **Headers:** `Authorization: Bearer <token>`
 
-To access to the admin panel you need to have some of these:
+### 4. Nested & Specific Routes
 
-- Admin
-- Editor
-- Moderator
+Many resources have nested routes to manage their relationships or perform specific actions.
 
-Sometimes you may wish to change a user's role. You can do that in the user section of the admin panel.
+* **Book-related operations:**
+    * `POST /books/{book_id}/comments`: Add a comment to a specific book.
+    * `GET /books/{book_id}/posts`: Get posts related to a specific book.
+    * `POST /books/{book_id}/posts`: Create a new post for a specific book.
+    * `PUT /books/{book_id}/tags`: Update tags associated with a book (requires a list of tag IDs in the body).
+    * `PUT /books/{book_id}/reading-progress`: Update a user's reading progress for a book (e.g., `{"progress": 75}`).
+    * `GET /books/{book_id}/reviews`: Get reviews for a specific book.
+    * `POST /books/{book_id}/reviews`: Add a review for a specific book.
+
+* **Post-related operations:**
+    * `GET /posts/{post_id}/comments`: Get comments for a specific post.
+    * `POST /posts/{post_id}/comments`: Add a comment to a specific post.
+
+* **Review-related operations:**
+    * `GET /reviews/{review_id}/comments`: Get comments for a specific review.
+    * `POST /reviews/{review_id}/comments`: Add a comment to a specific review.
+    * `POST /reviews/{review_id}/like`: Like a review.
+    * `POST /reviews/{review_id}/dislike`: Dislike a review.
+
+* **User-related operations:**
+    * `GET /users/{user_id}/reviews`: Get reviews written by a specific user.
+    * `GET /users/{user_id}/posts`: Get posts created by a specific user.
+    * `POST /users/{user_id}/posts`: Create a new post for a specific user.
+    * `POST /users/{user_id}/follow`: Follow another user.
+    * `DELETE /users/{user_id}/unfollow`: Unfollow another user.
+
+**Using Postman/Insomnia:**
+
+1.  Set the **HTTP Method** (GET, POST, PUT, DELETE).
+2.  Enter the **Request URL** (e.g., `http://localhost:8000/api/authors`).
+3.  For authenticated requests, go to the **Headers** tab and add `Authorization` as a key and `Bearer <your_access_token>` as the value.
+4.  For POST/PUT requests with a JSON body, go to the **Headers** tab and add `Content-Type: application/json`. Then, go to the **Body** tab, select `raw` and `JSON`, and paste your JSON payload.
+5.  Click **Send**.
