@@ -36,5 +36,7 @@ class RoleSeeder extends Seeder
                 'email' => config('admin_user.email'),
                 'password' => Hash::make(config('admin_user.password')),
         ]);
+
+        $adminUser->assignRole(AppRoles::ADMIN->getValue());
     }
 }
