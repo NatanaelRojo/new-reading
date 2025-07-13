@@ -22,7 +22,7 @@ class ReviewFactory extends Factory
     {
         return [
             'user_id' => User::inRandomOrder()->first()->id,
-            'book_id' => Book::inRandomOrder()->first(),
+            'book_id' => Book::inRandomOrder()->first()->id,
             'comment' => fake()->text(),
             'rating' => fake()->numberBetween(1, 5),
         ];
