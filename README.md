@@ -4,6 +4,8 @@
 
 This project provides a comprehensive API for managing various entities such as authors, books, comments, reviews, users, and more. It is built using **[Laravel](https://laravel.com/)**, a robust PHP framework.
 
+You can find a Spanish version of this README [here](README.es.md)
+
 ## Table of Contents
 
 - [New Reading API](#new-reading-api)
