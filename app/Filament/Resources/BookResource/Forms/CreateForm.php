@@ -78,7 +78,7 @@ class CreateForm extends AbstractCreateForm
                     titleAttribute: 'full_name'
                 )->preload()
                 ->searchable()
-                ->createOptionForm(FormsCreateForm::getFields()),
+                ->createOptionForm(FormsCreateForm::make()),
                 Select::make('users')
                 ->relationship(
                     name: 'users',
